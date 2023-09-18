@@ -3,6 +3,7 @@ package hanghae99.plus2.team3.commerce.market
 import hanghae99.plus2.team3.commerce.market.domain.usecase.SellerRegisterMarketUseCase
 import hanghae99.plus2.team3.commerce.market.domain.usecase.impl.SellerRegisterMarketUseCaseImpl
 import hanghae99.plus2.team3.commerce.seller.FakeSellerRepositoryImpl
+import hanghae99.plus2.team3.commerce.seller.SellerMemoryRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -25,7 +26,7 @@ class SellerRegisterMarketUseCaseTest {
             FakeMarketRepositoryImpl(
                 MarketMemoryRepository()
             ),
-            FakeSellerRepositoryImpl(),
+            FakeSellerRepositoryImpl(SellerMemoryRepository()),
         )
     }
 
