@@ -1,5 +1,6 @@
 package hanghae99.plus2.team3.commerce.jaehyun.seller.medium
 
+import hanghae99.plus2.team3.commerce.jaehyun.seller.interfaces.request.SellerRegistrationRequest
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import org.assertj.core.api.Assertions.assertThat
@@ -46,8 +47,3 @@ class SellerApiTest {
 
     }
 }
-
-
-data class SellerRegistrationRequest(
-    val name: String,
-)
