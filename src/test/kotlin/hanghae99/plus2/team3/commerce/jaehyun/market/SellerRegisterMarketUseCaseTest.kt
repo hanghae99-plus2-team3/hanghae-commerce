@@ -1,9 +1,11 @@
 package hanghae99.plus2.team3.commerce.jaehyun.market
 
+import hanghae99.plus2.team3.commerce.jaehyun.common.exception.ErrorCode
 import hanghae99.plus2.team3.commerce.jaehyun.market.domain.usecase.SellerRegisterMarketUseCase
 import hanghae99.plus2.team3.commerce.jaehyun.market.domain.usecase.impl.SellerRegisterMarketUseCaseImpl
 import hanghae99.plus2.team3.commerce.jaehyun.seller.FakeSellerRepositoryImpl
 import hanghae99.plus2.team3.commerce.jaehyun.seller.SellerMemoryRepository
+import hanghae99.plus2.team3.commerce.jaehyun.seller.exception.SellerNotFoundException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
@@ -58,17 +60,5 @@ class SellerRegisterMarketUseCaseTest {
     }
 }
 
-enum class ErrorCode (
-    val message: String,
-){
-    SELLER_NOT_FOUND(message = "등록되지 않은 판매자 ID 입니다."),
-    ;
-}
-
-open class SellerException(
-    errorCode: ErrorCode
-) : RuntimeException(errorCode.message)
-
-class SellerNotFoundException : SellerException(ErrorCode.SELLER_NOT_FOUND)
 
 

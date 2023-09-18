@@ -4,6 +4,7 @@ import hanghae99.plus2.team3.commerce.jaehyun.market.domain.Market
 import hanghae99.plus2.team3.commerce.jaehyun.market.domain.MarketRepository
 import hanghae99.plus2.team3.commerce.jaehyun.market.domain.usecase.SellerRegisterMarketUseCase
 import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.SellerRepository
+import hanghae99.plus2.team3.commerce.jaehyun.seller.exception.SellerNotFoundException
 
 class SellerRegisterMarketUseCaseImpl(
     private val marketRepository: MarketRepository,
@@ -14,7 +15,7 @@ class SellerRegisterMarketUseCaseImpl(
 
         val market = Market(
             name = command.name,
-            sellerId = (sellerRepository.findByIdOrNull(command.sellerId) ?: throw IllegalArgumentException()).id,
+            sellerId = (sellerRepository.findByIdOrNull(command.sellerId) ?: throw SellerNotFoundException()).id,
         )
         return marketRepository.save(market)
     }
