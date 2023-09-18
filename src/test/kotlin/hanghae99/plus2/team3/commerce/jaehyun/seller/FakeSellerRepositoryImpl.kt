@@ -7,10 +7,7 @@ class FakeSellerRepositoryImpl(
     private val sellerMemoryRepository: SellerMemoryRepository
 ) : SellerRepository {
     override fun findByIdOrNull(sellerId: Long): Seller? {
-        return Seller(
-            id = 1L,
-            name = "판매자1",
-        )
+        return sellerMemoryRepository.findByIdOrNull(sellerId)
     }
 
     override fun save(seller: Seller): Seller {

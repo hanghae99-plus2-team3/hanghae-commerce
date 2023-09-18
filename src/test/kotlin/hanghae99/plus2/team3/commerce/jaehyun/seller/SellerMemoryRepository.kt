@@ -17,4 +17,13 @@ class SellerMemoryRepository{
         sellers.add(entity)
         return seller.copy(id = entity.id)
     }
+
+    fun findByIdOrNull(sellerId: Long): Seller? {
+        return sellers.find { it.id == sellerId }?.let {
+            return Seller(
+                id = it.id,
+                name = it.name,
+            )
+        }
+    }
 }
