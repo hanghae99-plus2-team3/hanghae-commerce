@@ -2,7 +2,7 @@ package hanghae99.plus2.team3.commerce.jaehyun.market
 
 import hanghae99.plus2.team3.commerce.jaehyun.common.exception.ErrorCode
 import hanghae99.plus2.team3.commerce.jaehyun.market.domain.usecase.SellerRegisterMarketUseCase
-import hanghae99.plus2.team3.commerce.jaehyun.market.domain.usecase.impl.SellerRegisterMarketUseCaseImpl
+import hanghae99.plus2.team3.commerce.jaehyun.market.domain.usecase.SellerRegisterMarketUseCaseImpl
 import hanghae99.plus2.team3.commerce.jaehyun.seller.FakeSellerRepositoryImpl
 import hanghae99.plus2.team3.commerce.jaehyun.seller.SellerMemoryRepository
 import hanghae99.plus2.team3.commerce.jaehyun.seller.exception.SellerNotFoundException

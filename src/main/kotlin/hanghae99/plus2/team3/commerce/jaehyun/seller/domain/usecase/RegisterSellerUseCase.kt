@@ -1,6 +1,7 @@
 package hanghae99.plus2.team3.commerce.jaehyun.seller.domain.usecase
 
 import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.Seller
+import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.SellerRepository
 
 interface RegisterSellerUseCase {
     fun command(command: Command): Seller
@@ -11,5 +12,17 @@ interface RegisterSellerUseCase {
         init {
             require(name.isNotBlank()) { "판매자 이름은 필수입니다." }
         }
+    }
+}
+
+internal class RegisterSellerUseCaseImpl(
+    private val sellerRepository: SellerRepository
+) : RegisterSellerUseCase {
+
+    override fun command(command: RegisterSellerUseCase.Command): Seller {
+        val seller = Seller(
+            name = command.name,
+        )
+        return sellerRepository.save(seller)
     }
 }
