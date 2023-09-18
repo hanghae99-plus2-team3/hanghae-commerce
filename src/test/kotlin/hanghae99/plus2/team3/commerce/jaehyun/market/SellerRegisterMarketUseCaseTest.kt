@@ -52,9 +52,23 @@ class SellerRegisterMarketUseCaseTest {
             sellerId = 9999L,
         )
 
-        assertThatThrownBy{sellerRegisterMarketUseCase.command(command)}
-            .isExactlyInstanceOf(IllegalArgumentException::class.java)
+        assertThatThrownBy { sellerRegisterMarketUseCase.command(command) }
+            .isExactlyInstanceOf(SellerNotFoundException::class.java)
+            .hasMessage(ErrorCode.SELLER_NOT_FOUND.message)
     }
 }
+
+enum class ErrorCode (
+    val message: String,
+){
+    SELLER_NOT_FOUND(message = "등록되지 않은 판매자 ID 입니다."),
+    ;
+}
+
+open class SellerException(
+    errorCode: ErrorCode
+) : RuntimeException(errorCode.message)
+
+class SellerNotFoundException : SellerException(ErrorCode.SELLER_NOT_FOUND)
 
 
