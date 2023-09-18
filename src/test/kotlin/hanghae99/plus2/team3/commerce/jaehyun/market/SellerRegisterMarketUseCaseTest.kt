@@ -5,6 +5,7 @@ import hanghae99.plus2.team3.commerce.jaehyun.market.domain.usecase.SellerRegist
 import hanghae99.plus2.team3.commerce.jaehyun.market.domain.usecase.SellerRegisterMarketUseCaseImpl
 import hanghae99.plus2.team3.commerce.jaehyun.seller.FakeSellerRepositoryImpl
 import hanghae99.plus2.team3.commerce.jaehyun.seller.SellerMemoryRepository
+import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.Seller
 import hanghae99.plus2.team3.commerce.jaehyun.seller.exception.SellerNotFoundException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -25,12 +26,14 @@ class SellerRegisterMarketUseCaseTest {
 
     @BeforeEach
     fun setUp() {
+        val fakeSellerRepository = FakeSellerRepositoryImpl(SellerMemoryRepository())
         sellerRegisterMarketUseCase = SellerRegisterMarketUseCaseImpl(
             FakeMarketRepositoryImpl(
                 MarketMemoryRepository()
             ),
-            FakeSellerRepositoryImpl(SellerMemoryRepository()),
+            fakeSellerRepository,
         )
+        fakeSellerRepository.save(Seller(id = 1L, name = "판매자1"))
     }
 
     @Test
