@@ -1,5 +1,7 @@
-package hanghae99.plus2.team3.commerce.jaehyun.seller
+package hanghae99.plus2.team3.commerce.jaehyun.seller.small
 
+import hanghae99.plus2.team3.commerce.jaehyun.seller.mock.FakeSellerRepositoryImpl
+import hanghae99.plus2.team3.commerce.jaehyun.seller.mock.SellerMemoryRepository
 import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.usecase.RegisterSellerUseCase
 import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.usecase.RegisterSellerUseCaseImpl
 import org.assertj.core.api.Assertions.assertThat

@@ -1,10 +1,12 @@
-package hanghae99.plus2.team3.commerce.jaehyun.market
+package hanghae99.plus2.team3.commerce.jaehyun.market.small
 
 import hanghae99.plus2.team3.commerce.jaehyun.common.exception.ErrorCode
+import hanghae99.plus2.team3.commerce.jaehyun.market.mock.FakeMarketRepositoryImpl
 import hanghae99.plus2.team3.commerce.jaehyun.market.domain.usecase.SellerRegisterMarketUseCase
 import hanghae99.plus2.team3.commerce.jaehyun.market.domain.usecase.SellerRegisterMarketUseCaseImpl
-import hanghae99.plus2.team3.commerce.jaehyun.seller.FakeSellerRepositoryImpl
-import hanghae99.plus2.team3.commerce.jaehyun.seller.SellerMemoryRepository
+import hanghae99.plus2.team3.commerce.jaehyun.market.mock.MarketMemoryRepository
+import hanghae99.plus2.team3.commerce.jaehyun.seller.mock.FakeSellerRepositoryImpl
+import hanghae99.plus2.team3.commerce.jaehyun.seller.mock.SellerMemoryRepository
 import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.Seller
 import hanghae99.plus2.team3.commerce.jaehyun.seller.exception.SellerNotFoundException
 import org.assertj.core.api.Assertions.assertThat
