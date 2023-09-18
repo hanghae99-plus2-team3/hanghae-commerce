@@ -5,6 +5,7 @@ import hanghae99.plus2.team3.commerce.jaehyun.market.domain.usecase.impl.SellerR
 import hanghae99.plus2.team3.commerce.jaehyun.seller.FakeSellerRepositoryImpl
 import hanghae99.plus2.team3.commerce.jaehyun.seller.SellerMemoryRepository
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -43,7 +44,17 @@ class SellerRegisterMarketUseCaseTest {
         assertThat(savedMarket.name).isEqualTo(command.name)
         assertThat(savedMarket.sellerId).isEqualTo(command.sellerId)
     }
-}
 
+    @Test
+    fun `등록되지 않은 sellerId로 상점 등록 요청을 하면 기대하는 응답(exception)을 반환한다`() {
+        val command = SellerRegisterMarketUseCase.Command(
+            name = "상점1",
+            sellerId = 9999L,
+        )
+
+        assertThatThrownBy{sellerRegisterMarketUseCase.command(command)}
+            .isExactlyInstanceOf(IllegalArgumentException::class.java)
+    }
+}
 
 
