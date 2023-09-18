@@ -1,12 +1,12 @@
-package hanghae99.plus2.team3.commerce.jaehyun.market.domain.usecase
+package hanghae99.plus2.team3.commerce.jaehyun.shop.domain.usecase
 
-import hanghae99.plus2.team3.commerce.jaehyun.market.domain.Market
-import hanghae99.plus2.team3.commerce.jaehyun.market.domain.MarketRepository
+import hanghae99.plus2.team3.commerce.jaehyun.shop.domain.Shop
+import hanghae99.plus2.team3.commerce.jaehyun.shop.domain.ShopRepository
 import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.SellerRepository
 import hanghae99.plus2.team3.commerce.jaehyun.seller.exception.SellerNotFoundException
 
-interface SellerRegisterMarketUseCase {
-    fun command(command: Command): Market
+interface SellerRegisterShopUseCase {
+    fun command(command: Command): Shop
 
     data class Command(
         val name: String,
@@ -19,17 +19,17 @@ interface SellerRegisterMarketUseCase {
     }
 }
 
-internal class SellerRegisterMarketUseCaseImpl(
-    private val marketRepository: MarketRepository,
+internal class SellerRegisterShopUseCaseImpl(
+    private val shopRepository: ShopRepository,
     private val sellerRepository: SellerRepository,
 
-    ) : SellerRegisterMarketUseCase {
-    override fun command(command: SellerRegisterMarketUseCase.Command): Market {
+    ) : SellerRegisterShopUseCase {
+    override fun command(command: SellerRegisterShopUseCase.Command): Shop {
 
-        val market = Market(
+        val shop = Shop(
             name = command.name,
             sellerId = (sellerRepository.findByIdOrNull(command.sellerId) ?: throw SellerNotFoundException()).id,
         )
-        return marketRepository.save(market)
+        return shopRepository.save(shop)
     }
 }

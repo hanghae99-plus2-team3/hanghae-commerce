@@ -1,6 +1,6 @@
-package hanghae99.plus2.team3.commerce.jaehyun.market.domain
+package hanghae99.plus2.team3.commerce.jaehyun.shop.domain
 
-data class Market(
+data class Shop(
     val id: Long = 0,
     val name: String,
     val sellerId: Long,

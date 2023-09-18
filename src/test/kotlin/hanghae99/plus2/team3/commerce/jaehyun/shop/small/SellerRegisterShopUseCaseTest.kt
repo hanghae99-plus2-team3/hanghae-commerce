@@ -1,10 +1,10 @@
-package hanghae99.plus2.team3.commerce.jaehyun.market.small
+package hanghae99.plus2.team3.commerce.jaehyun.shop.small
 
 import hanghae99.plus2.team3.commerce.jaehyun.common.exception.ErrorCode
-import hanghae99.plus2.team3.commerce.jaehyun.market.mock.FakeMarketRepositoryImpl
-import hanghae99.plus2.team3.commerce.jaehyun.market.domain.usecase.SellerRegisterMarketUseCase
-import hanghae99.plus2.team3.commerce.jaehyun.market.domain.usecase.SellerRegisterMarketUseCaseImpl
-import hanghae99.plus2.team3.commerce.jaehyun.market.mock.MarketMemoryRepository
+import hanghae99.plus2.team3.commerce.jaehyun.shop.mock.FakeShopRepositoryImpl
+import hanghae99.plus2.team3.commerce.jaehyun.shop.domain.usecase.SellerRegisterShopUseCase
+import hanghae99.plus2.team3.commerce.jaehyun.shop.domain.usecase.SellerRegisterShopUseCaseImpl
+import hanghae99.plus2.team3.commerce.jaehyun.shop.mock.ShopMemoryRepository
 import hanghae99.plus2.team3.commerce.jaehyun.seller.mock.FakeSellerRepositoryImpl
 import hanghae99.plus2.team3.commerce.jaehyun.seller.mock.SellerMemoryRepository
 import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.Seller
@@ -23,15 +23,15 @@ import org.junit.jupiter.api.Test
  */
 
 // 판매자는 본인의 상점 정보를 등록한다.
-class SellerRegisterMarketUseCaseTest {
-    private lateinit var sellerRegisterMarketUseCase: SellerRegisterMarketUseCase
+class SellerRegisterShopUseCaseTest {
+    private lateinit var sellerRegisterShopUseCase: SellerRegisterShopUseCase
 
     @BeforeEach
     fun setUp() {
         val fakeSellerRepository = FakeSellerRepositoryImpl(SellerMemoryRepository())
-        sellerRegisterMarketUseCase = SellerRegisterMarketUseCaseImpl(
-            FakeMarketRepositoryImpl(
-                MarketMemoryRepository()
+        sellerRegisterShopUseCase = SellerRegisterShopUseCaseImpl(
+            FakeShopRepositoryImpl(
+                ShopMemoryRepository()
             ),
             fakeSellerRepository,
         )
@@ -40,12 +40,12 @@ class SellerRegisterMarketUseCaseTest {
 
     @Test
     fun `정상적으로 판매자가 상점를 등록하면 기대하는 응답을 반환한다`() {
-        val command = SellerRegisterMarketUseCase.Command(
+        val command = SellerRegisterShopUseCase.Command(
             name = "상점1",
             sellerId = 1L,
         )
 
-        val savedMarket = sellerRegisterMarketUseCase.command(command)
+        val savedMarket = sellerRegisterShopUseCase.command(command)
 
         assertThat(savedMarket.id).isNotNull
         assertThat(savedMarket.name).isEqualTo(command.name)
@@ -54,12 +54,12 @@ class SellerRegisterMarketUseCaseTest {
 
     @Test
     fun `등록되지 않은 sellerId로 상점 등록 요청을 하면 기대하는 응답(exception)을 반환한다`() {
-        val command = SellerRegisterMarketUseCase.Command(
+        val command = SellerRegisterShopUseCase.Command(
             name = "상점1",
             sellerId = 9999L,
         )
 
-        assertThatThrownBy { sellerRegisterMarketUseCase.command(command) }
+        assertThatThrownBy { sellerRegisterShopUseCase.command(command) }
             .isExactlyInstanceOf(SellerNotFoundException::class.java)
             .hasMessage(ErrorCode.SELLER_NOT_FOUND.message)
     }
