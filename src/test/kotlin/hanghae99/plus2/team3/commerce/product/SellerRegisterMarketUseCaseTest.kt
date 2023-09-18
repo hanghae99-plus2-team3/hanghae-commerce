@@ -3,6 +3,7 @@ package hanghae99.plus2.team3.commerce.product
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.lang.IllegalArgumentException
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 
@@ -24,9 +25,7 @@ class SellerRegisterMarketUseCaseTest {
             FakeMarketRepositoryImpl(
                 MarketMemoryRepository()
             ),
-            FakeSellerRepositoryImpl(
-                SellerMemoryRepository()
-            ),
+            FakeSellerRepositoryImpl(),
         )
     }
 
@@ -80,7 +79,7 @@ class SellerRegisterMarketUseCaseImpl(
 
         val market = Market(
             name = command.name,
-            sellerId = sellerRepository.findByIdOrNull(command.sellerId) ?: throw SellerNotFoundException(),
+            sellerId = (sellerRepository.findByIdOrNull(command.sellerId) ?: throw IllegalArgumentException()).id,
         )
         return marketRepository.save(market)
     }
@@ -88,6 +87,21 @@ class SellerRegisterMarketUseCaseImpl(
 
 interface MarketRepository {
     fun save(market: Market): Market
+}
+interface SellerRepository{
+    fun findByIdOrNull(sellerId: Long): Seller?
+}
+
+class FakeSellerRepositoryImpl(
+
+) : SellerRepository{
+    override fun findByIdOrNull(sellerId: Long): Seller? {
+        return Seller(
+            id = 1L,
+            name = "판매자1",
+        )
+    }
+
 }
 
 class FakeMarketRepositoryImpl(
@@ -113,10 +127,16 @@ class MarketMemoryRepository {
     }
 }
 
+data class Seller(
+    val id: Long,
+    val name: String,
+)
+
 data class MarketEntity(
     val id: Long,
     val name: String,
     val sellerId: Long,
 )
+
 
 
