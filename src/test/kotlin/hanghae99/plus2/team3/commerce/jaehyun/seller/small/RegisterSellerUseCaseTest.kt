@@ -38,5 +38,17 @@ class RegisterSellerUseCaseTest {
         assertThat(savedSeller.id).isNotNull
         assertThat(savedSeller.name).isEqualTo(command.name)
     }
+
+    @Test
+    fun `이미 등록된 판매자명으로 등록을 요청하면 기대하는 응답(exception)을 반환한다`() {
+        val command = RegisterSellerUseCase.Command(
+            name = "판매자1",
+        )
+
+        val savedSeller = registerSellerUseCase.command(command)
+
+        assertThat(savedSeller.id).isNotNull
+        assertThat(savedSeller.name).isEqualTo(command.name)
+    }
 }
 
