@@ -23,7 +23,10 @@ class SellerRegisterMarketUseCaseTest {
         sellerRegisterMarketUseCase = SellerRegisterMarketUseCaseImpl(
             FakeMarketRepositoryImpl(
                 MarketMemoryRepository()
-            )
+            ),
+            FakeSellerRepositoryImpl(
+                SellerMemoryRepository()
+            ),
         )
     }
 
@@ -49,7 +52,7 @@ interface SellerRegisterMarketUseCase {
     data class Command(
         val name: String,
         val sellerId: Long,
-    ){
+    ) {
         init {
             require(name.isNotBlank()) { "상점 이름은 필수입니다." }
             require(sellerId > 0) { "잘못된 판매자 ID 입니다." }
@@ -61,7 +64,7 @@ data class Market(
     val id: Long = 0,
     val name: String,
     val sellerId: Long,
-){
+) {
     init {
         require(name.isNotBlank()) { "상점 이름은 필수입니다." }
         require(sellerId > 0) { "잘못된 판매자 ID 입니다." }
@@ -69,12 +72,15 @@ data class Market(
 }
 
 class SellerRegisterMarketUseCaseImpl(
-    private val marketRepository: MarketRepository
-) : SellerRegisterMarketUseCase {
+    private val marketRepository: MarketRepository,
+    private val sellerRepository: SellerRepository,
+
+    ) : SellerRegisterMarketUseCase {
     override fun command(command: SellerRegisterMarketUseCase.Command): Market {
+
         val market = Market(
             name = command.name,
-            sellerId = command.sellerId,
+            sellerId = sellerRepository.findByIdOrNull(command.sellerId) ?: throw SellerNotFoundException(),
         )
         return marketRepository.save(market)
     }
