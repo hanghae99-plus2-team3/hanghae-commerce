@@ -1,4 +1,4 @@
-package hanghae99.plus2.team3.commerce.market.infrastructure
+package hanghae99.plus2.team3.commerce.jaehyun.market.infrastructure
 
 data class MarketEntity(
     val id: Long,

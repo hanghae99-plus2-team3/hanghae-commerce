@@ -1,7 +1,7 @@
-package hanghae99.plus2.team3.commerce.seller
+package hanghae99.plus2.team3.commerce.jaehyun.seller
 
-import hanghae99.plus2.team3.commerce.seller.domain.Seller
-import hanghae99.plus2.team3.commerce.seller.infrastructure.SellerEntity
+import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.Seller
+import hanghae99.plus2.team3.commerce.jaehyun.seller.infrastructure.SellerEntity
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 

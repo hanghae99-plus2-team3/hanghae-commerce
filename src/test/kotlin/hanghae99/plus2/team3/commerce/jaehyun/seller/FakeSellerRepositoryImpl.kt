@@ -1,7 +1,7 @@
-package hanghae99.plus2.team3.commerce.seller
+package hanghae99.plus2.team3.commerce.jaehyun.seller
 
-import hanghae99.plus2.team3.commerce.seller.domain.Seller
-import hanghae99.plus2.team3.commerce.seller.domain.SellerRepository
+import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.Seller
+import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.SellerRepository
 
 class FakeSellerRepositoryImpl(
     private val sellerMemoryRepository: SellerMemoryRepository

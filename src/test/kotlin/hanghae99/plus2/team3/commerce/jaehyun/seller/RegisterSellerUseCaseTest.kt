@@ -1,7 +1,7 @@
-package hanghae99.plus2.team3.commerce.seller
+package hanghae99.plus2.team3.commerce.jaehyun.seller
 
-import hanghae99.plus2.team3.commerce.seller.domain.usecase.RegisterSellerUseCase
-import hanghae99.plus2.team3.commerce.seller.domain.usecase.impl.RegisterSellerUseCaseImpl
+import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.usecase.RegisterSellerUseCase
+import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.usecase.impl.RegisterSellerUseCaseImpl
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

@@ -1,7 +1,7 @@
-package hanghae99.plus2.team3.commerce.market
+package hanghae99.plus2.team3.commerce.jaehyun.market
 
-import hanghae99.plus2.team3.commerce.market.domain.Market
-import hanghae99.plus2.team3.commerce.market.infrastructure.MarketEntity
+import hanghae99.plus2.team3.commerce.jaehyun.market.domain.Market
+import hanghae99.plus2.team3.commerce.jaehyun.market.infrastructure.MarketEntity
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 

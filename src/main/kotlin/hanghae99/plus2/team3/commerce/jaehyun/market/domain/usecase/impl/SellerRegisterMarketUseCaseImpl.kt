@@ -1,9 +1,9 @@
-package hanghae99.plus2.team3.commerce.market.domain.usecase.impl
+package hanghae99.plus2.team3.commerce.jaehyun.market.domain.usecase.impl
 
-import hanghae99.plus2.team3.commerce.market.domain.Market
-import hanghae99.plus2.team3.commerce.market.domain.MarketRepository
-import hanghae99.plus2.team3.commerce.market.domain.usecase.SellerRegisterMarketUseCase
-import hanghae99.plus2.team3.commerce.seller.domain.SellerRepository
+import hanghae99.plus2.team3.commerce.jaehyun.market.domain.Market
+import hanghae99.plus2.team3.commerce.jaehyun.market.domain.MarketRepository
+import hanghae99.plus2.team3.commerce.jaehyun.market.domain.usecase.SellerRegisterMarketUseCase
+import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.SellerRepository
 
 class SellerRegisterMarketUseCaseImpl(
     private val marketRepository: MarketRepository,

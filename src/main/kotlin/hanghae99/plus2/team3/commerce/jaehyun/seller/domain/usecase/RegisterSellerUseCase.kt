@@ -1,6 +1,6 @@
-package hanghae99.plus2.team3.commerce.seller.domain.usecase
+package hanghae99.plus2.team3.commerce.jaehyun.seller.domain.usecase
 
-import hanghae99.plus2.team3.commerce.seller.domain.Seller
+import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.Seller
 
 interface RegisterSellerUseCase {
     fun command(command: Command): Seller

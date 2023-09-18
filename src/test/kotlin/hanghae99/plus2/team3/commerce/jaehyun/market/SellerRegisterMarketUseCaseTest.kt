@@ -1,9 +1,9 @@
-package hanghae99.plus2.team3.commerce.market
+package hanghae99.plus2.team3.commerce.jaehyun.market
 
-import hanghae99.plus2.team3.commerce.market.domain.usecase.SellerRegisterMarketUseCase
-import hanghae99.plus2.team3.commerce.market.domain.usecase.impl.SellerRegisterMarketUseCaseImpl
-import hanghae99.plus2.team3.commerce.seller.FakeSellerRepositoryImpl
-import hanghae99.plus2.team3.commerce.seller.SellerMemoryRepository
+import hanghae99.plus2.team3.commerce.jaehyun.market.domain.usecase.SellerRegisterMarketUseCase
+import hanghae99.plus2.team3.commerce.jaehyun.market.domain.usecase.impl.SellerRegisterMarketUseCaseImpl
+import hanghae99.plus2.team3.commerce.jaehyun.seller.FakeSellerRepositoryImpl
+import hanghae99.plus2.team3.commerce.jaehyun.seller.SellerMemoryRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

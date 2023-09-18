@@ -1,8 +1,8 @@
-package hanghae99.plus2.team3.commerce.seller.domain.usecase.impl
+package hanghae99.plus2.team3.commerce.jaehyun.seller.domain.usecase.impl
 
-import hanghae99.plus2.team3.commerce.seller.domain.usecase.RegisterSellerUseCase
-import hanghae99.plus2.team3.commerce.seller.domain.Seller
-import hanghae99.plus2.team3.commerce.seller.domain.SellerRepository
+import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.usecase.RegisterSellerUseCase
+import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.Seller
+import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.SellerRepository
 
 class RegisterSellerUseCaseImpl(
     private val sellerRepository: SellerRepository
