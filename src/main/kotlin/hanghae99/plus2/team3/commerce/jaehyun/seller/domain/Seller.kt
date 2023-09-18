@@ -1,7 +1,7 @@
 package hanghae99.plus2.team3.commerce.jaehyun.seller.domain
 
 data class Seller(
-    val id: Long=0,
+    val id: Long = 0,
     val name: String,
 ) {
     init {

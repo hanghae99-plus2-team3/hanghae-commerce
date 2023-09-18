@@ -2,6 +2,7 @@ package hanghae99.plus2.team3.commerce.jaehyun.seller.domain.usecase
 
 import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.Seller
 import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.SellerRepository
+import org.springframework.stereotype.Component
 
 interface RegisterSellerUseCase {
     fun command(command: Command): Seller
@@ -15,6 +16,7 @@ interface RegisterSellerUseCase {
     }
 }
 
+@Component
 internal class RegisterSellerUseCaseImpl(
     private val sellerRepository: SellerRepository
 ) : RegisterSellerUseCase {

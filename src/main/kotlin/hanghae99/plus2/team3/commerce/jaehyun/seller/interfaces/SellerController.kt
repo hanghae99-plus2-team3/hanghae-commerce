@@ -1,5 +1,6 @@
 package hanghae99.plus2.team3.commerce.jaehyun.seller.interfaces
 
+import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.usecase.RegisterSellerUseCase
 import hanghae99.plus2.team3.commerce.jaehyun.seller.interfaces.request.SellerRegistrationRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -18,12 +19,19 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/v1/seller")
-class SellerController {
+class SellerController(
+    private val registerSellerUseCase: RegisterSellerUseCase
+) {
 
     @PostMapping
     fun registerSeller(
         @RequestBody request: SellerRegistrationRequest
     ):ResponseEntity<Unit>{
+        registerSellerUseCase.command(
+            RegisterSellerUseCase.Command(
+                name = request.name
+            )
+        )
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .build()
