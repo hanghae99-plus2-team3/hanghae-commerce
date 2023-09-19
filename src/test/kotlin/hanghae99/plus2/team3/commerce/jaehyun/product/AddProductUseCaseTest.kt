@@ -1,5 +1,8 @@
 package hanghae99.plus2.team3.commerce.jaehyun.product
 
+import hanghae99.plus2.team3.commerce.jaehyun.common.exception.ErrorCode
+import hanghae99.plus2.team3.commerce.jaehyun.seller.exception.SellerNameDuplicatedException
+import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -41,7 +44,22 @@ class AddProductUseCaseTest {
         assertThat(savedProduct.quantity).isEqualTo(command.quantity)
         assertThat(savedProduct.sellerId).isEqualTo(command.sellerId)
         assertThat(savedProduct.category).isEqualTo(command.category)
+    }
 
+    @Test
+    fun `잘못된 sellerId와 shopId로 상품 등록을 요청하면 기대하는 응답(exception)을 반환한다`() {
+        val command: AddProductUseCase.Command = AddProductUseCase.Command(
+            name = "상품1",
+            price = 1000,
+            quantity = 10,
+            sellerId = 999L,
+            shopId = 1L,
+            category = Category.CLOTHES,
+        )
+
+        assertThatThrownBy {  addProductUseCase.command(command) }
+            .isExactlyInstanceOf(InvalidShopInfoException::class.java)
+            .hasMessage(ErrorCode.INVALID_SHOP_INFO.message)
     }
 }
 
