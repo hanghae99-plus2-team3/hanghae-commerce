@@ -4,6 +4,7 @@ import hanghae99.plus2.team3.commerce.jaehyun.shop.domain.Shop
 import hanghae99.plus2.team3.commerce.jaehyun.shop.domain.ShopRepository
 import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.SellerRepository
 import hanghae99.plus2.team3.commerce.jaehyun.seller.exception.SellerNotFoundException
+import hanghae99.plus2.team3.commerce.jaehyun.shop.exception.ShopNameDuplicatedException
 
 interface SellerRegisterShopUseCase {
     fun command(command: Command): Shop
@@ -25,6 +26,8 @@ internal class SellerRegisterShopUseCaseImpl(
 
     ) : SellerRegisterShopUseCase {
     override fun command(command: SellerRegisterShopUseCase.Command): Shop {
+        if(shopRepository.findByName(command.name) != null)
+            throw ShopNameDuplicatedException()
 
         val shop = Shop(
             name = command.name,

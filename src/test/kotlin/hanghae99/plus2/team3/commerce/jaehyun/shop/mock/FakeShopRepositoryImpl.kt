@@ -13,6 +13,10 @@ class FakeShopRepositoryImpl(
     override fun save(shop: Shop): Shop {
         return shopMemoryRepository.save(shop)
     }
+
+    override fun findByName(name: String): Shop? {
+        return shopMemoryRepository.findByName(name)
+    }
 }
 
 class ShopMemoryRepository {
@@ -27,5 +31,9 @@ class ShopMemoryRepository {
         )
         shops.add(entity)
         return shop.copy(id = entity.id)
+    }
+
+    fun findByName(name: String): Shop? {
+        return shops.find { it.name == name }?.toDomain()
     }
 }

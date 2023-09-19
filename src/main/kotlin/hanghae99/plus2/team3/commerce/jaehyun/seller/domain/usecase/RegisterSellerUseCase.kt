@@ -23,9 +23,8 @@ internal class RegisterSellerUseCaseImpl(
 ) : RegisterSellerUseCase {
 
     override fun command(command: RegisterSellerUseCase.Command): Seller {
-        if(sellerRepository.findByName(command.name)!=null){
+        if (sellerRepository.findByName(command.name) != null)
             throw SellerNameDuplicatedException()
-        }
 
         return sellerRepository.save(
             Seller(

@@ -12,6 +12,7 @@ import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.usecase.RegisterSell
 import hanghae99.plus2.team3.commerce.jaehyun.seller.exception.SellerNameDuplicatedException
 import hanghae99.plus2.team3.commerce.jaehyun.seller.exception.SellerNotFoundException
 import hanghae99.plus2.team3.commerce.jaehyun.shop.domain.Shop
+import hanghae99.plus2.team3.commerce.jaehyun.shop.exception.ShopNameDuplicatedException
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -80,7 +81,7 @@ class SellerRegisterShopUseCaseTest {
     fun `이미 등록된 상점명으로 등록을 요청하면 기대하는 응답(exception)을 반환한다`() {
         val command = SellerRegisterShopUseCase.Command(
             name = "상점1",
-            sellerId = 9999L,
+            sellerId = 1L,
         )
 
         assertThatThrownBy { sellerRegisterShopUseCase.command(command) }
