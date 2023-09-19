@@ -16,6 +16,10 @@ class FakeSellerRepositoryImpl(
     override fun save(seller: Seller): Seller {
         return sellerMemoryRepository.save(seller)
     }
+
+    override fun findByName(name: String): Seller? {
+        return sellerMemoryRepository.findByName(name)
+    }
 }
 
 class SellerMemoryRepository{
@@ -33,6 +37,15 @@ class SellerMemoryRepository{
 
     fun findByIdOrNull(sellerId: Long): Seller? {
         return sellers.find { it.id == sellerId }?.let {
+            return Seller(
+                id = it.id,
+                name = it.name,
+            )
+        }
+    }
+
+    fun findByName(name: String): Seller? {
+        return sellers.find { it.name == name }?.let {
             return Seller(
                 id = it.id,
                 name = it.name,

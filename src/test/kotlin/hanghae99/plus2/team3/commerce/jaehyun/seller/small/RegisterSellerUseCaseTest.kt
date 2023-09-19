@@ -6,6 +6,7 @@ import hanghae99.plus2.team3.commerce.jaehyun.seller.mock.FakeSellerRepositoryIm
 import hanghae99.plus2.team3.commerce.jaehyun.seller.mock.SellerMemoryRepository
 import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.usecase.RegisterSellerUseCase
 import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.usecase.RegisterSellerUseCaseImpl
+import hanghae99.plus2.team3.commerce.jaehyun.seller.exception.SellerNameDuplicatedException
 import hanghae99.plus2.team3.commerce.jaehyun.seller.exception.SellerNotFoundException
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
@@ -53,7 +54,7 @@ class RegisterSellerUseCaseTest {
 
         Assertions.assertThatThrownBy {  registerSellerUseCase.command(command) }
             .isExactlyInstanceOf(SellerNameDuplicatedException::class.java)
-            .hasMessage(ErrorCode.SELLER_NOT_FOUND.message)
+            .hasMessage(ErrorCode.SELLER_NAME_DUPLICATED.message)
     }
 }
 

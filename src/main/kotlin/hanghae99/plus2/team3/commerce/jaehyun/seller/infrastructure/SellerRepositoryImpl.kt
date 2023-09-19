@@ -27,4 +27,9 @@ class SellerRepositoryImpl(
             SellerEntity(seller)
         ).toDomain()
     }
+
+    override fun findByName(name: String): Seller? {
+        return sellerJpaRepository.findByName(name)?.toDomain()
+    }
+
 }

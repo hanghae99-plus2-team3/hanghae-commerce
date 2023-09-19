@@ -2,6 +2,7 @@ package hanghae99.plus2.team3.commerce.jaehyun.seller.domain.usecase
 
 import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.Seller
 import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.SellerRepository
+import hanghae99.plus2.team3.commerce.jaehyun.seller.exception.SellerNameDuplicatedException
 import org.springframework.stereotype.Component
 
 interface RegisterSellerUseCase {
@@ -22,9 +23,14 @@ internal class RegisterSellerUseCaseImpl(
 ) : RegisterSellerUseCase {
 
     override fun command(command: RegisterSellerUseCase.Command): Seller {
-        val seller = Seller(
-            name = command.name,
+        if(sellerRepository.findByName(command.name)!=null){
+            throw SellerNameDuplicatedException()
+        }
+
+        return sellerRepository.save(
+            Seller(
+                name = command.name,
+            )
         )
-        return sellerRepository.save(seller)
     }
 }

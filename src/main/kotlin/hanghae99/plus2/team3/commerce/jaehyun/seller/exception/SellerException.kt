@@ -14,5 +14,4 @@ open class SellerException(
 ) : RuntimeException(errorCode.message)
 
 class SellerNotFoundException : SellerException(ErrorCode.SELLER_NOT_FOUND)
-
-
+class SellerNameDuplicatedException : SellerException(ErrorCode.SELLER_NAME_DUPLICATED)
