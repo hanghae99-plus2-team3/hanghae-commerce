@@ -17,26 +17,14 @@ import org.springframework.stereotype.Repository
 class SellerRepositoryImpl(
     private val sellerJpaRepository: SellerJpaRepository
 ) : SellerRepository {
+
     override fun findByIdOrNull(sellerId: Long): Seller? {
-        return sellerJpaRepository.findByIdOrNull(sellerId)?.let {
-            return Seller(
-                id = it.id,
-                name = it.name,
-            )
-        }
+        return sellerJpaRepository.findByIdOrNull(sellerId)?.toDomain()
     }
 
     override fun save(seller: Seller): Seller {
         return sellerJpaRepository.save(
-            SellerEntity(
-                id = seller.id,
-                name = seller.name,
-            )
-        ).let{
-            return Seller(
-                id = it.id,
-                name = it.name,
-            )
-        }
+            SellerEntity(seller)
+        ).toDomain()
     }
 }

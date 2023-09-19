@@ -28,7 +28,7 @@ internal class SellerRegisterShopUseCaseImpl(
 
         val shop = Shop(
             name = command.name,
-            sellerId = (sellerRepository.findByIdOrNull(command.sellerId) ?: throw SellerNotFoundException()).id,
+            seller = (sellerRepository.findByIdOrNull(command.sellerId) ?: throw SellerNotFoundException()),
         )
         return shopRepository.save(shop)
     }

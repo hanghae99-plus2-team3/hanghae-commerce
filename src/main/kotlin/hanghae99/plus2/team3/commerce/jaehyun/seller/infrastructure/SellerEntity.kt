@@ -1,5 +1,6 @@
 package hanghae99.plus2.team3.commerce.jaehyun.seller.infrastructure
 
+import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.Seller
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -16,4 +17,16 @@ class SellerEntity(
 
     var name: String = name
         private set
+
+    constructor(seller: Seller) : this(
+        id = seller.id,
+        name = seller.name,
+    )
+
+    fun toDomain(): Seller {
+        return Seller(
+            id = id,
+            name = name,
+        )
+    }
 }

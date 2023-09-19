@@ -49,7 +49,7 @@ class SellerRegisterShopUseCaseTest {
 
         assertThat(savedMarket.id).isNotNull
         assertThat(savedMarket.name).isEqualTo(command.name)
-        assertThat(savedMarket.sellerId).isEqualTo(command.sellerId)
+        assertThat(savedMarket.seller.id).isEqualTo(command.sellerId)
     }
 
     @Test
