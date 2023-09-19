@@ -64,6 +64,7 @@ class AddProductUseCaseTest {
         assertThat(savedProduct.price).isEqualTo(command.price)
         assertThat(savedProduct.quantity).isEqualTo(command.quantity)
         assertThat(savedProduct.sellerId).isEqualTo(command.sellerId)
+        assertThat(savedProduct.shopId).isEqualTo(command.shopId)
         assertThat(savedProduct.category).isEqualTo(command.category)
     }
 

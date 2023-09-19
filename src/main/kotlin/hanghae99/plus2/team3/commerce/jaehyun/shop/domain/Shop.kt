@@ -3,7 +3,7 @@ package hanghae99.plus2.team3.commerce.jaehyun.shop.domain
 import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.Seller
 
 data class Shop(
-    val id: Long = 0,
+    val id: Long? = null,
     val name: String,
     val seller: Seller,
 ) {
