@@ -1,7 +1,15 @@
 package hanghae99.plus2.team3.commerce.jaehyun.product
 
 import hanghae99.plus2.team3.commerce.jaehyun.common.exception.ErrorCode
+import hanghae99.plus2.team3.commerce.jaehyun.seller.domain.Seller
+import hanghae99.plus2.team3.commerce.jaehyun.seller.exception.SellerException
 import hanghae99.plus2.team3.commerce.jaehyun.seller.exception.SellerNameDuplicatedException
+import hanghae99.plus2.team3.commerce.jaehyun.seller.mock.FakeSellerRepositoryImpl
+import hanghae99.plus2.team3.commerce.jaehyun.seller.mock.SellerMemoryRepository
+import hanghae99.plus2.team3.commerce.jaehyun.shop.domain.Shop
+import hanghae99.plus2.team3.commerce.jaehyun.shop.domain.ShopRepository
+import hanghae99.plus2.team3.commerce.jaehyun.shop.mock.FakeShopRepositoryImpl
+import hanghae99.plus2.team3.commerce.jaehyun.shop.mock.ShopMemoryRepository
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -19,10 +27,21 @@ import java.util.concurrent.atomic.AtomicLong
 class AddProductUseCaseTest {
 
     private lateinit var addProductUseCase: AddProductUseCase
+    private lateinit var fakeSellerRepository: FakeSellerRepositoryImpl
+    private lateinit var fakeShopRepository: FakeShopRepositoryImpl
+    private lateinit var fakeProductRepository: FakeProductRepositoryImpl
 
     @BeforeEach
     fun setUp() {
-        addProductUseCase = AddProductUseCaseImpl(FakeProductRepositoryImpl(ProductMemoryRepository()))
+        fakeSellerRepository = FakeSellerRepositoryImpl(SellerMemoryRepository())
+        fakeShopRepository = FakeShopRepositoryImpl(ShopMemoryRepository())
+        fakeProductRepository = FakeProductRepositoryImpl(ProductMemoryRepository())
+        addProductUseCase = AddProductUseCaseImpl(fakeProductRepository, fakeShopRepository)
+
+        val preSavedSeller = Seller(id = 1L, name = "판매자1")
+        val preSavedShop = Shop(id = 1L, name = "상점1", preSavedSeller)
+        fakeSellerRepository.save(preSavedSeller)
+        fakeShopRepository.save(preSavedShop)
     }
 
     @Test
@@ -78,10 +97,14 @@ interface AddProductUseCase {
 
 class AddProductUseCaseImpl(
     private val productRepository: ProductRepository,
+    private val shopRepository: ShopRepository,
 ) : AddProductUseCase {
 
     override fun command(command: AddProductUseCase.Command)
     : Product {
+        shopRepository.findByIdAndSellerId(command.shopId, command.sellerId)
+            ?: throw InvalidShopInfoException()
+
         val product = Product(
             name = command.name,
             price = command.price,
@@ -176,4 +199,13 @@ data class Product(
 enum class Category {
     CLOTHES,
 }
+
+
+open class ProductException(
+    errorCode: ErrorCode
+) : RuntimeException(errorCode.message)
+
+class InvalidShopInfoException : ProductException(ErrorCode.INVALID_SHOP_INFO)
+
+
 

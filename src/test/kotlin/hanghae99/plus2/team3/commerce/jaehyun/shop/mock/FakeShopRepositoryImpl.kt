@@ -17,6 +17,10 @@ class FakeShopRepositoryImpl(
     override fun findByName(name: String): Shop? {
         return shopMemoryRepository.findByName(name)
     }
+
+    override fun findByIdAndSellerId(shopId: Long, sellerId: Long): Shop? {
+        return shopMemoryRepository.findByIdAndSellerId(shopId= shopId, sellerId = sellerId)
+    }
 }
 
 class ShopMemoryRepository {
@@ -35,5 +39,9 @@ class ShopMemoryRepository {
 
     fun findByName(name: String): Shop? {
         return shops.find { it.name == name }?.toDomain()
+    }
+
+    fun findByIdAndSellerId(shopId: Long, sellerId: Long): Shop? {
+        return shops.find { it.id == shopId && it.seller.id == sellerId }?.toDomain()
     }
 }
