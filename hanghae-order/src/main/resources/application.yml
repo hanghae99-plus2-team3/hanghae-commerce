@@ -1,0 +1,13 @@
+jays:
+    hanghae:
+        journey:
+            profile: local
+
+spring:
+    datasource:
+        url: jdbc:mysql://hanghae-order-mysql:3306/order
+        username: root
+        password: rootpassword
+    jpa:
+        hibernate:
+            ddl-auto: update

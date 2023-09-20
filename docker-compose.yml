@@ -1,0 +1,110 @@
+version: '1'
+services:
+  hanghae-customer-mysql:
+    image: mysql:8.0
+    networks:
+      - hanghae-customer-network
+    volumes:
+      - ./hanghae-customer/db/conf.d:/etc/mysql/conf.d
+      - ./hanghae-customer/db/data:/var/lib/mysql
+      - ./hanghae-customer/db/initdb.d:/docker-entrypoint-initdb.d
+    env_file: ./hanghae-customer/.env
+    ports:
+      - "3307:3306"
+
+  hanghae-customer-service:
+    image: hanghae-customer:1.0.0
+    networks:
+      - hanghae-customer-network
+    ports:
+      - "8081:8080"
+    depends_on:
+      - hanghae-customer-mysql
+    environment:
+      - ACTIVE_PROFILE=default
+
+#========================================================================
+
+  hanghae-delivery-mysql:
+    image: mysql:8.0
+    networks:
+      - hanghae-delivery-network
+    volumes:
+      - ./hanghae-delivery/db/conf.d:/etc/mysql/conf.d
+      - ./hanghae-delivery/db/data:/var/lib/mysql
+      - ./hanghae-delivery/db/initdb.d:/docker-entrypoint-initdb.d
+    env_file: ./hanghae-delivery/.env
+    ports:
+      - "3308:3306"
+
+  hanghae-delivery-service:
+    image: hanghae-delivery:1.0.0
+    networks:
+      - hanghae-delivery-network
+    ports:
+      - "8082:8080"
+    depends_on:
+      - hanghae-delivery-mysql
+    environment:
+      - ACTIVE_PROFILE=default
+
+#========================================================================
+
+
+  hanghae-order-mysql:
+    image: mysql:8.0
+    networks:
+      - hanghae-order-network
+    volumes:
+      - ./hanghae-order/db/conf.d:/etc/mysql/conf.d
+      - ./hanghae-order/db/customer/data:/var/lib/mysql
+      - ./hanghae-order/db/initdb.d:/docker-entrypoint-initdb.d
+    env_file: ./hanghae-order/.env
+    ports:
+      - "3309:3306"
+
+  hanghae-order-service:
+    image: hanghae-order:1.0.0
+    networks:
+      - hanghae-order-network
+    ports:
+      - "8083:8080"
+    depends_on:
+      - hanghae-order-mysql
+    environment:
+      - ACTIVE_PROFILE=default
+
+#========================================================================
+
+  hanghae-product-mysql:
+    image: mysql:8.0
+    networks:
+      - hanghae-product-network
+    volumes:
+      - ./hanghae-product/db/conf.d:/etc/mysql/conf.d
+      - ./hanghae-product/db/customer/data:/var/lib/mysql
+      - ./hanghae-product/db/initdb.d:/docker-entrypoint-initdb.d
+    env_file: ./hanghae-product/.env
+    ports:
+      - "3310:3306"
+
+  hanghae-product-service:
+    image: hanghae-product:1.0.0
+    networks:
+      - hanghae-product-network
+    ports:
+      - "8084:8080"
+    depends_on:
+      - hanghae-product-mysql
+    environment:
+      - ACTIVE_PROFILE=default
+
+networks:
+  hanghae-customer-network:
+    driver: bridge
+  hanghae-delivery-network:
+    driver: bridge
+  hanghae-order-network:
+    driver: bridge
+  hanghae-product-network:
+    driver: bridge

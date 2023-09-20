@@ -1,11 +1,11 @@
-package hanghae99.plus2.team3.commerce
+package hanghae99.plus2.team3.hanghaeorder
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class CommerceApplication
+class HanghaeOrderApplication
 
 fun main(args: Array<String>) {
-    runApplication<CommerceApplication>(*args)
+    runApplication<HanghaeOrderApplication>(*args)
 }
