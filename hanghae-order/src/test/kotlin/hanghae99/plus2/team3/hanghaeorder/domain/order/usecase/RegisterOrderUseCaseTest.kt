@@ -25,6 +25,12 @@ class RegisterOrderUseCaseTest {
 
         val command = RegisterOrderUseCase.Command(
             userId = 1L,
+            receiverName = "홍길동",
+            receiverPhone = "010-1234-5678",
+            receiverZipCode = "12345",
+            receiverAddress1 = "서울시 강남구",
+            receiverAddress2 = "역삼동 123-456",
+            message = "부재시 경비실에 맡겨주세요",
             orderItemList = listOf(
                 RegisterOrderUseCase.Command.OrderItem(
                     productId = 1L,
@@ -46,7 +52,7 @@ class RegisterOrderUseCaseTest {
 
 class RegisterOrderUseCaseImpl : RegisterOrderUseCase {
     override fun command(command: RegisterOrderUseCase.Command) : String{
-        TODO("Not yet implemented")
+
     }
 
 }
@@ -58,6 +64,12 @@ interface RegisterOrderUseCase {
 
     data class Command(
         val userId: Long,
+        val receiverName: String,
+        val receiverPhone: String,
+        val receiverZipCode: String,
+        val receiverAddress1: String,
+        val receiverAddress2: String,
+        val message: String,
         val orderItemList: List<OrderItem>,
     ){
         data class OrderItem(
