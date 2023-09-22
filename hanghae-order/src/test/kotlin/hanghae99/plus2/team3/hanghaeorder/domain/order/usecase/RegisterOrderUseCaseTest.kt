@@ -1,8 +1,10 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.usecase
 
+import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 
@@ -50,7 +52,39 @@ class RegisterOrderUseCaseTest {
 
         assertThat(orderNum).isNotEmpty()
     }
+
+
+    @Test
+    fun `상품 주문시 상품의 재고가 부족하면 기대하는 응답(실패)을 반환한다`() {
+        val command = RegisterOrderUseCase.Command(
+            userId = 1L,
+            receiverName = "홍길동",
+            receiverPhone = "010-1234-5678",
+            receiverZipCode = "12345",
+            receiverAddress1 = "서울시 강남구",
+            receiverAddress2 = "역삼동 123-456",
+            message = "부재시 경비실에 맡겨주세요",
+            orderItemList = listOf(
+                RegisterOrderUseCase.Command.OrderItemCommand(
+                    productId = 1L,
+                    quantity = 2,
+                    productPrice = 1000L,
+                ),
+                RegisterOrderUseCase.Command.OrderItemCommand(
+                    productId = 2L,
+                    quantity = 5,
+                    productPrice = 5000L,
+                ),
+            )
+        )
+
+        assertThatThrownBy {  sut.command(command) }
+            .isExactlyInstanceOf(Exception::class.java)
+            .hasMessage("주문할 상품의 재고가 부족합니다.")
+    }
+
 }
+
 
 class RegisterOrderUseCaseImpl(
     private val orderRepository: OrderRepository,
