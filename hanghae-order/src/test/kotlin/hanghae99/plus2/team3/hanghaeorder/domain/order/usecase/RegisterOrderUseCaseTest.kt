@@ -1,10 +1,8 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.usecase
 
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 
@@ -98,8 +96,8 @@ class RegisterOrderUseCaseTest {
         )
 
         assertThatThrownBy { sut.command(command) }
-            .isExactlyInstanceOf(Exception::class.java)
-            .hasMessage("주문할 상품의 재고가 부족합니다.")
+            .isExactlyInstanceOf(ProductStockNotEnoughException::class.java)
+            .hasMessage(ErrorCode.NOT_ENOUGH_STOCK.message)
     }
 
 }
@@ -117,16 +115,9 @@ class RegisterOrderUseCaseImpl(
                 command.orderItemList.map { it.productId }
             )
 
-        command.orderItemList.forEach {
-            orderedProductInfo.find { productInfo -> productInfo.productId == it.productId }?.let { productInfo ->
-                if (productInfo.productStock < it.quantity) {
-                    throw Exception("주문할 상품의 재고가 부족합니다.")
-                }
-            }
-        }
+        orderedProductsStockValidate(command, orderedProductInfo)
 
-        val order = command.toEntity()
-        val savedOrder = orderRepository.save(order)
+        val savedOrder = orderRepository.save(command.toEntity())
 
         command.orderItemList.forEach {
             orderItemRepository.save(it.toEntity(orderId = savedOrder.id!!))
@@ -135,7 +126,35 @@ class RegisterOrderUseCaseImpl(
         return savedOrder.orderNum
     }
 
+    private fun orderedProductsStockValidate(
+        command: RegisterOrderUseCase.Command,
+        orderedProductInfo: List<ProductInfo>
+    ) {
+        command.orderItemList.forEach {
+            orderedProductInfo.find { productInfo -> productInfo.productId == it.productId }?.let {
+                productInfo ->
+                if (productInfo.productStock < it.quantity) {
+                    throw ProductStockNotEnoughException()
+                }
+            }
+        }
+    }
+
 }
+
+open class OrderException(
+    errorCode: ErrorCode
+): RuntimeException(errorCode.message)
+
+class ProductStockNotEnoughException():OrderException(ErrorCode.NOT_ENOUGH_STOCK)
+
+enum class ErrorCode  (
+    val message: String,
+){
+    NOT_ENOUGH_STOCK("주문할 상품의 재고가 부족합니다."),
+    ;
+}
+
 
 
 interface RegisterOrderUseCase {
