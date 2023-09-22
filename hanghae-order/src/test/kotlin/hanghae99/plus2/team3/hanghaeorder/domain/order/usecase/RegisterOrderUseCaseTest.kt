@@ -100,6 +100,35 @@ class RegisterOrderUseCaseTest {
             .hasMessage(ErrorCode.NOT_ENOUGH_STOCK.message)
     }
 
+    @Test
+    fun ` 존재 하지 않는 상품을 주문하면 기대하는 응답(실패)을 반환한다`() {
+        val command = RegisterOrderUseCase.Command(
+            userId = 1L,
+            receiverName = "홍길동",
+            receiverPhone = "010-1234-5678",
+            receiverZipCode = "12345",
+            receiverAddress1 = "서울시 강남구",
+            receiverAddress2 = "역삼동 123-456",
+            message = "부재시 경비실에 맡겨주세요",
+            orderItemList = listOf(
+                RegisterOrderUseCase.Command.OrderItemCommand(
+                    productId = 999L,
+                    quantity = 2,
+                    productPrice = 1000L,
+                ),
+                RegisterOrderUseCase.Command.OrderItemCommand(
+                    productId = 2L,
+                    quantity = 100,
+                    productPrice = 5000L,
+                ),
+            )
+        )
+
+        assertThatThrownBy { sut.command(command) }
+            .isExactlyInstanceOf(ProductNotFoundException::class.java)
+            .hasMessage(ErrorCode.PRODUCT_NOT_FOUND.message)
+    }
+
 }
 
 
@@ -147,11 +176,13 @@ open class OrderException(
 ): RuntimeException(errorCode.message)
 
 class ProductStockNotEnoughException():OrderException(ErrorCode.NOT_ENOUGH_STOCK)
+class ProductNotFoundException():OrderException(ErrorCode.NOT_ENOUGH_STOCK)
 
 enum class ErrorCode  (
     val message: String,
 ){
     NOT_ENOUGH_STOCK("주문할 상품의 재고가 부족합니다."),
+    PRODUCT_NOT_FOUND("주문할 상품이 존재하지 않습니다.")
     ;
 }
 
