@@ -21,7 +21,26 @@ class RegisterOrderUseCaseTest {
 
     @BeforeEach
     fun setUp() {
-        sut = RegisterOrderUseCaseImpl(FakeOrderRepositoryImpl(), FakeOrderItemRepositoryImpl())
+        val productsInStock = listOf(
+            ProductInfo.create(
+                productId = 1L,
+                productName = "상품1",
+                productPrice = 2000L,
+                productStock = 10,
+            ),
+            ProductInfo.create(
+                productId = 2L,
+                productName = "상품2",
+                productPrice = 3000L,
+                productStock = 5,
+            ),
+        )
+        sut =
+            RegisterOrderUseCaseImpl(
+                FakeOrderRepositoryImpl(),
+                FakeOrderItemRepositoryImpl(),
+                FakeProductServiceImpl(productsInStock)
+            )
     }
 
     @Test
@@ -72,13 +91,13 @@ class RegisterOrderUseCaseTest {
                 ),
                 RegisterOrderUseCase.Command.OrderItemCommand(
                     productId = 2L,
-                    quantity = 5,
+                    quantity = 100,
                     productPrice = 5000L,
                 ),
             )
         )
 
-        assertThatThrownBy {  sut.command(command) }
+        assertThatThrownBy { sut.command(command) }
             .isExactlyInstanceOf(Exception::class.java)
             .hasMessage("주문할 상품의 재고가 부족합니다.")
     }
@@ -89,9 +108,23 @@ class RegisterOrderUseCaseTest {
 class RegisterOrderUseCaseImpl(
     private val orderRepository: OrderRepository,
     private val orderItemRepository: OrderItemRepository,
+    private val productService: ProductService,
 ) : RegisterOrderUseCase {
 
     override fun command(command: RegisterOrderUseCase.Command): String {
+        val orderedProductInfo =
+            productService.validationRequestOf(
+                command.orderItemList.map { it.productId }
+            )
+
+        command.orderItemList.forEach {
+            orderedProductInfo.find { productInfo -> productInfo.productId == it.productId }?.let { productInfo ->
+                if (productInfo.productStock < it.quantity) {
+                    throw Exception("주문할 상품의 재고가 부족합니다.")
+                }
+            }
+        }
+
         val order = command.toEntity()
         val savedOrder = orderRepository.save(order)
 
@@ -318,5 +351,44 @@ class FakeOrderItemRepositoryImpl : OrderItemRepository {
         )
         orderItems.add(entity)
         return orderItem.copy(id = entity.id)
+    }
+}
+
+
+interface ProductService {
+    fun validationRequestOf(productIds: List<Long>): List<ProductInfo>
+}
+
+class FakeProductServiceImpl(
+    private val productInfo: List<ProductInfo>
+) : ProductService {
+
+    override fun validationRequestOf(productIds: List<Long>): List<ProductInfo> {
+        return productInfo.filter { productIds.contains(it.productId) }
+    }
+}
+
+data class ProductInfo private constructor(
+    val productId: Long,
+    val productName: String,
+    val productPrice: Long,
+    val productStock: Int,
+) {
+
+    companion object {
+        fun create(
+            productId: Long,
+            productName: String,
+            productPrice: Long,
+            productStock: Int,
+        ): ProductInfo {
+
+            return ProductInfo(
+                productId = productId,
+                productName = productName,
+                productPrice = productPrice,
+                productStock = productStock
+            )
+        }
     }
 }
