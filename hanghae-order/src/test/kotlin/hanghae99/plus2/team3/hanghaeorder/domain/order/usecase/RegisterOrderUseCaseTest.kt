@@ -33,11 +33,19 @@ class RegisterOrderUseCaseTest {
                 productStock = 5,
             ),
         )
+        val users = listOf(
+            UserInfo.create(
+                userId = 1L,
+                userName = "홍길동",
+                userEmail = "test@gmail.com"
+            )
+        )
         sut =
             RegisterOrderUseCaseImpl(
                 FakeOrderRepositoryImpl(),
                 FakeOrderItemRepositoryImpl(),
-                FakeQueryProductsInfoImpl(productsInStock)
+                FakeQueryProductsInfoImpl(productsInStock),
+                FakeQueryUserInfoImpl(users)
             )
     }
 
@@ -155,9 +163,13 @@ class RegisterOrderUseCaseImpl(
     private val orderRepository: OrderRepository,
     private val orderItemRepository: OrderItemRepository,
     private val queryProductsInfo: QueryProductsInfo,
+    private val queryUserInfo: QueryUserInfo,
 ) : RegisterOrderUseCase {
 
     override fun command(command: RegisterOrderUseCase.Command): String {
+        if (queryUserInfo.query(command.userId) == null)
+            throw OrderedUserNotFoundException()
+
         val orderedProductInfo =
             queryProductsInfo.query(
                 command.orderItemList.map { it.productId }
@@ -179,9 +191,9 @@ class RegisterOrderUseCaseImpl(
         orderedProductInfo: List<ProductInfo>
     ) {
         command.orderItemList.forEach {
-            val productInfo = orderedProductInfo.find {
-                productInfo -> productInfo.productId == it.productId
-            }?:throw ProductNotFoundException()
+            val productInfo = orderedProductInfo.find { productInfo ->
+                productInfo.productId == it.productId
+            } ?: throw ProductNotFoundException()
 
             if (productInfo.productStock < it.quantity) {
                 throw ProductStockNotEnoughException()
@@ -425,7 +437,6 @@ class FakeOrderItemRepositoryImpl : OrderItemRepository {
     }
 }
 
-
 interface QueryProductsInfo {
     fun query(productIds: List<Long>): List<ProductInfo>
 }
@@ -459,6 +470,42 @@ data class ProductInfo private constructor(
                 productName = productName,
                 productPrice = productPrice,
                 productStock = productStock
+            )
+        }
+    }
+}
+
+
+interface QueryUserInfo {
+    fun query(userId: Long): UserInfo?
+}
+
+class FakeQueryUserInfoImpl(
+    private val userInfos: List<UserInfo>
+) : QueryUserInfo {
+
+    override fun query(userId: Long): UserInfo? {
+        return userInfos.findLast { it.userId == userId }
+    }
+}
+
+data class UserInfo private constructor(
+    val userId: Long,
+    val userName: String,
+    val userEmail: String,
+) {
+
+    companion object {
+        fun create(
+            userId: Long,
+            userName: String,
+            userEmail: String,
+        ): UserInfo {
+
+            return UserInfo(
+                userId = userId,
+                userName = userName,
+                userEmail = userEmail,
             )
         }
     }
