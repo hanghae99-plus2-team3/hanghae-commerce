@@ -37,7 +37,7 @@ class RegisterOrderUseCaseTest {
             RegisterOrderUseCaseImpl(
                 FakeOrderRepositoryImpl(),
                 FakeOrderItemRepositoryImpl(),
-                FakeProductServiceImpl(productsInStock)
+                FakeQueryProductsInfoImpl(productsInStock)
             )
     }
 
@@ -124,22 +124,46 @@ class RegisterOrderUseCaseTest {
             .hasMessage(ErrorCode.PRODUCT_NOT_FOUND.message)
     }
 
+    @Test
+    fun `존재 하지 않는 고객이 주문하면 기대하는 응답(실패)을 반환한다`() {
+        val command = RegisterOrderUseCase.Command(
+            userId = 9999L,
+            receiverName = "홍길동",
+            receiverPhone = "010-1234-5678",
+            receiverZipCode = "12345",
+            receiverAddress1 = "서울시 강남구",
+            receiverAddress2 = "역삼동 123-456",
+            message = "부재시 경비실에 맡겨주세요",
+            orderItemList = listOf(
+                RegisterOrderUseCase.Command.OrderItemCommand(
+                    productId = 999L,
+                    quantity = 2,
+                    productPrice = 1000L,
+                ),
+            )
+        )
+
+        assertThatThrownBy { sut.command(command) }
+            .isExactlyInstanceOf(OrderedUserNotFoundException::class.java)
+            .hasMessage(ErrorCode.USER_NOT_FOUND.message)
+    }
+
 }
 
 
 class RegisterOrderUseCaseImpl(
     private val orderRepository: OrderRepository,
     private val orderItemRepository: OrderItemRepository,
-    private val productService: ProductService,
+    private val queryProductsInfo: QueryProductsInfo,
 ) : RegisterOrderUseCase {
 
     override fun command(command: RegisterOrderUseCase.Command): String {
         val orderedProductInfo =
-            productService.validationRequestOf(
+            queryProductsInfo.query(
                 command.orderItemList.map { it.productId }
             )
 
-        ValidateOrderedProducts(command, orderedProductInfo)
+        validateOrderedProducts(command, orderedProductInfo)
 
         val savedOrder = orderRepository.save(command.toEntity())
 
@@ -150,7 +174,7 @@ class RegisterOrderUseCaseImpl(
         return savedOrder.orderNum
     }
 
-    private fun ValidateOrderedProducts(
+    private fun validateOrderedProducts(
         command: RegisterOrderUseCase.Command,
         orderedProductInfo: List<ProductInfo>
     ) {
@@ -170,14 +194,17 @@ open class OrderException(
     errorCode: ErrorCode
 ) : RuntimeException(errorCode.message)
 
-class ProductStockNotEnoughException() : OrderException(ErrorCode.NOT_ENOUGH_STOCK)
-class ProductNotFoundException() : OrderException(ErrorCode.PRODUCT_NOT_FOUND)
+class ProductStockNotEnoughException : OrderException(ErrorCode.NOT_ENOUGH_STOCK)
+class ProductNotFoundException : OrderException(ErrorCode.PRODUCT_NOT_FOUND)
+class OrderedUserNotFoundException : OrderException(ErrorCode.USER_NOT_FOUND)
 
 enum class ErrorCode(
     val message: String,
 ) {
     NOT_ENOUGH_STOCK("주문할 상품의 재고가 부족합니다."),
-    PRODUCT_NOT_FOUND("주문할 상품이 존재하지 않습니다.")
+    PRODUCT_NOT_FOUND("주문할 상품이 존재하지 않습니다."),
+    USER_NOT_FOUND("존재하지 않는 고객의 주문입니다.")
+
     ;
 }
 
@@ -399,15 +426,15 @@ class FakeOrderItemRepositoryImpl : OrderItemRepository {
 }
 
 
-interface ProductService {
-    fun validationRequestOf(productIds: List<Long>): List<ProductInfo>
+interface QueryProductsInfo {
+    fun query(productIds: List<Long>): List<ProductInfo>
 }
 
-class FakeProductServiceImpl(
+class FakeQueryProductsInfoImpl(
     private val productInfo: List<ProductInfo>
-) : ProductService {
+) : QueryProductsInfo {
 
-    override fun validationRequestOf(productIds: List<Long>): List<ProductInfo> {
+    override fun query(productIds: List<Long>): List<ProductInfo> {
         return productInfo.filter { productIds.contains(it.productId) }
     }
 }
