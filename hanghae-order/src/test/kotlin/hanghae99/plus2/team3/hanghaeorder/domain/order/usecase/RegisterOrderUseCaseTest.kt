@@ -116,11 +116,6 @@ class RegisterOrderUseCaseTest {
                     quantity = 2,
                     productPrice = 1000L,
                 ),
-                RegisterOrderUseCase.Command.OrderItemCommand(
-                    productId = 2L,
-                    quantity = 100,
-                    productPrice = 5000L,
-                ),
             )
         )
 
@@ -144,7 +139,7 @@ class RegisterOrderUseCaseImpl(
                 command.orderItemList.map { it.productId }
             )
 
-        orderedProductsStockValidate(command, orderedProductInfo)
+        ValidateOrderedProducts(command, orderedProductInfo)
 
         val savedOrder = orderRepository.save(command.toEntity())
 
@@ -155,37 +150,36 @@ class RegisterOrderUseCaseImpl(
         return savedOrder.orderNum
     }
 
-    private fun orderedProductsStockValidate(
+    private fun ValidateOrderedProducts(
         command: RegisterOrderUseCase.Command,
         orderedProductInfo: List<ProductInfo>
     ) {
         command.orderItemList.forEach {
-            orderedProductInfo.find { productInfo -> productInfo.productId == it.productId }?.let {
-                productInfo ->
-                if (productInfo.productStock < it.quantity) {
-                    throw ProductStockNotEnoughException()
-                }
+            val productInfo = orderedProductInfo.find {
+                productInfo -> productInfo.productId == it.productId
+            }?:throw ProductNotFoundException()
+
+            if (productInfo.productStock < it.quantity) {
+                throw ProductStockNotEnoughException()
             }
         }
     }
-
 }
 
 open class OrderException(
     errorCode: ErrorCode
-): RuntimeException(errorCode.message)
+) : RuntimeException(errorCode.message)
 
-class ProductStockNotEnoughException():OrderException(ErrorCode.NOT_ENOUGH_STOCK)
-class ProductNotFoundException():OrderException(ErrorCode.NOT_ENOUGH_STOCK)
+class ProductStockNotEnoughException() : OrderException(ErrorCode.NOT_ENOUGH_STOCK)
+class ProductNotFoundException() : OrderException(ErrorCode.PRODUCT_NOT_FOUND)
 
-enum class ErrorCode  (
+enum class ErrorCode(
     val message: String,
-){
+) {
     NOT_ENOUGH_STOCK("주문할 상품의 재고가 부족합니다."),
     PRODUCT_NOT_FOUND("주문할 상품이 존재하지 않습니다.")
     ;
 }
-
 
 
 interface RegisterOrderUseCase {
