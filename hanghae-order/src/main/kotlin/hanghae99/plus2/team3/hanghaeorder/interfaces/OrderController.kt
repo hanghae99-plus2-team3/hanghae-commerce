@@ -2,6 +2,7 @@ package hanghae99.plus2.team3.hanghaeorder.interfaces
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
 import hanghae99.plus2.team3.hanghaeorder.interfaces.request.OrderProductsRequest
+import hanghae99.plus2.team3.hanghaeorder.interfaces.request.toCommand
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -19,13 +20,17 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/v1/orders")
-class OrderController {
+class OrderController(
+    private val registerOrderUseCase: RegisterOrderUseCase
+) {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     fun registerOrder(
         @RequestBody orderProductsRequest: OrderProductsRequest
     ) {
-        TODO()
+        registerOrderUseCase.command(orderProductsRequest.toCommand())
     }
 }
+
+

@@ -1,5 +1,6 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.medium
 
+import hanghae99.plus2.team3.hanghaeorder.domain.order.config.TestConfig
 import hanghae99.plus2.team3.hanghaeorder.interfaces.request.OrderProductsRequest
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.context.annotation.Import
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 
@@ -19,6 +21,7 @@ import org.springframework.test.context.ActiveProfiles
  * @since 2023/09/23
  */
 
+@Import(TestConfig::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class OrderApiTest {
@@ -46,10 +49,12 @@ class OrderApiTest {
                 OrderProductsRequest.OrderItemRequest(
                     productId = 1L,
                     quantity = 1,
+                    productPrice = 2000L,
                 ),
                 OrderProductsRequest.OrderItemRequest(
                     productId = 2L,
                     quantity = 2,
+                    productPrice = 3000L,
                 ),
             ),
         )

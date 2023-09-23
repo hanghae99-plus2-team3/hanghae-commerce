@@ -31,13 +31,13 @@ class RegisterOrderUseCaseTest {
     @BeforeEach
     fun setUp() {
         val productsInStock = listOf(
-            QueryProductsInfo.ProductInfo.create(
+            QueryProductsInfo.ProductInfo(
                 productId = 1L,
                 productName = "상품1",
                 productPrice = 2000L,
                 productStock = 10,
             ),
-            QueryProductsInfo.ProductInfo.create(
+            QueryProductsInfo.ProductInfo(
                 productId = 2L,
                 productName = "상품2",
                 productPrice = 3000L,
@@ -45,7 +45,7 @@ class RegisterOrderUseCaseTest {
             ),
         )
         val users = listOf(
-            QueryUserInfo.UserInfo.create(
+            QueryUserInfo.UserInfo(
                 userId = 1L,
                 userName = "홍길동",
                 userEmail = "test@gmail.com"

@@ -2,13 +2,14 @@ package hanghae99.plus2.team3.hanghaeorder.domain.order
 
 import java.util.*
 
-data class Order private constructor(
-    val id: Long? = null,
+data class Order(
+    val id: Long,
     val orderNum: String,
     val userId: Long,
     val deliveryInfo: DeliveryInfo,
     val orderStatus: OrderStatus,
 ) {
+
 
     companion object {
         fun create(
@@ -21,7 +22,7 @@ data class Order private constructor(
             message: String,
         ): Order {
             return Order(
-                id = null,
+                id = 0L,
                 orderNum = UUID.randomUUID().toString(),
                 userId = userId,
                 DeliveryInfo(

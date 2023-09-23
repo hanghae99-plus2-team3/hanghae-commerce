@@ -1,5 +1,8 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order
 
+import jakarta.persistence.Embeddable
+
+@Embeddable
 data class DeliveryInfo(
     val receiverName: String,
     val receiverPhone: String,

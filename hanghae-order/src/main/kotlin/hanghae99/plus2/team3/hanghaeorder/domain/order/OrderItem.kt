@@ -1,7 +1,7 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order
 
-data class OrderItem private constructor(
-    val id: Long? = null,
+data class OrderItem(
+    val id: Long,
     val orderId: Long,
     val productId: Long,
     val quantity: Int,
@@ -21,7 +21,7 @@ data class OrderItem private constructor(
             require(productPrice > 0) { "상품 가격은 0보다 커야 합니다." }
 
             return OrderItem(
-                id = null,
+                id = 0L,
                 orderId = orderId,
                 productId = productId,
                 quantity = quantity,
