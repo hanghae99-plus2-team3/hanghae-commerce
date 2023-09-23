@@ -1,5 +1,6 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.medium
 
+import hanghae99.plus2.team3.hanghaeorder.interfaces.request.OrderProductsRequest
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import org.assertj.core.api.Assertions
@@ -66,19 +67,3 @@ class OrderApiTest {
     }
 }
 
-data class OrderProductsRequest(
-    val userId: Long,
-    val receiverName: String,
-    val receiverPhone: String,
-    val receiverZipCode: String,
-    val receiverAddress1: String,
-    val receiverAddress2: String,
-    val message: String,
-    val orderItemList: List<OrderItemRequest>,
-) {
-
-    data class OrderItemRequest(
-        val productId: Long,
-        val quantity: Int,
-    )
-}
