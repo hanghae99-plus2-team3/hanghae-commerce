@@ -1,10 +1,9 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.config
 
-import hanghae99.plus2.team3.hanghaeorder.domain.order.QueryProductsInfo
-import hanghae99.plus2.team3.hanghaeorder.domain.order.QueryUserInfo
-import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeQueryProductsInfoImpl
-import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeQueryUserInfoImpl
-import hanghae99.plus2.team3.hanghaeorder.infrastructure.QueryProductsInfoImpl
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.QueryProductsInfoByApi
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.QueryUserInfoByApi
+import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeQueryProductsInfoByApiImpl
+import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeQueryUserInfoByApiImpl
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
@@ -21,16 +20,16 @@ class TestConfig {
 
     @Primary
     @Bean
-    fun queryProductsInfo(): QueryProductsInfo =
-        FakeQueryProductsInfoImpl(
+    fun queryProductsInfo(): QueryProductsInfoByApi =
+        FakeQueryProductsInfoByApiImpl(
             listOf(
-                QueryProductsInfo.ProductInfo(
+                QueryProductsInfoByApi.ProductInfo(
                     productId = 1L,
                     productName = "상품1",
                     productPrice = 2000L,
                     productStock = 10,
                 ),
-                QueryProductsInfo.ProductInfo(
+                QueryProductsInfoByApi.ProductInfo(
                     productId = 2L,
                     productName = "상품2",
                     productPrice = 3000L,
@@ -42,10 +41,10 @@ class TestConfig {
 
     @Primary
     @Bean
-    fun queryUserInfo(): QueryUserInfo =
-        FakeQueryUserInfoImpl(
+    fun queryUserInfo(): QueryUserInfoByApi =
+        FakeQueryUserInfoByApiImpl(
             listOf(
-                QueryUserInfo.UserInfo(
+                QueryUserInfoByApi.UserInfo(
                     userId = 1L,
                     userName = "홍길동",
                     userEmail = "test@gmail.com"

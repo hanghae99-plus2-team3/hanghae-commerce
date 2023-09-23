@@ -1,6 +1,6 @@
-package hanghae99.plus2.team3.hanghaeorder.domain.order
+package hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure
 
-interface QueryProductsInfo {
+interface QueryProductsInfoByApi {
     fun query(productIds: List<Long>): List<ProductInfo>
 
     data class ProductInfo (

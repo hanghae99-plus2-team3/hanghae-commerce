@@ -1,6 +1,9 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.impl
 
-import hanghae99.plus2.team3.hanghaeorder.domain.order.*
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.QueryProductsInfoByApi
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.QueryUserInfoByApi
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
 import hanghae99.plus2.team3.hanghaeorder.exception.OrderedUserNotFoundException
 import hanghae99.plus2.team3.hanghaeorder.exception.ProductNotFoundException
@@ -11,16 +14,16 @@ import org.springframework.stereotype.Component
 class RegisterOrderUseCaseImpl(
     private val orderRepository: OrderRepository,
     private val orderItemRepository: OrderItemRepository,
-    private val queryProductsInfo: QueryProductsInfo,
-    private val queryUserInfo: QueryUserInfo,
+    private val queryProductsInfoByApi: QueryProductsInfoByApi,
+    private val queryUserInfoByApi: QueryUserInfoByApi,
 ) : RegisterOrderUseCase {
 
     override fun command(command: RegisterOrderUseCase.Command): String {
-        if (queryUserInfo.query(command.userId) == null)
+        if (queryUserInfoByApi.query(command.userId) == null)
             throw OrderedUserNotFoundException()
 
         val orderedProductInfo =
-            queryProductsInfo.query(
+            queryProductsInfoByApi.query(
                 command.orderItemList.map { it.productId }
             )
 
@@ -37,7 +40,7 @@ class RegisterOrderUseCaseImpl(
 
     private fun validateOrderedProducts(
         command: RegisterOrderUseCase.Command,
-        orderedProductInfo: List<QueryProductsInfo.ProductInfo>
+        orderedProductInfo: List<QueryProductsInfoByApi.ProductInfo>
     ) {
         command.orderItemList.forEach {
             val productInfo = orderedProductInfo.find { productInfo ->

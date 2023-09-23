@@ -1,8 +1,10 @@
 package hanghae99.plus2.team3.hanghaeorder.infrastructure
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
+import hanghae99.plus2.team3.hanghaeorder.infrastructure.entity.OrderEntity
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
-import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderRepository as OrderRepository
 
 /**
  * OrderRepositoryImpl
@@ -19,4 +21,8 @@ class OrderRepositoryImpl(
     override fun save(order: Order): Order {
         return orderJpaRepository.save(OrderEntity.of(order)).toDomain()
     }
+}
+
+
+interface OrderJpaRepository : JpaRepository<OrderEntity, Long> {
 }

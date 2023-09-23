@@ -1,8 +1,8 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.mock
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
-import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItemRepository
-import hanghae99.plus2.team3.hanghaeorder.infrastructure.OrderItemEntity
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
+import hanghae99.plus2.team3.hanghaeorder.infrastructure.entity.OrderItemEntity
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 

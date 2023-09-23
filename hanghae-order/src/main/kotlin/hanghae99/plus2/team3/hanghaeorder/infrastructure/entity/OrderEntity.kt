@@ -1,4 +1,4 @@
-package hanghae99.plus2.team3.hanghaeorder.infrastructure
+package hanghae99.plus2.team3.hanghaeorder.infrastructure.entity
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.DeliveryInfo
 import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
@@ -32,7 +32,7 @@ class OrderEntity(
     companion object {
         fun of(
             order: Order
-        ):OrderEntity{
+        ): OrderEntity {
             return OrderEntity(
                 id = order.id,
                 orderNum = order.orderNum,

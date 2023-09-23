@@ -1,11 +1,11 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.small
 
-import hanghae99.plus2.team3.hanghaeorder.domain.order.QueryProductsInfo
-import hanghae99.plus2.team3.hanghaeorder.domain.order.QueryUserInfo
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.QueryProductsInfoByApi
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.QueryUserInfoByApi
 import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeOrderItemRepositoryImpl
 import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeOrderRepositoryImpl
-import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeQueryProductsInfoImpl
-import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeQueryUserInfoImpl
+import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeQueryProductsInfoByApiImpl
+import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeQueryUserInfoByApiImpl
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.impl.RegisterOrderUseCaseImpl
 import hanghae99.plus2.team3.hanghaeorder.exception.ErrorCode
@@ -31,13 +31,13 @@ class RegisterOrderUseCaseTest {
     @BeforeEach
     fun setUp() {
         val productsInStock = listOf(
-            QueryProductsInfo.ProductInfo(
+            QueryProductsInfoByApi.ProductInfo(
                 productId = 1L,
                 productName = "상품1",
                 productPrice = 2000L,
                 productStock = 10,
             ),
-            QueryProductsInfo.ProductInfo(
+            QueryProductsInfoByApi.ProductInfo(
                 productId = 2L,
                 productName = "상품2",
                 productPrice = 3000L,
@@ -45,7 +45,7 @@ class RegisterOrderUseCaseTest {
             ),
         )
         val users = listOf(
-            QueryUserInfo.UserInfo(
+            QueryUserInfoByApi.UserInfo(
                 userId = 1L,
                 userName = "홍길동",
                 userEmail = "test@gmail.com"
@@ -55,8 +55,8 @@ class RegisterOrderUseCaseTest {
             RegisterOrderUseCaseImpl(
                 FakeOrderRepositoryImpl(),
                 FakeOrderItemRepositoryImpl(),
-                FakeQueryProductsInfoImpl(productsInStock),
-                FakeQueryUserInfoImpl(users)
+                FakeQueryProductsInfoByApiImpl(productsInStock),
+                FakeQueryUserInfoByApiImpl(users)
             )
     }
 

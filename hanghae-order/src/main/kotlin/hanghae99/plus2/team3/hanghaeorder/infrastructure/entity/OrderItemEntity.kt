@@ -1,6 +1,5 @@
-package hanghae99.plus2.team3.hanghaeorder.infrastructure
+package hanghae99.plus2.team3.hanghaeorder.infrastructure.entity
 
-import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
 import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -32,7 +31,7 @@ class OrderItemEntity(
     companion object {
         fun of(
             orderItem: OrderItem
-        ):OrderItemEntity{
+        ): OrderItemEntity {
             return OrderItemEntity(
                 id = orderItem.id,
                 orderId = orderItem.orderId,
