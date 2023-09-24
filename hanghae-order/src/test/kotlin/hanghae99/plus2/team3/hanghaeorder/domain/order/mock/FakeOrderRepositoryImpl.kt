@@ -21,4 +21,8 @@ class FakeOrderRepositoryImpl : OrderRepository {
         orders.add(entity)
         return order.copy(id = entity.id)
     }
+
+    override fun findByIdOrNull(orderId: Long): Order? {
+        return orders.find { it.id == orderId }?.toDomain()
+    }
 }

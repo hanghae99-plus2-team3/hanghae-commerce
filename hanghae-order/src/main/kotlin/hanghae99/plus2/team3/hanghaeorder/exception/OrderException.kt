@@ -8,5 +8,4 @@ open class OrderException(
 class ProductStockNotEnoughException : OrderException(ErrorCode.NOT_ENOUGH_STOCK)
 class ProductNotFoundException : OrderException(ErrorCode.PRODUCT_NOT_FOUND)
 class OrderedUserNotFoundException : OrderException(ErrorCode.USER_NOT_FOUND)
-
-
+class OrderNotFoundException : OrderException(ErrorCode.ORDER_NOT_FOUND)

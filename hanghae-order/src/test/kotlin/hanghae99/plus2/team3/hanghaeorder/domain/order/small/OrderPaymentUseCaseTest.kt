@@ -1,9 +1,13 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.small
 
+import hanghae99.plus2.team3.hanghaeorder.domain.order.DeliveryInfo
+import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
+import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeOrderRepositoryImpl
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
 import hanghae99.plus2.team3.hanghaeorder.exception.ErrorCode
+import hanghae99.plus2.team3.hanghaeorder.exception.OrderNotFoundException
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -21,7 +25,24 @@ class OrderPaymentUseCaseTest {
 
     @BeforeEach
     fun setUp() {
-        sut = OrderPaymentUseCaseImpl()
+        val orderRepository = FakeOrderRepositoryImpl()
+        sut = OrderPaymentUseCaseImpl(orderRepository)
+
+        orderRepository.save(
+            Order(
+                1L,
+                "orderNum-1",
+                1L,
+                DeliveryInfo(
+                    "홍길동",
+                    "010-1234-5678",
+                    "13254",
+                    "서울시 강남구",
+                    "123-456"
+                ),
+                Order.OrderStatus.ORDERED
+            )
+        )
     }
 
     @Test
@@ -54,7 +75,7 @@ class OrderPaymentUseCaseTest {
     }
 }
 
-interface OrderPaymentUseCase{
+interface OrderPaymentUseCase {
     fun command(command: Command): String
 
     data class Command(
@@ -70,6 +91,7 @@ enum class PaymentType {
 }
 
 class OrderPaymentUseCaseImpl(
+    private val orderRepository: OrderRepository,
 ) : OrderPaymentUseCase {
 
     companion object {
@@ -77,6 +99,8 @@ class OrderPaymentUseCaseImpl(
     }
 
     override fun command(command: OrderPaymentUseCase.Command): String {
+        val order = (orderRepository.findByIdOrNull(command.orderId)
+            ?: throw OrderNotFoundException())
         return PAYMENT_PREFIX + command.orderId
     }
 }
