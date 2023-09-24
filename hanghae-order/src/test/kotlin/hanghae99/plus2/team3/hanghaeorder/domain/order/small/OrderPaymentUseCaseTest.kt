@@ -9,6 +9,7 @@ import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeOrderRepositoryI
 import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeQueryUserInfoByApiImpl
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
 import hanghae99.plus2.team3.hanghaeorder.exception.ErrorCode
+import hanghae99.plus2.team3.hanghaeorder.exception.OrderInfoNotValidException
 import hanghae99.plus2.team3.hanghaeorder.exception.OrderNotFoundException
 import hanghae99.plus2.team3.hanghaeorder.exception.OrderedUserNotFoundException
 import org.assertj.core.api.Assertions
@@ -33,6 +34,11 @@ class OrderPaymentUseCaseTest {
                 userId = 1L,
                 userName = "홍길동",
                 userEmail = "test@gmail.com"
+            ),
+            QueryUserInfoByApi.UserInfo(
+                userId = 2L,
+                userName = "임꺽정",
+                userEmail = "test2@gmail.com"
             )
         )
         val orderRepository = FakeOrderRepositoryImpl()
@@ -95,7 +101,7 @@ class OrderPaymentUseCaseTest {
                     paymentAmount = 5000L,
                 )
             )
-        }.isInstanceOf(OrderNotFoundException::class.java)
+        }.isInstanceOf(OrderInfoNotValidException::class.java)
             .hasMessage(ErrorCode.ORDER_INFO_NOT_VALID.message)
     }
 }
@@ -130,6 +136,10 @@ class OrderPaymentUseCaseImpl(
 
         val order = (orderRepository.findByIdOrNull(command.orderId)
             ?: throw OrderNotFoundException())
+
+        if( order.userId != command.userId)
+            throw OrderInfoNotValidException()
+
         return PAYMENT_PREFIX + command.orderId
     }
 }
