@@ -78,7 +78,7 @@ class OrderPaymentUseCaseTest {
 
         val paymentId = sut.command(
             OrderPaymentUseCase.Command(
-                orderId = 1L,
+                orderNum = "orderNum-1",
                 userId = 1L,
                 paymentType = PaymentType.CARD,
                 paymentAmount = 20000L,
@@ -92,7 +92,7 @@ class OrderPaymentUseCaseTest {
         assertThatThrownBy {
             sut.command(
                 OrderPaymentUseCase.Command(
-                    orderId = 999L,
+                    orderNum = "orderNum-999",
                     userId = 1L,
                     paymentType = PaymentType.CARD,
                     paymentAmount = 5000L,
@@ -107,7 +107,7 @@ class OrderPaymentUseCaseTest {
         assertThatThrownBy {
             sut.command(
                 OrderPaymentUseCase.Command(
-                    orderId = 1L,
+                    orderNum = "orderNum-1",
                     userId = 2L,
                     paymentType = PaymentType.CARD,
                     paymentAmount = 5000L,
@@ -122,7 +122,7 @@ class OrderPaymentUseCaseTest {
         assertThatThrownBy {
             sut.command(
                 OrderPaymentUseCase.Command(
-                    orderId = 1L,
+                    orderNum = "orderNum-1",
                     userId = 1L,
                     paymentType = PaymentType.CARD,
                     paymentAmount = 5000L,
@@ -137,7 +137,7 @@ interface OrderPaymentUseCase {
     fun command(command: Command): String
 
     data class Command(
-        val orderId: Long,
+        val orderNum: String,
         val userId: Long,
         val paymentType: PaymentType,
         val paymentAmount: Long,
@@ -162,7 +162,7 @@ class OrderPaymentUseCaseImpl(
         if (queryUserInfoByApi.query(command.userId) == null)
             throw OrderedUserNotFoundException()
 
-        val order = (orderRepository.findByIdOrNull(command.orderId) ?:
+        val order = (orderRepository.findByOrderNum(command.orderNum) ?:
         throw OrderNotFoundException())
 
         if( order.userId != command.userId)
@@ -171,6 +171,6 @@ class OrderPaymentUseCaseImpl(
         if(orderItemRepository.findByOrderId(order.id).sumOf { it.productPrice * it.quantity } != command.paymentAmount)
             throw OrderedPriceNotMatchException()
 
-        return PAYMENT_PREFIX + command.orderId
+        return PAYMENT_PREFIX + order.id
     }
 }

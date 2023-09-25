@@ -22,7 +22,7 @@ class FakeOrderRepositoryImpl : OrderRepository {
         return order.copy(id = entity.id)
     }
 
-    override fun findByIdOrNull(orderId: Long): Order? {
-        return orders.find { it.id == orderId }?.toDomain()
+    override fun findByOrderNum(orderNum: String): Order? {
+        return orders.find { it.orderNum == orderNum }?.toDomain()
     }
 }

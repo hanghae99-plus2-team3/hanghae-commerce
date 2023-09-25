@@ -23,11 +23,12 @@ class OrderRepositoryImpl(
         return orderJpaRepository.save(OrderEntity.of(order)).toDomain()
     }
 
-    override fun findByIdOrNull(orderId: Long): Order? {
-        return orderJpaRepository.findByIdOrNull(orderId)?.toDomain()
+    override fun findByOrderNum(orderNum: String): Order? {
+        return orderJpaRepository.findByOrderNum(orderNum)?.toDomain()
     }
 }
 
 
 interface OrderJpaRepository : JpaRepository<OrderEntity, Long> {
+    fun findByOrderNum(orderNum: String): OrderEntity?
 }
