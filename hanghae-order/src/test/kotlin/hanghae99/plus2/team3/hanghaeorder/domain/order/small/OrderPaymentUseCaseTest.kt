@@ -104,6 +104,21 @@ class OrderPaymentUseCaseTest {
         }.isInstanceOf(OrderInfoNotValidException::class.java)
             .hasMessage(ErrorCode.ORDER_INFO_NOT_VALID.message)
     }
+
+    @Test
+    fun `주문 금액과 결제 금액이 다를 때 결제를 요청하면 기대하는 응답(실패)을 반환한다`() {
+        assertThatThrownBy {
+            sut.command(
+                OrderPaymentUseCase.Command(
+                    orderId = 1L,
+                    userId = 2L,
+                    paymentType = PaymentType.CARD,
+                    paymentAmount = 5000L,
+                )
+            )
+        }.isInstanceOf(OrderedPriceNotMatchException::class.java)
+            .hasMessage(ErrorCode.ORDER_PRICE_NOT_VALID.message)
+    }
 }
 
 interface OrderPaymentUseCase {
