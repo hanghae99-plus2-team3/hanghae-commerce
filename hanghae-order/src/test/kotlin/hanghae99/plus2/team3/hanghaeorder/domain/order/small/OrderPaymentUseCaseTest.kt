@@ -9,9 +9,7 @@ import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.QueryUserI
 import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeOrderItemRepositoryImpl
 import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeOrderRepositoryImpl
 import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeQueryUserInfoByApiImpl
-import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
 import hanghae99.plus2.team3.hanghaeorder.exception.*
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -131,6 +129,25 @@ class OrderPaymentUseCaseTest {
         }.isInstanceOf(OrderedPriceNotMatchException::class.java)
             .hasMessage(ErrorCode.ORDER_PRICE_NOT_MATCH.message)
     }
+
+    @Test
+    fun `결제시 주문한 상품의 제고가 부족하면 기대하는 응답(실패)을 반환한다`() {
+        assertThatThrownBy {
+            sut.command(
+                OrderPaymentUseCase.Command(
+                    orderNum = "orderNum-2",
+                    userId = 1L,
+                    paymentType = PaymentType.CARD,
+                    paymentAmount = 5000L,
+                )
+            )
+        }.isInstanceOf(OrderedItemOutOfStockException::class.java)
+            .hasMessage(ErrorCode.ORDERED_ITEM_OUT_OF_STOCK.message.format("상품명"))
+    }
+
+
+
+
 }
 
 interface OrderPaymentUseCase {
