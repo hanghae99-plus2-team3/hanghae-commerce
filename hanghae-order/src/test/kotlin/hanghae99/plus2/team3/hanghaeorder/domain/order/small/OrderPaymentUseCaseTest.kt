@@ -2,16 +2,15 @@ package hanghae99.plus2.team3.hanghaeorder.domain.order.small
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.DeliveryInfo
 import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
+import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.QueryUserInfoByApi
+import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeOrderItemRepositoryImpl
 import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeOrderRepositoryImpl
 import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeQueryUserInfoByApiImpl
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
-import hanghae99.plus2.team3.hanghaeorder.exception.ErrorCode
-import hanghae99.plus2.team3.hanghaeorder.exception.OrderInfoNotValidException
-import hanghae99.plus2.team3.hanghaeorder.exception.OrderNotFoundException
-import hanghae99.plus2.team3.hanghaeorder.exception.OrderedUserNotFoundException
+import hanghae99.plus2.team3.hanghaeorder.exception.*
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -42,21 +41,34 @@ class OrderPaymentUseCaseTest {
             )
         )
         val orderRepository = FakeOrderRepositoryImpl()
-        sut = OrderPaymentUseCaseImpl(orderRepository, FakeQueryUserInfoByApiImpl(users))
+        val orderItemRepository = FakeOrderItemRepositoryImpl()
+        sut = OrderPaymentUseCaseImpl(orderRepository, orderItemRepository, FakeQueryUserInfoByApiImpl(users))
 
+        val order = Order(
+            1L,
+            "orderNum-1",
+            1L,
+            DeliveryInfo(
+                "홍길동",
+                "010-1234-5678",
+                "13254",
+                "서울시 강남구",
+                "123-456"
+            ),
+            Order.OrderStatus.ORDERED
+        )
         orderRepository.save(
-            Order(
+            order
+        )
+
+        orderItemRepository.save(
+            OrderItem(
                 1L,
-                "orderNum-1",
+                order,
                 1L,
-                DeliveryInfo(
-                    "홍길동",
-                    "010-1234-5678",
-                    "13254",
-                    "서울시 강남구",
-                    "123-456"
-                ),
-                Order.OrderStatus.ORDERED
+                10,
+                2000L,
+                OrderItem.DeliveryStatus.READY
             )
         )
     }
@@ -69,7 +81,7 @@ class OrderPaymentUseCaseTest {
                 orderId = 1L,
                 userId = 1L,
                 paymentType = PaymentType.CARD,
-                paymentAmount = 5000L,
+                paymentAmount = 20000L,
             )
         )
         assertThat(paymentId).isNotNull
@@ -111,13 +123,13 @@ class OrderPaymentUseCaseTest {
             sut.command(
                 OrderPaymentUseCase.Command(
                     orderId = 1L,
-                    userId = 2L,
+                    userId = 1L,
                     paymentType = PaymentType.CARD,
                     paymentAmount = 5000L,
                 )
             )
         }.isInstanceOf(OrderedPriceNotMatchException::class.java)
-            .hasMessage(ErrorCode.ORDER_PRICE_NOT_VALID.message)
+            .hasMessage(ErrorCode.ORDER_PRICE_NOT_MATCH.message)
     }
 }
 
@@ -138,6 +150,7 @@ enum class PaymentType {
 
 class OrderPaymentUseCaseImpl(
     private val orderRepository: OrderRepository,
+    private val orderItemRepository: OrderItemRepository,
     private val queryUserInfoByApi: QueryUserInfoByApi,
 ) : OrderPaymentUseCase {
 
@@ -149,11 +162,14 @@ class OrderPaymentUseCaseImpl(
         if (queryUserInfoByApi.query(command.userId) == null)
             throw OrderedUserNotFoundException()
 
-        val order = (orderRepository.findByIdOrNull(command.orderId)
-            ?: throw OrderNotFoundException())
+        val order = (orderRepository.findByIdOrNull(command.orderId) ?:
+        throw OrderNotFoundException())
 
         if( order.userId != command.userId)
             throw OrderInfoNotValidException()
+
+        if(orderItemRepository.findByOrderId(order.id).sumOf { it.productPrice * it.quantity } != command.paymentAmount)
+            throw OrderedPriceNotMatchException()
 
         return PAYMENT_PREFIX + command.orderId
     }

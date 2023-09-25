@@ -2,7 +2,7 @@ package hanghae99.plus2.team3.hanghaeorder.domain.order
 
 data class OrderItem(
     val id: Long,
-    val orderId: Long,
+    val order: Order,
     val productId: Long,
     val quantity: Int,
     val productPrice: Long,
@@ -11,7 +11,7 @@ data class OrderItem(
 
     companion object {
         fun create(
-            orderId: Long,
+            order: Order,
             productId: Long,
             quantity: Int,
             productPrice: Long,
@@ -22,7 +22,7 @@ data class OrderItem(
 
             return OrderItem(
                 id = 0L,
-                orderId = orderId,
+                order = order,
                 productId = productId,
                 quantity = quantity,
                 productPrice = productPrice,

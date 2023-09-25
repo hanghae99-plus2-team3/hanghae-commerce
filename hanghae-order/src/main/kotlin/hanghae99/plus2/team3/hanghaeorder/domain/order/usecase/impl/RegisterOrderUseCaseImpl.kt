@@ -9,6 +9,7 @@ import hanghae99.plus2.team3.hanghaeorder.exception.OrderedUserNotFoundException
 import hanghae99.plus2.team3.hanghaeorder.exception.ProductNotFoundException
 import hanghae99.plus2.team3.hanghaeorder.exception.ProductStockNotEnoughException
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 class RegisterOrderUseCaseImpl(
@@ -29,10 +30,10 @@ class RegisterOrderUseCaseImpl(
 
         validateOrderedProducts(command, orderedProductInfo)
 
-        val savedOrder = orderRepository.save(command.toEntity())
+        val savedOrder = orderRepository.save(command.toDomain())
 
         command.orderItemList.forEach {
-            orderItemRepository.save(it.toEntity(orderId = savedOrder.id!!))
+            orderItemRepository.save(it.toDomain(order = savedOrder))
         }
 
         return savedOrder.orderNum

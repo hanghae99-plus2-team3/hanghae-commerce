@@ -18,7 +18,7 @@ interface RegisterOrderUseCase {
         val orderItemList: List<OrderItemCommand>,
     ) {
 
-        fun toEntity(): Order {
+        fun toDomain(): Order {
             return Order.create(
                 userId = userId,
                 receiverName = receiverName,
@@ -35,12 +35,12 @@ interface RegisterOrderUseCase {
             val quantity: Int,
             val productPrice: Long,
         ) {
-            fun toEntity(orderId: Long): OrderItem {
+            fun toDomain(order: Order): OrderItem {
                 return OrderItem.create(
                     productId = productId,
                     quantity = quantity,
                     productPrice = productPrice,
-                    orderId = orderId,
+                    order = order,
                 )
             }
         }
