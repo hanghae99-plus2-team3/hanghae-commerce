@@ -6,7 +6,7 @@ import hanghae99.plus2.team3.hanghaeorder.exception.NotSupportedPaymentVendorExc
 class PaymentProcessor(
     private val paymentVendorCallers: List<PaymentVendorCaller>
 ) {
-    fun process(request: PaymentRequest) {
+    fun pay(request: PaymentRequest) {
         findRequestedPaymentVendor(request.paymentVendor)
             .pay(request)
     }
