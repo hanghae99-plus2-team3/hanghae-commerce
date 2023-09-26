@@ -1,7 +1,7 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.small
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
-import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.QueryUserInfoByApi
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.UserInfoAccessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.impl.RegisterOrderUseCaseImpl
@@ -32,14 +32,14 @@ class RegisterOrderUseCaseTest {
             ProductsAccessor.ProductInfo(productId = 2L, productName = "상품2", productPrice = 3000L, productStock = 5,),
         )
         val users = listOf(
-            QueryUserInfoByApi.UserInfo(userId = 1L, userName = "홍길동", userEmail = "test@gmail.com")
+            UserInfoAccessor.UserInfo(userId = 1L, userName = "홍길동", userEmail = "test@gmail.com")
         )
         sut =
             RegisterOrderUseCaseImpl(
                 FakeOrderRepositoryImpl(listOf()),
                 FakeOrderItemRepositoryImpl(listOf()),
-                FakeProductsAccessorImpl(productsInStock),
-                FakeQueryUserInfoByApiImpl(users)
+                FakeProductsAccessor(productsInStock),
+                FakeUserInfoAccessor(users)
             )
     }
 

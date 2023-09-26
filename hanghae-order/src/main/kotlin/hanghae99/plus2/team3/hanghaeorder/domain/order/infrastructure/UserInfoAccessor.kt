@@ -1,6 +1,6 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure
 
-interface QueryUserInfoByApi {
+interface UserInfoAccessor {
     fun query(userId: Long): UserInfo?
 
     data class UserInfo  (

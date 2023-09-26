@@ -1,9 +1,9 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.config
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
-import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.QueryUserInfoByApi
-import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeProductsAccessorImpl
-import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeQueryUserInfoByApiImpl
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.UserInfoAccessor
+import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeProductsAccessor
+import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeUserInfoAccessor
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
@@ -21,7 +21,7 @@ class TestConfig {
     @Primary
     @Bean
     fun queryProductsInfo(): ProductsAccessor =
-        FakeProductsAccessorImpl(
+        FakeProductsAccessor(
             mutableListOf(
                 ProductsAccessor.ProductInfo(
                     productId = 1L,
@@ -41,10 +41,10 @@ class TestConfig {
 
     @Primary
     @Bean
-    fun queryUserInfo(): QueryUserInfoByApi =
-        FakeQueryUserInfoByApiImpl(
+    fun queryUserInfo(): UserInfoAccessor =
+        FakeUserInfoAccessor(
             listOf(
-                QueryUserInfoByApi.UserInfo(
+                UserInfoAccessor.UserInfo(
                     userId = 1L,
                     userName = "홍길동",
                     userEmail = "test@gmail.com"

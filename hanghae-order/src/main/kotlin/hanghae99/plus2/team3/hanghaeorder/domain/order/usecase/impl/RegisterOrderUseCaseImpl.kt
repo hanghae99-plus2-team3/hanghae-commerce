@@ -6,18 +6,17 @@ import hanghae99.plus2.team3.hanghaeorder.exception.OrderedUserNotFoundException
 import hanghae99.plus2.team3.hanghaeorder.exception.ProductNotFoundException
 import hanghae99.plus2.team3.hanghaeorder.exception.ProductStockNotEnoughException
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 
 @Component
 class RegisterOrderUseCaseImpl(
     private val orderRepository: OrderRepository,
     private val orderItemRepository: OrderItemRepository,
     private val productsAccessor: ProductsAccessor,
-    private val queryUserInfoByApi: QueryUserInfoByApi,
+    private val userInfoAccessor: UserInfoAccessor,
 ) : RegisterOrderUseCase {
 
     override fun command(command: RegisterOrderUseCase.Command): String {
-        if (queryUserInfoByApi.query(command.userId) == null)
+        if (userInfoAccessor.query(command.userId) == null)
             throw OrderedUserNotFoundException()
 
         val orderedProductInfo =
