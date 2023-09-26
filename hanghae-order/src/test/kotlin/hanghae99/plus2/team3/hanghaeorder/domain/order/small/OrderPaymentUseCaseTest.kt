@@ -6,6 +6,7 @@ import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.QueryUserInfoByApi
 import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.*
 import hanghae99.plus2.team3.hanghaeorder.exception.*
@@ -22,98 +23,19 @@ import org.junit.jupiter.api.Test
  */
 class OrderPaymentUseCaseTest {
     private lateinit var sut: OrderPaymentUseCase
+    private lateinit var orderRepository: OrderRepository
+    private lateinit var orderItemRepository: OrderItemRepository
+    private lateinit var productsAccessor: ProductsAccessor
+    private lateinit var userAccessor: QueryUserInfoByApi
 
     @BeforeEach
     fun setUp() {
-        val users = listOf(
-            QueryUserInfoByApi.UserInfo(
-                userId = 1L,
-                userName = "홍길동",
-                userEmail = "test@gmail.com"
-            ),
-            QueryUserInfoByApi.UserInfo(
-                userId = 2L,
-                userName = "임꺽정",
-                userEmail = "test2@gmail.com"
-            )
-        )
-        val productsInStock = mutableListOf(
-            ProductsAccessor.ProductInfo(
-                productId = 1L,
-                productName = "상품1",
-                productPrice = 2000L,
-                productStock = 5,
-            ),
-            ProductsAccessor.ProductInfo(
-                productId = 2L,
-                productName = "상품2",
-                productPrice = 3000L,
-                productStock = 5,
-            ),
-        )
-        val orderRepository = FakeOrderRepositoryImpl()
-        val orderItemRepository = FakeOrderItemRepositoryImpl()
-        val productsAccessor = FakeProductsAccessorImpl(productsInStock)
-        val userAccessor = FakeQueryUserInfoByApiImpl(users)
+        prepareTest()
         sut = OrderPaymentUseCaseImpl(
             orderRepository,
             orderItemRepository,
             userAccessor,
             productsAccessor
-        )
-
-        val order = Order(
-            1L,
-            "orderNum-1",
-            1L,
-            DeliveryInfo(
-                "홍길동",
-                "010-1234-5678",
-                "13254",
-                "서울시 강남구",
-                "123-456"
-            ),
-            Order.OrderStatus.ORDERED
-        )
-        val invalidOrder = Order(
-            2L,
-            "orderNum-3",
-            1L,
-            DeliveryInfo(
-                "홍길동",
-                "010-1234-5678",
-                "13254",
-                "서울시 강남구",
-                "123-456"
-            ),
-            Order.OrderStatus.ORDERED
-        )
-        orderRepository.save(
-            order
-        )
-        orderRepository.save(
-            invalidOrder
-        )
-
-        orderItemRepository.save(
-            OrderItem(
-                1L,
-                order,
-                1L,
-                5,
-                2000L,
-                OrderItem.DeliveryStatus.READY
-            )
-        )
-        orderItemRepository.save(
-            OrderItem(
-                2L,
-                invalidOrder,
-                2L,
-                6,
-                3000L,
-                OrderItem.DeliveryStatus.READY
-            )
         )
     }
 
@@ -190,6 +112,38 @@ class OrderPaymentUseCaseTest {
         }.isInstanceOf(OrderedItemOutOfStockException::class.java)
             .hasMessage(ErrorCode.ORDERED_ITEM_OUT_OF_STOCK.message )
     }
+
+    private fun prepareTest() {
+        val users = listOf(
+            QueryUserInfoByApi.UserInfo(userId = 1L, userName = "홍길동", userEmail = "test@gmail.com"),
+            QueryUserInfoByApi.UserInfo(userId = 2L, userName = "임꺽정", userEmail = "test2@gmail.com"),
+        )
+        val productsInStock = mutableListOf(
+            ProductInfo(productId = 1L, productName = "상품1", productPrice = 2000L, productStock = 5),
+            ProductInfo(productId = 2L, productName = "상품2", productPrice = 3000L, productStock = 5),
+        )
+        val orders = listOf(
+            Order(
+                1L, "orderNum-1", 1L,
+                DeliveryInfo("홍길동", "010-1234-5678", "13254", "서울시 강남구", "123-456"),
+                Order.OrderStatus.ORDERED
+            ), Order(
+                2L, "orderNum-3", 1L,
+                DeliveryInfo("홍길동", "010-1234-5678", "13254", "서울시 강남구", "123-456"),
+                Order.OrderStatus.ORDERED
+            )
+        )
+        val orderItems = listOf(
+            OrderItem(1L, orders[0], 1L, 5, 2000L, OrderItem.DeliveryStatus.READY),
+            OrderItem(2L, orders[1], 2L, 6, 3000L, OrderItem.DeliveryStatus.READY)
+        )
+
+        orderRepository = FakeOrderRepositoryImpl(orders)
+        orderItemRepository = FakeOrderItemRepositoryImpl(orderItems)
+        productsAccessor = FakeProductsAccessorImpl(productsInStock)
+        userAccessor = FakeQueryUserInfoByApiImpl(users)
+    }
+
 }
 
 interface OrderPaymentUseCase {
@@ -235,9 +189,10 @@ class OrderPaymentUseCaseImpl(
             throw OrderedPriceNotMatchException()
 
         productsAccessor.updateProductStock(orderItems.map {
-            ProductsAccessor.UpdateProductStockRequest(it.productId, it.quantity)
+            UpdateProductStockRequest(it.productId, it.quantity)
         })
 
         return PAYMENT_PREFIX + order.id
     }
+
 }

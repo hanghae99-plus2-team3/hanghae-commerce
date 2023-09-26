@@ -28,30 +28,16 @@ class RegisterOrderUseCaseTest {
     @BeforeEach
     fun setUp() {
         val productsInStock = mutableListOf(
-            ProductsAccessor.ProductInfo(
-                productId = 1L,
-                productName = "상품1",
-                productPrice = 2000L,
-                productStock = 10,
-            ),
-            ProductsAccessor.ProductInfo(
-                productId = 2L,
-                productName = "상품2",
-                productPrice = 3000L,
-                productStock = 5,
-            ),
+            ProductsAccessor.ProductInfo(productId = 1L, productName = "상품1", productPrice = 2000L, productStock = 10,),
+            ProductsAccessor.ProductInfo(productId = 2L, productName = "상품2", productPrice = 3000L, productStock = 5,),
         )
         val users = listOf(
-            QueryUserInfoByApi.UserInfo(
-                userId = 1L,
-                userName = "홍길동",
-                userEmail = "test@gmail.com"
-            )
+            QueryUserInfoByApi.UserInfo(userId = 1L, userName = "홍길동", userEmail = "test@gmail.com")
         )
         sut =
             RegisterOrderUseCaseImpl(
-                FakeOrderRepositoryImpl(),
-                FakeOrderItemRepositoryImpl(),
+                FakeOrderRepositoryImpl(listOf()),
+                FakeOrderItemRepositoryImpl(listOf()),
                 FakeProductsAccessorImpl(productsInStock),
                 FakeQueryUserInfoByApiImpl(users)
             )
