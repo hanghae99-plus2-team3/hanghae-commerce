@@ -114,6 +114,21 @@ class OrderPaymentUseCaseTest {
             .hasMessage(ErrorCode.ORDER_ALREADY_PAYED.message)
     }
 
+    @Test
+    fun `외부 결제사에게 보낸 결제 요청이 일정시간 이상 소요되면 기대하는 응답(실패)을 반환한다`() {
+        assertThatThrownBy {
+            sut.command(
+                OrderPaymentUseCase.Command(
+                    orderNum = "orderNum-3",
+                    userId = 1L,
+                    paymentType = PaymentType.CARD,
+                    paymentAmount = 18000L,
+                )
+            )
+        }.isInstanceOf(PaymentProcessException::class.java)
+            .hasMessage(ErrorCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT.message)
+    }
+
     private fun prepareTest() {
         val users = listOf(
             QueryUserInfoByApi.UserInfo(userId = 1L, userName = "홍길동", userEmail = "test@gmail.com"),
