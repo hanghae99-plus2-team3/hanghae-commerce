@@ -130,6 +130,21 @@ class OrderPaymentUseCaseTest {
             .hasMessage(ErrorCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT.message)
     }
 
+    @Test
+    fun `지원하지 않는 외부 결제사로 결제를 요청하면 기대하는 응답(실패)을 반환한다`() {
+        assertThatThrownBy {
+            sut.command(
+                OrderPaymentUseCase.Command(
+                    orderNum = "orderNum-1",
+                    userId = 1L,
+                    paymentVendor = PaymentVendor.NAVER,
+                    paymentAmount = 10000L,
+                )
+            )
+        }.isInstanceOf(NotSupportedPaymentVendorException::class.java)
+            .hasMessage(ErrorCode.NOT_SUPPORTED_PAYMENT_VENDOR.message)
+    }
+
 
     private fun prepareTest() {
         val users = listOf(
@@ -182,7 +197,7 @@ interface OrderPaymentUseCase {
 }
 
 enum class PaymentVendor {
-    TOSS, KAKAO
+    TOSS, KAKAO, NAVER
 }
 
 class OrderPaymentUseCaseImpl(
