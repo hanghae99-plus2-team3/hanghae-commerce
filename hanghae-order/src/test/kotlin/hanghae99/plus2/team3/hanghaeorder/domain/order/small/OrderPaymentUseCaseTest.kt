@@ -103,10 +103,10 @@ class OrderPaymentUseCaseTest {
         assertThatThrownBy {
             sut.command(
                 OrderPaymentUseCase.Command(
-                    orderNum = "orderNum-3",
+                    orderNum = "orderNum-4",
                     userId = 1L,
                     paymentType = PaymentType.CARD,
-                    paymentAmount = 18000L,
+                    paymentAmount = 6000L,
                 )
             )
         }.isInstanceOf(OrderAlreadyPayedException::class.java)
@@ -140,7 +140,7 @@ class OrderPaymentUseCaseTest {
         val orderItems = listOf(
             OrderItem(1L, orders[0], 1L, 5, 2000L, OrderItem.DeliveryStatus.BEFORE_PAYMENT),
             OrderItem(2L, orders[1], 2L, 6, 3000L, OrderItem.DeliveryStatus.BEFORE_PAYMENT),
-            OrderItem(3L, orders[2], 2L, 6, 3000L, OrderItem.DeliveryStatus.READY),
+            OrderItem(3L, orders[2], 2L, 2, 3000L, OrderItem.DeliveryStatus.READY),
 
         )
 
@@ -190,6 +190,9 @@ class OrderPaymentUseCaseImpl(
 
         if (order.userId != command.userId)
             throw OrderInfoNotValidException()
+
+        if(order.orderStatus != Order.OrderStatus.ORDERED)
+            throw OrderAlreadyPayedException()
 
         if (orderItems.sumOf { it.productPrice * it.quantity } != command.paymentAmount)
             throw OrderedPriceNotMatchException()
