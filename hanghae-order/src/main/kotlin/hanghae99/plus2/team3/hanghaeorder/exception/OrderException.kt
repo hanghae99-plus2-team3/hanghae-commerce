@@ -14,3 +14,4 @@ class OrderedPriceNotMatchException : OrderException(ErrorCode.ORDER_PRICE_NOT_M
 class OrderedItemOutOfStockException : OrderException(ErrorCode.ORDERED_ITEM_OUT_OF_STOCK)
 class OrderAlreadyPayedException : OrderException(ErrorCode.ORDER_ALREADY_PAYED)
 class PaymentProcessException : OrderException(ErrorCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT)
+class NotSupportedPaymentVendorException : OrderException(ErrorCode.NOT_SUPPORTED_PAYMENT_VENDOR)

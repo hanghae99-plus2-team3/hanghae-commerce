@@ -36,7 +36,8 @@ class OrderPaymentUseCaseTest {
             orderItemRepository,
             userAccessor,
             productsAccessor,
-            listOf(PaymentTotalValidator(), OrderStatusValidator(), PaymentRequestUserValidator(), OrderItemValidator())
+            listOf(PaymentTotalValidator(), OrderStatusValidator(), PaymentRequestUserValidator(), OrderItemValidator()),
+            PaymentProcessorImpl(listOf(FakeTossErrorPaymentVendorCaller(), FakeKakaoPayErrorPaymentVendorCaller()))
         )
     }
 
@@ -47,7 +48,7 @@ class OrderPaymentUseCaseTest {
             OrderPaymentUseCase.Command(
                 orderNum = "orderNum-1",
                 userId = 1L,
-                paymentType = PaymentType.CARD,
+                paymentVendor = PaymentVendor.KAKAO,
                 paymentAmount = 10000L,
             )
         )
@@ -61,7 +62,7 @@ class OrderPaymentUseCaseTest {
                 OrderPaymentUseCase.Command(
                     orderNum = "orderNum-999",
                     userId = 1L,
-                    paymentType = PaymentType.CARD,
+                    paymentVendor = PaymentVendor.TOSS,
                     paymentAmount = 5000L,
                 )
             )
@@ -76,7 +77,7 @@ class OrderPaymentUseCaseTest {
                 OrderPaymentUseCase.Command(
                     orderNum = "orderNum-1",
                     userId = 2L,
-                    paymentType = PaymentType.CARD,
+                    paymentVendor = PaymentVendor.TOSS,
                     paymentAmount = 10000L,
                 )
             )
@@ -91,7 +92,7 @@ class OrderPaymentUseCaseTest {
                 OrderPaymentUseCase.Command(
                     orderNum = "orderNum-1",
                     userId = 1L,
-                    paymentType = PaymentType.CARD,
+                    paymentVendor = PaymentVendor.TOSS,
                     paymentAmount = 5000L,
                 )
             )
@@ -106,7 +107,7 @@ class OrderPaymentUseCaseTest {
                 OrderPaymentUseCase.Command(
                     orderNum = "orderNum-4",
                     userId = 1L,
-                    paymentType = PaymentType.CARD,
+                    paymentVendor = PaymentVendor.TOSS,
                     paymentAmount = 6000L,
                 )
             )
@@ -119,15 +120,16 @@ class OrderPaymentUseCaseTest {
         assertThatThrownBy {
             sut.command(
                 OrderPaymentUseCase.Command(
-                    orderNum = "orderNum-3",
+                    orderNum = "orderNum-1",
                     userId = 1L,
-                    paymentType = PaymentType.CARD,
-                    paymentAmount = 18000L,
+                    paymentVendor = PaymentVendor.TOSS,
+                    paymentAmount = 10000L,
                 )
             )
         }.isInstanceOf(PaymentProcessException::class.java)
             .hasMessage(ErrorCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT.message)
     }
+
 
     private fun prepareTest() {
         val users = listOf(
@@ -174,13 +176,13 @@ interface OrderPaymentUseCase {
     data class Command(
         val orderNum: String,
         val userId: Long,
-        val paymentType: PaymentType,
+        val paymentVendor: PaymentVendor,
         val paymentAmount: Long,
     )
 }
 
-enum class PaymentType {
-    CARD,
+enum class PaymentVendor {
+    TOSS, KAKAO
 }
 
 class OrderPaymentUseCaseImpl(
@@ -189,6 +191,7 @@ class OrderPaymentUseCaseImpl(
     private val queryUserInfoByApi: QueryUserInfoByApi,
     private val productsAccessor: ProductsAccessor,
     private val paymentValidator: List<PaymentValidator>,
+    private val paymentProcessor : PaymentProcessor,
 ) : OrderPaymentUseCase {
 
     companion object {
@@ -207,6 +210,11 @@ class OrderPaymentUseCaseImpl(
         productsAccessor.updateProductStock(orderItems.map {
             UpdateProductStockRequest(it.productId, it.quantity)
         })
+        paymentProcessor.process(PaymentProcessor.PaymentRequest(
+            orderNum = order.orderNum,
+            paymentVendor = command.paymentVendor,
+            paymentAmount = command.paymentAmount,
+        ))
 
         return PAYMENT_PREFIX + order.id
     }
@@ -242,4 +250,52 @@ class OrderItemValidator : PaymentValidator {
         if (orderItems.isEmpty())
             throw OrderInfoNotValidException()
     }
+}
+
+interface PaymentProcessor{
+    fun process(request: PaymentRequest)
+
+    data class PaymentRequest(
+        val orderNum: String,
+        val paymentVendor: PaymentVendor,
+        val paymentAmount: Long,
+    )
+}
+
+interface PaymentVendorCaller{
+    fun support(paymentVendor: PaymentVendor): Boolean
+    fun pay(request: PaymentProcessor.PaymentRequest): String
+}
+
+class FakeTossErrorPaymentVendorCaller : PaymentVendorCaller{
+    override fun support(paymentVendor: PaymentVendor): Boolean {
+        return paymentVendor == PaymentVendor.TOSS
+    }
+
+    override fun pay(request: PaymentProcessor.PaymentRequest): String {
+        throw PaymentProcessException()
+    }
+}
+
+class FakeKakaoPayErrorPaymentVendorCaller : PaymentVendorCaller{
+    override fun support(paymentVendor: PaymentVendor): Boolean {
+        return paymentVendor == PaymentVendor.KAKAO
+    }
+
+    override fun pay(request: PaymentProcessor.PaymentRequest): String {
+        return request.orderNum
+    }
+}
+
+class PaymentProcessorImpl(
+    private val paymentVendorCallers: List<PaymentVendorCaller>
+) : PaymentProcessor {
+    override fun process(request: PaymentProcessor.PaymentRequest) {
+        findRequestedPaymentVendor(request.paymentVendor)
+            .pay(request)
+    }
+
+    private fun findRequestedPaymentVendor(requestedPaymentVendor: PaymentVendor)
+    = paymentVendorCallers.find { it.support(requestedPaymentVendor)  }
+        ?: throw NotSupportedPaymentVendorException()
 }
