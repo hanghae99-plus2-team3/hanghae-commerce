@@ -26,7 +26,7 @@ data class OrderItem(
                 productId = productId,
                 quantity = quantity,
                 productPrice = productPrice,
-                deliveryStatus = DeliveryStatus.READY,
+                deliveryStatus = DeliveryStatus.BEFORE_PAYMENT,
             )
         }
     }
@@ -34,6 +34,7 @@ data class OrderItem(
     enum class DeliveryStatus(
         val description: String
     ) {
+        BEFORE_PAYMENT("결제 대기"),
         READY("배송 준비중"),
         DELIVERY("배송 중"),
         COMPLETE("배송 완료");

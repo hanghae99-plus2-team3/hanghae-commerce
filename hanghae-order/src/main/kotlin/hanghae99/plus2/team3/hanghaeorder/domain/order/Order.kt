@@ -42,6 +42,7 @@ data class Order(
     enum class OrderStatus(
         val description: String
     ) {
-        ORDERED("주문 완료");
+        ORDERED("주문 완료"),
+        PAYMENT_COMPLETED("결제 완료");
     }
 }

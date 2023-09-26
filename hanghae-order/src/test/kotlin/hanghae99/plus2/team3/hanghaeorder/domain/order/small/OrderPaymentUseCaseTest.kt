@@ -99,7 +99,7 @@ class OrderPaymentUseCaseTest {
     }
 
     @Test
-    fun `결제시 주문한 상품의 제고가 부족하면 기대하는 응답(실패)을 반환한다`() {
+    fun `이미 결제 완료한 주문에 대해서 다시 결제 요청하면 기대하는 응답(실패)을 반환한다`() {
         assertThatThrownBy {
             sut.command(
                 OrderPaymentUseCase.Command(
@@ -109,8 +109,8 @@ class OrderPaymentUseCaseTest {
                     paymentAmount = 18000L,
                 )
             )
-        }.isInstanceOf(OrderedItemOutOfStockException::class.java)
-            .hasMessage(ErrorCode.ORDERED_ITEM_OUT_OF_STOCK.message )
+        }.isInstanceOf(OrderAlreadyPayedException::class.java)
+            .hasMessage(ErrorCode.ORDER_ALREADY_PAYED.message )
     }
 
     private fun prepareTest() {
@@ -131,11 +131,17 @@ class OrderPaymentUseCaseTest {
                 2L, "orderNum-3", 1L,
                 DeliveryInfo("홍길동", "010-1234-5678", "13254", "서울시 강남구", "123-456"),
                 Order.OrderStatus.ORDERED
+            ), Order(
+                3L, "orderNum-4", 1L,
+                DeliveryInfo("홍길동", "010-1234-5678", "13254", "서울시 강남구", "123-456"),
+                Order.OrderStatus.PAYMENT_COMPLETED
             )
         )
         val orderItems = listOf(
-            OrderItem(1L, orders[0], 1L, 5, 2000L, OrderItem.DeliveryStatus.READY),
-            OrderItem(2L, orders[1], 2L, 6, 3000L, OrderItem.DeliveryStatus.READY)
+            OrderItem(1L, orders[0], 1L, 5, 2000L, OrderItem.DeliveryStatus.BEFORE_PAYMENT),
+            OrderItem(2L, orders[1], 2L, 6, 3000L, OrderItem.DeliveryStatus.BEFORE_PAYMENT),
+            OrderItem(3L, orders[2], 2L, 6, 3000L, OrderItem.DeliveryStatus.READY),
+
         )
 
         orderRepository = FakeOrderRepositoryImpl(orders)
