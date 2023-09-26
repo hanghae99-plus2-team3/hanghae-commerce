@@ -10,6 +10,9 @@ data class Order(
     val orderStatus: OrderStatus,
 ) {
 
+    fun isPaymentCompleted(): Boolean {
+        return orderStatus != OrderStatus.ORDERED
+    }
 
     companion object {
         fun create(

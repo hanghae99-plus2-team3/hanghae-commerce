@@ -35,7 +35,8 @@ class OrderPaymentUseCaseTest {
             orderRepository,
             orderItemRepository,
             userAccessor,
-            productsAccessor
+            productsAccessor,
+            listOf(PaymentTotalValidator(), OrderStatusValidator(), PaymentRequestUserValidator(), OrderItemValidator())
         )
     }
 
@@ -76,7 +77,7 @@ class OrderPaymentUseCaseTest {
                     orderNum = "orderNum-1",
                     userId = 2L,
                     paymentType = PaymentType.CARD,
-                    paymentAmount = 5000L,
+                    paymentAmount = 10000L,
                 )
             )
         }.isInstanceOf(OrderInfoNotValidException::class.java)
@@ -110,7 +111,7 @@ class OrderPaymentUseCaseTest {
                 )
             )
         }.isInstanceOf(OrderAlreadyPayedException::class.java)
-            .hasMessage(ErrorCode.ORDER_ALREADY_PAYED.message )
+            .hasMessage(ErrorCode.ORDER_ALREADY_PAYED.message)
     }
 
     private fun prepareTest() {
@@ -142,7 +143,7 @@ class OrderPaymentUseCaseTest {
             OrderItem(2L, orders[1], 2L, 6, 3000L, OrderItem.DeliveryStatus.BEFORE_PAYMENT),
             OrderItem(3L, orders[2], 2L, 2, 3000L, OrderItem.DeliveryStatus.READY),
 
-        )
+            )
 
         orderRepository = FakeOrderRepositoryImpl(orders)
         orderItemRepository = FakeOrderItemRepositoryImpl(orderItems)
@@ -172,6 +173,7 @@ class OrderPaymentUseCaseImpl(
     private val orderItemRepository: OrderItemRepository,
     private val queryUserInfoByApi: QueryUserInfoByApi,
     private val productsAccessor: ProductsAccessor,
+    private val paymentValidator: List<PaymentValidator>,
 ) : OrderPaymentUseCase {
 
     companion object {
@@ -185,17 +187,7 @@ class OrderPaymentUseCaseImpl(
         val order = (orderRepository.findByOrderNum(command.orderNum) ?: throw OrderNotFoundException())
         val orderItems = orderItemRepository.findByOrderId(order.id)
 
-        if (orderItems.isEmpty())
-            throw OrderInfoNotValidException()
-
-        if (order.userId != command.userId)
-            throw OrderInfoNotValidException()
-
-        if(order.orderStatus != Order.OrderStatus.ORDERED)
-            throw OrderAlreadyPayedException()
-
-        if (orderItems.sumOf { it.productPrice * it.quantity } != command.paymentAmount)
-            throw OrderedPriceNotMatchException()
+        paymentValidator.forEach { it.validate(order, orderItems, command) }
 
         productsAccessor.updateProductStock(orderItems.map {
             UpdateProductStockRequest(it.productId, it.quantity)
@@ -203,5 +195,36 @@ class OrderPaymentUseCaseImpl(
 
         return PAYMENT_PREFIX + order.id
     }
+}
 
+interface PaymentValidator {
+    fun validate(order: Order, orderItems: List<OrderItem>, command: OrderPaymentUseCase.Command)
+}
+
+class PaymentTotalValidator : PaymentValidator {
+    override fun validate(order: Order, orderItems: List<OrderItem>, command: OrderPaymentUseCase.Command) {
+        if (orderItems.sumOf { it.productPrice * it.quantity } != command.paymentAmount)
+            throw OrderedPriceNotMatchException()
+    }
+}
+
+class OrderStatusValidator : PaymentValidator {
+    override fun validate(order: Order, orderItems: List<OrderItem>, command: OrderPaymentUseCase.Command) {
+        if (order.isPaymentCompleted())
+            throw OrderAlreadyPayedException()
+    }
+}
+
+class PaymentRequestUserValidator:PaymentValidator{
+    override fun validate(order: Order, orderItems: List<OrderItem>, command: OrderPaymentUseCase.Command) {
+        if (order.userId != command.userId)
+            throw OrderInfoNotValidException()
+    }
+}
+
+class OrderItemValidator : PaymentValidator {
+    override fun validate(order: Order, orderItems: List<OrderItem>, command: OrderPaymentUseCase.Command) {
+        if (orderItems.isEmpty())
+            throw OrderInfoNotValidException()
+    }
 }
