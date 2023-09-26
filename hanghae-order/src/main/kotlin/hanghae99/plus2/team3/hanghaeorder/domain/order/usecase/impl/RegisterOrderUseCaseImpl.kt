@@ -1,9 +1,6 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.impl
 
-import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
-import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
-import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.QueryProductsInfoByApi
-import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.QueryUserInfoByApi
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
 import hanghae99.plus2.team3.hanghaeorder.exception.OrderedUserNotFoundException
 import hanghae99.plus2.team3.hanghaeorder.exception.ProductNotFoundException
@@ -15,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 class RegisterOrderUseCaseImpl(
     private val orderRepository: OrderRepository,
     private val orderItemRepository: OrderItemRepository,
-    private val queryProductsInfoByApi: QueryProductsInfoByApi,
+    private val productsAccessor: ProductsAccessor,
     private val queryUserInfoByApi: QueryUserInfoByApi,
 ) : RegisterOrderUseCase {
 
@@ -24,7 +21,7 @@ class RegisterOrderUseCaseImpl(
             throw OrderedUserNotFoundException()
 
         val orderedProductInfo =
-            queryProductsInfoByApi.query(
+            productsAccessor.queryProduct(
                 command.orderItemList.map { it.productId }
             )
 
@@ -41,7 +38,7 @@ class RegisterOrderUseCaseImpl(
 
     private fun validateOrderedProducts(
         command: RegisterOrderUseCase.Command,
-        orderedProductInfo: List<QueryProductsInfoByApi.ProductInfo>
+        orderedProductInfo: List<ProductsAccessor.ProductInfo>
     ) {
         command.orderItemList.forEach {
             val productInfo = orderedProductInfo.find { productInfo ->

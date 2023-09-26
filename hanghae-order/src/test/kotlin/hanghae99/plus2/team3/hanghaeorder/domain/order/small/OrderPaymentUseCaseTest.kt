@@ -5,10 +5,9 @@ import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
 import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.QueryUserInfoByApi
-import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeOrderItemRepositoryImpl
-import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeOrderRepositoryImpl
-import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeQueryUserInfoByApiImpl
+import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.*
 import hanghae99.plus2.team3.hanghaeorder.exception.*
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -38,9 +37,30 @@ class OrderPaymentUseCaseTest {
                 userEmail = "test2@gmail.com"
             )
         )
+        val productsInStock = mutableListOf(
+            ProductsAccessor.ProductInfo(
+                productId = 1L,
+                productName = "상품1",
+                productPrice = 2000L,
+                productStock = 5,
+            ),
+            ProductsAccessor.ProductInfo(
+                productId = 2L,
+                productName = "상품2",
+                productPrice = 3000L,
+                productStock = 5,
+            ),
+        )
         val orderRepository = FakeOrderRepositoryImpl()
         val orderItemRepository = FakeOrderItemRepositoryImpl()
-        sut = OrderPaymentUseCaseImpl(orderRepository, orderItemRepository, FakeQueryUserInfoByApiImpl(users))
+        val productsAccessor = FakeProductsAccessorImpl(productsInStock)
+        val userAccessor = FakeQueryUserInfoByApiImpl(users)
+        sut = OrderPaymentUseCaseImpl(
+            orderRepository,
+            orderItemRepository,
+            userAccessor,
+            productsAccessor
+        )
 
         val order = Order(
             1L,
@@ -55,8 +75,24 @@ class OrderPaymentUseCaseTest {
             ),
             Order.OrderStatus.ORDERED
         )
+        val invalidOrder = Order(
+            2L,
+            "orderNum-3",
+            1L,
+            DeliveryInfo(
+                "홍길동",
+                "010-1234-5678",
+                "13254",
+                "서울시 강남구",
+                "123-456"
+            ),
+            Order.OrderStatus.ORDERED
+        )
         orderRepository.save(
             order
+        )
+        orderRepository.save(
+            invalidOrder
         )
 
         orderItemRepository.save(
@@ -64,8 +100,18 @@ class OrderPaymentUseCaseTest {
                 1L,
                 order,
                 1L,
-                10,
+                5,
                 2000L,
+                OrderItem.DeliveryStatus.READY
+            )
+        )
+        orderItemRepository.save(
+            OrderItem(
+                2L,
+                invalidOrder,
+                2L,
+                6,
+                3000L,
                 OrderItem.DeliveryStatus.READY
             )
         )
@@ -79,7 +125,7 @@ class OrderPaymentUseCaseTest {
                 orderNum = "orderNum-1",
                 userId = 1L,
                 paymentType = PaymentType.CARD,
-                paymentAmount = 20000L,
+                paymentAmount = 10000L,
             )
         )
         assertThat(paymentId).isNotNull
@@ -135,19 +181,15 @@ class OrderPaymentUseCaseTest {
         assertThatThrownBy {
             sut.command(
                 OrderPaymentUseCase.Command(
-                    orderNum = "orderNum-2",
+                    orderNum = "orderNum-3",
                     userId = 1L,
                     paymentType = PaymentType.CARD,
-                    paymentAmount = 5000L,
+                    paymentAmount = 18000L,
                 )
             )
         }.isInstanceOf(OrderedItemOutOfStockException::class.java)
-            .hasMessage(ErrorCode.ORDERED_ITEM_OUT_OF_STOCK.message.format("상품명"))
+            .hasMessage(ErrorCode.ORDERED_ITEM_OUT_OF_STOCK.message )
     }
-
-
-
-
 }
 
 interface OrderPaymentUseCase {
@@ -169,6 +211,7 @@ class OrderPaymentUseCaseImpl(
     private val orderRepository: OrderRepository,
     private val orderItemRepository: OrderItemRepository,
     private val queryUserInfoByApi: QueryUserInfoByApi,
+    private val productsAccessor: ProductsAccessor,
 ) : OrderPaymentUseCase {
 
     companion object {
@@ -179,14 +222,21 @@ class OrderPaymentUseCaseImpl(
         if (queryUserInfoByApi.query(command.userId) == null)
             throw OrderedUserNotFoundException()
 
-        val order = (orderRepository.findByOrderNum(command.orderNum) ?:
-        throw OrderNotFoundException())
+        val order = (orderRepository.findByOrderNum(command.orderNum) ?: throw OrderNotFoundException())
+        val orderItems = orderItemRepository.findByOrderId(order.id)
 
-        if( order.userId != command.userId)
+        if (orderItems.isEmpty())
             throw OrderInfoNotValidException()
 
-        if(orderItemRepository.findByOrderId(order.id).sumOf { it.productPrice * it.quantity } != command.paymentAmount)
+        if (order.userId != command.userId)
+            throw OrderInfoNotValidException()
+
+        if (orderItems.sumOf { it.productPrice * it.quantity } != command.paymentAmount)
             throw OrderedPriceNotMatchException()
+
+        productsAccessor.updateProductStock(orderItems.map {
+            ProductsAccessor.UpdateProductStockRequest(it.productId, it.quantity)
+        })
 
         return PAYMENT_PREFIX + order.id
     }

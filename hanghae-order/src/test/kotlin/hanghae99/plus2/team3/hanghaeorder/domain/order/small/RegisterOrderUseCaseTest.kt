@@ -1,11 +1,8 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.small
 
-import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.QueryProductsInfoByApi
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.QueryUserInfoByApi
-import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeOrderItemRepositoryImpl
-import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeOrderRepositoryImpl
-import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeQueryProductsInfoByApiImpl
-import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeQueryUserInfoByApiImpl
+import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.impl.RegisterOrderUseCaseImpl
 import hanghae99.plus2.team3.hanghaeorder.exception.ErrorCode
@@ -30,14 +27,14 @@ class RegisterOrderUseCaseTest {
 
     @BeforeEach
     fun setUp() {
-        val productsInStock = listOf(
-            QueryProductsInfoByApi.ProductInfo(
+        val productsInStock = mutableListOf(
+            ProductsAccessor.ProductInfo(
                 productId = 1L,
                 productName = "상품1",
                 productPrice = 2000L,
                 productStock = 10,
             ),
-            QueryProductsInfoByApi.ProductInfo(
+            ProductsAccessor.ProductInfo(
                 productId = 2L,
                 productName = "상품2",
                 productPrice = 3000L,
@@ -55,7 +52,7 @@ class RegisterOrderUseCaseTest {
             RegisterOrderUseCaseImpl(
                 FakeOrderRepositoryImpl(),
                 FakeOrderItemRepositoryImpl(),
-                FakeQueryProductsInfoByApiImpl(productsInStock),
+                FakeProductsAccessorImpl(productsInStock),
                 FakeQueryUserInfoByApiImpl(users)
             )
     }
