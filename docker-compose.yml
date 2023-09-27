@@ -1,50 +1,50 @@
 version: '1'
 services:
-  hanghae-customer-mysql:
+  hanghae-auth-user-mysql:
     image: mysql:8.0
     networks:
-      - hanghae-customer-network
+      - hanghae-auth-user-network
     volumes:
-      - ./hanghae-customer/db/conf.d:/etc/mysql/conf.d
-      - ./hanghae-customer/db/data:/var/lib/mysql
-      - ./hanghae-customer/db/initdb.d:/docker-entrypoint-initdb.d
-    env_file: ./hanghae-customer/.env
+      - ./hanghae-auth-user/db/conf.d:/etc/mysql/conf.d
+      - ./hanghae-auth-user/db/data:/var/lib/mysql
+      - ./hanghae-auth-user/db/initdb.d:/docker-entrypoint-initdb.d
+    env_file: ./hanghae-auth-user/.env
     ports:
       - "3307:3306"
 
-  hanghae-customer-service:
-    image: hanghae-customer:1.0.0
+  hanghae-auth-user-service:
+    image: hanghae-auth-user:1.0.0
     networks:
-      - hanghae-customer-network
+      - hanghae-auth-user-network
     ports:
       - "8081:8080"
     depends_on:
-      - hanghae-customer-mysql
+      - hanghae-auth-user-mysql
     environment:
       - ACTIVE_PROFILE=default
 
 #========================================================================
 
-  hanghae-delivery-mysql:
+  hanghae-like-cart-mysql:
     image: mysql:8.0
     networks:
-      - hanghae-delivery-network
+      - hanghae-like-cart-network
     volumes:
-      - ./hanghae-delivery/db/conf.d:/etc/mysql/conf.d
-      - ./hanghae-delivery/db/data:/var/lib/mysql
-      - ./hanghae-delivery/db/initdb.d:/docker-entrypoint-initdb.d
-    env_file: ./hanghae-delivery/.env
+      - ./hanghae-like-cart/db/conf.d:/etc/mysql/conf.d
+      - ./hanghae-like-cart/db/data:/var/lib/mysql
+      - ./hanghae-like-cart/db/initdb.d:/docker-entrypoint-initdb.d
+    env_file: ./hanghae-like-cart/.env
     ports:
       - "3308:3306"
 
   hanghae-delivery-service:
-    image: hanghae-delivery:1.0.0
+    image: hanghae-like-cart:1.0.0
     networks:
-      - hanghae-delivery-network
+      - hanghae-like-cart-network
     ports:
       - "8082:8080"
     depends_on:
-      - hanghae-delivery-mysql
+      - hanghae-like-cart-mysql
     environment:
       - ACTIVE_PROFILE=default
 
@@ -100,9 +100,9 @@ services:
       - ACTIVE_PROFILE=default
 
 networks:
-  hanghae-customer-network:
+  hanghae-auth-user-network:
     driver: bridge
-  hanghae-delivery-network:
+  hanghae-like-cart-network:
     driver: bridge
   hanghae-order-network:
     driver: bridge
