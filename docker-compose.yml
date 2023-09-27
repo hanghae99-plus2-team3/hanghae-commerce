@@ -37,7 +37,7 @@ services:
     ports:
       - "3308:3306"
 
-  hanghae-delivery-service:
+  hanghae-like-cart-service:
     image: hanghae-like-cart:1.0.0
     networks:
       - hanghae-like-cart-network
