@@ -1,4 +1,4 @@
-rootProject.name = "commerce"
+rootProject.name = "hanghae-commerce"
 
 include("hanghae-like-cart")
 include("hanghae-auth-user")
