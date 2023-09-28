@@ -1,6 +1,6 @@
 spring:
     datasource:
-        url: jdbc:mysql://hanghae-order-mysql:3306/order
+        url: jdbc:mysql://hanghae-auth-user-mysql:3306/auth-user
         username: root
         password: rootpassword
     jpa:
