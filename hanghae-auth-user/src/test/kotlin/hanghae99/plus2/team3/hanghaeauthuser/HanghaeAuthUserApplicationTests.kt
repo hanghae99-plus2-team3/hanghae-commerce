@@ -9,5 +9,4 @@ class HanghaeAuthUserApplicationTests {
     @Test
     fun contextLoads() {
     }
-
 }
