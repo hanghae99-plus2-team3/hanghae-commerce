@@ -1,6 +1,7 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.impl
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.*
+import hanghae99.plus2.team3.hanghaeorder.domain.order.service.OrderService
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
 import hanghae99.plus2.team3.hanghaeorder.exception.OrderedUserNotFoundException
 import hanghae99.plus2.team3.hanghaeorder.exception.ProductNotFoundException
@@ -9,40 +10,11 @@ import org.springframework.stereotype.Component
 
 @Component
 class RegisterOrderUseCaseImpl(
-    private val orderRepository: OrderRepository,
-    private val orderItemRepository: OrderItemRepository,
-    private val productsAccessor: ProductsAccessor,
+    private val orderService: OrderService,
 ) : RegisterOrderUseCase {
 
     override fun command(command: RegisterOrderUseCase.Command): String {
-        val orderedProductInfo =
-            productsAccessor.queryProduct(
-                command.orderItemList.map { it.productId }
-            )
-
-        validateOrderedProducts(command, orderedProductInfo)
-
-        val savedOrder = orderRepository.save(command.toDomain())
-
-        command.orderItemList.forEach {
-            orderItemRepository.save(it.toDomain(order = savedOrder))
-        }
-
-        return savedOrder.orderNum
+        return orderService.makeOrder(command)
     }
 
-    private fun validateOrderedProducts(
-        command: RegisterOrderUseCase.Command,
-        orderedProductInfo: List<ProductsAccessor.ProductInfo>
-    ) {
-        command.orderItemList.forEach {
-            val productInfo = orderedProductInfo.find { productInfo ->
-                productInfo.productId == it.productId
-            } ?: throw ProductNotFoundException()
-
-            if (productInfo.productStock < it.quantity) {
-                throw ProductStockNotEnoughException()
-            }
-        }
-    }
 }

@@ -43,7 +43,6 @@ class OrderPaymentUseCaseTest {
             OrderService(
                 orderRepository,
                 orderItemRepository,
-                userAccessor,
                 productsAccessor,
                 listOf(
                     PaymentTotalValidator(),

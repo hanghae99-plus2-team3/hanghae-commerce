@@ -6,9 +6,12 @@ import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAc
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.UserInfoAccessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.payment.PaymentProcessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.OrderPaymentUseCase
+import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentValidator
 import hanghae99.plus2.team3.hanghaeorder.exception.OrderNotFoundException
 import hanghae99.plus2.team3.hanghaeorder.exception.OrderedUserNotFoundException
+import hanghae99.plus2.team3.hanghaeorder.exception.ProductNotFoundException
+import hanghae99.plus2.team3.hanghaeorder.exception.ProductStockNotEnoughException
 import org.springframework.stereotype.Service
 
 /**
@@ -27,6 +30,23 @@ class OrderService(
     private val paymentValidators: List<PaymentValidator>,
     private val paymentProcessor: PaymentProcessor,
 ) {
+
+    fun makeOrder(command: RegisterOrderUseCase.Command): String {
+        val orderedProductInfo =
+            productsAccessor.queryProduct(
+                command.orderItemList.map { it.productId }
+            )
+
+        validateOrderedProducts(command, orderedProductInfo)
+
+        val savedOrder = orderRepository.save(command.toDomain())
+
+        command.orderItemList.forEach {
+            orderItemRepository.save(it.toDomain(order = savedOrder))
+        }
+
+        return savedOrder.orderNum
+    }
 
     fun makePaymentForOder(command: OrderPaymentUseCase.Command) : String {
         val order = orderRepository.findByOrderNum(command.orderNum)?: throw OrderNotFoundException()
@@ -49,6 +69,22 @@ class OrderService(
         )
 
         return order.getPaymentNum()
+    }
+
+
+    private fun validateOrderedProducts(
+        command: RegisterOrderUseCase.Command,
+        orderedProductInfo: List<ProductsAccessor.ProductInfo>
+    ) {
+        command.orderItemList.forEach {
+            val productInfo = orderedProductInfo.find { productInfo ->
+                productInfo.productId == it.productId
+            } ?: throw ProductNotFoundException()
+
+            if (productInfo.productStock < it.quantity) {
+                throw ProductStockNotEnoughException()
+            }
+        }
     }
 
 }

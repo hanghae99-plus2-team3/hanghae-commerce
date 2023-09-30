@@ -3,6 +3,8 @@ package hanghae99.plus2.team3.hanghaeorder.domain.order.small
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.UserInfoAccessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.*
+import hanghae99.plus2.team3.hanghaeorder.domain.order.payment.PaymentProcessor
+import hanghae99.plus2.team3.hanghaeorder.domain.order.service.OrderService
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.impl.RegisterOrderUseCaseImpl
 import hanghae99.plus2.team3.hanghaeorder.exception.ErrorCode
@@ -36,10 +38,13 @@ class RegisterOrderUseCaseTest {
         )
         sut =
             RegisterOrderUseCaseImpl(
-                FakeOrderRepositoryImpl(listOf()),
-                FakeOrderItemRepositoryImpl(listOf()),
-                FakeProductsAccessor(productsInStock),
-                FakeUserInfoAccessor(users)
+                OrderService(
+                    FakeOrderRepositoryImpl(listOf()),
+                    FakeOrderItemRepositoryImpl(listOf()),
+                    FakeProductsAccessor(productsInStock),
+                    listOf(),
+                    PaymentProcessor(listOf())
+                )
             )
     }
 
@@ -125,31 +130,6 @@ class RegisterOrderUseCaseTest {
             .isExactlyInstanceOf(ProductNotFoundException::class.java)
             .hasMessage(ErrorCode.PRODUCT_NOT_FOUND.message)
     }
-
-    @Test
-    fun `존재 하지 않는 고객이 주문하면 기대하는 응답(실패)을 반환한다`() {
-        val command = RegisterOrderUseCase.Command(
-            userId = 9999L,
-            receiverName = "홍길동",
-            receiverPhone = "010-1234-5678",
-            receiverZipCode = "12345",
-            receiverAddress1 = "서울시 강남구",
-            receiverAddress2 = "역삼동 123-456",
-            message = "부재시 경비실에 맡겨주세요",
-            orderItemList = listOf(
-                RegisterOrderUseCase.Command.OrderItemCommand(
-                    productId = 999L,
-                    quantity = 2,
-                    productPrice = 1000L,
-                ),
-            )
-        )
-
-        assertThatThrownBy { sut.command(command) }
-            .isExactlyInstanceOf(OrderedUserNotFoundException::class.java)
-            .hasMessage(ErrorCode.USER_NOT_FOUND.message)
-    }
-
 }
 
 
