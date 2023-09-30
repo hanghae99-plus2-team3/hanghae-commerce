@@ -3,13 +3,11 @@ package hanghae99.plus2.team3.hanghaeorder.domain.order.service
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
-import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.UserInfoAccessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.payment.PaymentProcessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.OrderPaymentUseCase
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentValidator
 import hanghae99.plus2.team3.hanghaeorder.exception.OrderNotFoundException
-import hanghae99.plus2.team3.hanghaeorder.exception.OrderedUserNotFoundException
 import hanghae99.plus2.team3.hanghaeorder.exception.ProductNotFoundException
 import hanghae99.plus2.team3.hanghaeorder.exception.ProductStockNotEnoughException
 import org.springframework.stereotype.Service
@@ -32,12 +30,7 @@ class OrderService(
 ) {
 
     fun makeOrder(command: RegisterOrderUseCase.Command): String {
-        val orderedProductInfo =
-            productsAccessor.queryProduct(
-                command.orderItemList.map { it.productId }
-            )
-
-        validateOrderedProducts(command, orderedProductInfo)
+        validateOrderedProducts(command, getProductInfo(command))
 
         val savedOrder = orderRepository.save(command.toDomain())
 
@@ -86,5 +79,12 @@ class OrderService(
             }
         }
     }
+
+    private fun getProductInfo(command: RegisterOrderUseCase.Command): List<ProductsAccessor.ProductInfo> {
+        return productsAccessor.queryProduct(
+            command.orderItemList.map { it.productId }
+        )
+    }
+
 
 }
