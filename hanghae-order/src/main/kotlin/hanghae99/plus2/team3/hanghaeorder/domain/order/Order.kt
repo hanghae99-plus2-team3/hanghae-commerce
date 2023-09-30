@@ -10,11 +10,16 @@ data class Order(
     val orderStatus: OrderStatus,
 ) {
 
+
+
     fun isPaymentCompleted(): Boolean {
         return orderStatus != OrderStatus.ORDERED
     }
 
     companion object {
+
+        private const val PAYMENT_PREFIX = "PAYMENT"
+
         fun create(
             userId: Long,
             receiverName: String,
@@ -40,6 +45,10 @@ data class Order(
             )
         }
 
+    }
+
+    fun getPaymentNum(): String {
+        return "$PAYMENT_PREFIX-$orderNum"
     }
 
     enum class OrderStatus(

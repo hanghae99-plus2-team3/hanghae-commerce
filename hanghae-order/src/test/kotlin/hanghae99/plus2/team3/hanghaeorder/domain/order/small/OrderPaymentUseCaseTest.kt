@@ -9,6 +9,7 @@ import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.UserInfoAc
 import hanghae99.plus2.team3.hanghaeorder.domain.order.payment.PaymentVendor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.payment.*
+import hanghae99.plus2.team3.hanghaeorder.domain.order.service.OrderService
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.OrderItemValidator
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.OrderStatusValidator
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentRequestUserValidator
@@ -39,12 +40,19 @@ class OrderPaymentUseCaseTest {
     fun setUp() {
         prepareTest()
         sut = OrderPaymentUseCaseImpl(
-            orderRepository,
-            orderItemRepository,
-            userAccessor,
-            productsAccessor,
-            listOf(PaymentTotalValidator(), OrderStatusValidator(), PaymentRequestUserValidator(), OrderItemValidator()),
-            PaymentProcessor(listOf(FakeTossErrorPaymentVendorCaller(), FakeKakaoErrorPaymentVendorCaller()))
+            OrderService(
+                orderRepository,
+                orderItemRepository,
+                userAccessor,
+                productsAccessor,
+                listOf(
+                    PaymentTotalValidator(),
+                    OrderStatusValidator(),
+                    PaymentRequestUserValidator(),
+                    OrderItemValidator()
+                ),
+                PaymentProcessor(listOf(FakeTossErrorPaymentVendorCaller(), FakeKakaoErrorPaymentVendorCaller()))
+            )
         )
     }
 
