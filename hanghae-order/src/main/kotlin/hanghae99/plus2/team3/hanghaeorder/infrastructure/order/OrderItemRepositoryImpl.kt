@@ -1,8 +1,8 @@
-package hanghae99.plus2.team3.hanghaeorder.infrastructure
+package hanghae99.plus2.team3.hanghaeorder.infrastructure.order
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
-import hanghae99.plus2.team3.hanghaeorder.infrastructure.entity.OrderItemEntity
+import hanghae99.plus2.team3.hanghaeorder.infrastructure.order.entity.OrderItemEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
