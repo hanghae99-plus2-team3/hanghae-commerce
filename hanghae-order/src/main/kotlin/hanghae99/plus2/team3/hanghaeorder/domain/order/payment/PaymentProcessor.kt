@@ -2,7 +2,9 @@ package hanghae99.plus2.team3.hanghaeorder.domain.order.payment
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.PaymentVendorCaller
 import hanghae99.plus2.team3.hanghaeorder.exception.NotSupportedPaymentVendorException
+import org.springframework.stereotype.Component
 
+@Component
 class PaymentProcessor(
     private val paymentVendorCallers: List<PaymentVendorCaller>
 ) {
