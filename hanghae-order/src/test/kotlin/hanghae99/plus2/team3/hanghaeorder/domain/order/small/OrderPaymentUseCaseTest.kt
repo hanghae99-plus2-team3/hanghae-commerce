@@ -1,5 +1,6 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.small
 
+import hanghae99.plus2.team3.hanghaeorder.common.exception.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
@@ -155,9 +156,28 @@ class OrderPaymentUseCaseTest {
                     paymentAmount = 10000L,
                 )
             )
-        }.isInstanceOf(NotSupportedPaymentVendorException::class.java)
-            .hasMessage(ErrorCode.NOT_SUPPORTED_PAYMENT_VENDOR.message)
+        }.isInstanceOf(PaymentProcessException::class.java)
+            .hasMessage(ErrorCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT.message)
     }
+
+    @Test
+    fun `결제 요청시 오류가 발생하면 차감했던 재고를 원복한다`() {
+        assertThatThrownBy {
+            sut.command(
+                OrderPaymentUseCase.Command(
+                    orderNum = "orderNum-1",
+                    userId = 1L,
+                    paymentVendor = PaymentVendor.TOSS,
+                    paymentAmount = 10000L,
+                )
+            )
+        }.isInstanceOf(PaymentProcessException::class.java)
+            .hasMessage(ErrorCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT.message)
+
+        val orderItems = orderItemRepository.findByOrderId(1L)
+        assertThat(orderItems[0].quantity).isEqualTo(5)
+    }
+
 
 
     private fun prepareTest() {

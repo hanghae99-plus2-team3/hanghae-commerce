@@ -2,7 +2,7 @@ package hanghae99.plus2.team3.hanghaeorder.common.filter
 
 import hanghae99.plus2.team3.hanghaeorder.common.CurrentUser
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.UserInfoAccessor
-import hanghae99.plus2.team3.hanghaeorder.exception.AuthenticationException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.AuthenticationException
 import jakarta.servlet.Filter
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletRequest

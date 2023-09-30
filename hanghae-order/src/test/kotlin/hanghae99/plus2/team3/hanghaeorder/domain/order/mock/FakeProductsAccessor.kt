@@ -1,7 +1,7 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.mock
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
-import hanghae99.plus2.team3.hanghaeorder.exception.OrderedItemOutOfStockException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.OrderedItemOutOfStockException
 
 class FakeProductsAccessor(
     private val productInfo: MutableList<ProductsAccessor.ProductInfo>

@@ -1,7 +1,7 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.payment
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.PaymentVendorCaller
-import hanghae99.plus2.team3.hanghaeorder.exception.NotSupportedPaymentVendorException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.NotSupportedPaymentVendorException
 import org.springframework.stereotype.Component
 
 @Component
