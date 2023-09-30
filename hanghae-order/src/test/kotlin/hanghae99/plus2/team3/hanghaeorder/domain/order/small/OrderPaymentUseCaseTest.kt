@@ -1,5 +1,6 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.small
 
+import hanghae99.plus2.team3.hanghaeorder.common.exception.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
@@ -155,8 +156,8 @@ class OrderPaymentUseCaseTest {
                     paymentAmount = 10000L,
                 )
             )
-        }.isInstanceOf(NotSupportedPaymentVendorException::class.java)
-            .hasMessage(ErrorCode.NOT_SUPPORTED_PAYMENT_VENDOR.message)
+        }.isInstanceOf(PaymentProcessException::class.java)
+            .hasMessage(ErrorCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT.message)
     }
 
     @Test

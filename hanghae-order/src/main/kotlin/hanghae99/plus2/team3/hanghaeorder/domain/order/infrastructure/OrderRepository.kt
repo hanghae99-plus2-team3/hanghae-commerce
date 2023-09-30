@@ -4,5 +4,5 @@ import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
 
 interface OrderRepository {
     fun save(order: Order): Order
-    fun findByOrderNum(orderNum: String): Order?
+    fun getByOrderNum(orderNum: String): Order
 }

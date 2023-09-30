@@ -1,11 +1,7 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.impl
 
-import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.service.OrderService
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
-import hanghae99.plus2.team3.hanghaeorder.exception.OrderedUserNotFoundException
-import hanghae99.plus2.team3.hanghaeorder.exception.ProductNotFoundException
-import hanghae99.plus2.team3.hanghaeorder.exception.ProductStockNotEnoughException
 import org.springframework.stereotype.Component
 
 @Component

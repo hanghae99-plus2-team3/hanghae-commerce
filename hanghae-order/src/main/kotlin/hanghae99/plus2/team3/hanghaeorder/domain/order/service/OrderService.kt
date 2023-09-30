@@ -1,5 +1,7 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.service
 
+import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
+import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
@@ -7,10 +9,10 @@ import hanghae99.plus2.team3.hanghaeorder.domain.order.payment.PaymentProcessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.OrderPaymentUseCase
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentValidator
-import hanghae99.plus2.team3.hanghaeorder.exception.OrderNotFoundException
-import hanghae99.plus2.team3.hanghaeorder.exception.PaymentProcessException
-import hanghae99.plus2.team3.hanghaeorder.exception.ProductNotFoundException
-import hanghae99.plus2.team3.hanghaeorder.exception.ProductStockNotEnoughException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.OrderNotFoundException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.PaymentProcessException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductNotFoundException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductStockNotEnoughException
 import org.springframework.stereotype.Service
 
 /**
@@ -43,35 +45,56 @@ class OrderService(
     }
 
     fun makePaymentForOder(command: OrderPaymentUseCase.Command) : String {
-        val order = orderRepository.findByOrderNum(command.orderNum)?: throw OrderNotFoundException()
+        val order = orderRepository.getByOrderNum(command.orderNum)
         val orderItems = orderItemRepository.findByOrderId(order.id)
 
-        paymentValidators.forEach { it.validate(order, orderItems, command) }
+        validatePayment(order, orderItems, command)
+        reduceProductStock(orderItems)
 
+        return try{
+            processPayment(order, command)
+            order.getPaymentNum()
+        } catch (e: Exception) {
+            rollbackProductStock(orderItems)
+            throw PaymentProcessException()
+        }
+    }
+
+    private fun rollbackProductStock(orderItems: List<OrderItem>) {
+        productsAccessor.updateProductStock(
+            orderItems.map {
+                ProductsAccessor.UpdateProductStockRequest(it.productId, -it.quantity)
+            }
+        )
+    }
+
+    private fun processPayment(
+        order: Order,
+        command: OrderPaymentUseCase.Command
+    ) {
+        paymentProcessor.pay(
+            PaymentProcessor.PaymentRequest(
+                orderNum = order.orderNum,
+                paymentVendor = command.paymentVendor,
+                paymentAmount = command.paymentAmount,
+            )
+        )
+    }
+
+    private fun reduceProductStock(orderItems: List<OrderItem>) {
         productsAccessor.updateProductStock(
             orderItems.map {
                 ProductsAccessor.UpdateProductStockRequest(it.productId, it.quantity)
             }
         )
+    }
 
-        try{
-            paymentProcessor.pay(
-                PaymentProcessor.PaymentRequest(
-                    orderNum = order.orderNum,
-                    paymentVendor = command.paymentVendor,
-                    paymentAmount = command.paymentAmount,
-                )
-            )
-        } catch (e: Exception) {
-            productsAccessor.updateProductStock(
-                orderItems.map {
-                    ProductsAccessor.UpdateProductStockRequest(it.productId, -it.quantity)
-                }
-            )
-            throw PaymentProcessException()
-        }
-
-        return order.getPaymentNum()
+    private fun validatePayment(
+        order: Order,
+        orderItems: List<OrderItem>,
+        command: OrderPaymentUseCase.Command
+    ) {
+        paymentValidators.forEach { it.validate(order, orderItems, command) }
     }
 
 

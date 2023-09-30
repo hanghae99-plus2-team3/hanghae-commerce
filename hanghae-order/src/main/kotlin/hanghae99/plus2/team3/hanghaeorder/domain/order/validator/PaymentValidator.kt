@@ -3,9 +3,9 @@ package hanghae99.plus2.team3.hanghaeorder.domain.order.validator
 import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
 import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.OrderPaymentUseCase
-import hanghae99.plus2.team3.hanghaeorder.exception.OrderAlreadyPayedException
-import hanghae99.plus2.team3.hanghaeorder.exception.OrderInfoNotValidException
-import hanghae99.plus2.team3.hanghaeorder.exception.OrderedPriceNotMatchException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.OrderAlreadyPayedException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.OrderInfoNotValidException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.OrderedPriceNotMatchException
 
 interface PaymentValidator {
     fun validate(order: Order, orderItems: List<OrderItem>, command: OrderPaymentUseCase.Command)

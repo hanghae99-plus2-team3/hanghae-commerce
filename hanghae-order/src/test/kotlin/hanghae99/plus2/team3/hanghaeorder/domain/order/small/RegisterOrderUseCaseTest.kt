@@ -1,16 +1,14 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.small
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
-import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.UserInfoAccessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.payment.PaymentProcessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.service.OrderService
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.impl.RegisterOrderUseCaseImpl
-import hanghae99.plus2.team3.hanghaeorder.exception.ErrorCode
-import hanghae99.plus2.team3.hanghaeorder.exception.OrderedUserNotFoundException
-import hanghae99.plus2.team3.hanghaeorder.exception.ProductNotFoundException
-import hanghae99.plus2.team3.hanghaeorder.exception.ProductStockNotEnoughException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.ErrorCode
+import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductNotFoundException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductStockNotEnoughException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach

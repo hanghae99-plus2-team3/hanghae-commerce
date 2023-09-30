@@ -1,8 +1,11 @@
-package hanghae99.plus2.team3.hanghaeorder.exception
+package hanghae99.plus2.team3.hanghaeorder.common.exception
 
 open class OrderException(
-    errorCode: ErrorCode
-) : RuntimeException(errorCode.message)
+    private val errorCode: ErrorCode
+) : RuntimeException(errorCode.message){
+
+    constructor(errorMsg: String?) : this(ErrorCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT)
+}
 
 class AuthenticationException : OrderException(ErrorCode.AUTHENTICATION_FAILED)
 class ProductStockNotEnoughException : OrderException(ErrorCode.NOT_ENOUGH_STOCK)

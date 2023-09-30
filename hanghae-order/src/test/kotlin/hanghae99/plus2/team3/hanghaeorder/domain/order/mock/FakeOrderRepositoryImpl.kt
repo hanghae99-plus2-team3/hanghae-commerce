@@ -2,6 +2,7 @@ package hanghae99.plus2.team3.hanghaeorder.domain.order.mock
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
+import hanghae99.plus2.team3.hanghaeorder.common.exception.OrderNotFoundException
 import hanghae99.plus2.team3.hanghaeorder.infrastructure.entity.OrderEntity
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
@@ -27,7 +28,9 @@ class FakeOrderRepositoryImpl(
         return order.copy(id = entity.id)
     }
 
-    override fun findByOrderNum(orderNum: String): Order? {
-        return orders.find { it.orderNum == orderNum }?.toDomain()
+    override fun getByOrderNum(orderNum: String): Order {
+        return (orders.find { it.orderNum == orderNum }
+            ?: throw OrderNotFoundException())
+            .toDomain()
     }
 }
