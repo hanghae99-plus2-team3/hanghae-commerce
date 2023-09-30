@@ -178,6 +178,28 @@ class OrderPaymentUseCaseTest {
         assertThat(orderItems[0].quantity).isEqualTo(5)
     }
 
+    @Test
+    fun `결제요청 발생시 요청 데이터를 결제 로그 테이블에 저장 한다`() {
+        val paymentId = sut.command(
+            OrderPaymentUseCase.Command(
+                orderNum = "orderNum-1",
+                userId = 1L,
+                paymentVendor = PaymentVendor.KAKAO,
+                paymentAmount = 10000L,
+            )
+        )
+        assertThat(paymentId).isNotNull
+
+        paymentRequestLogRepository.findByPaymentId(paymentId).let {
+            assertThat(it).isNotNull
+            assertThat(it.paymentId).isEqualTo(paymentId)
+            assertThat(it.orderNum).isEqualTo("orderNum-1")
+            assertThat(it.paymentVendor).isEqualTo(PaymentVendor.KAKAO)
+            assertThat(it.paymentAmount).isEqualTo(10000L)
+            assertThat(it.isPaymentSuccess).isEqualTo(true)
+        }
+    }
+
 
 
     private fun prepareTest() {
