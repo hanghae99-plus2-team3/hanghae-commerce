@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.context.annotation.Import
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 
@@ -38,7 +39,6 @@ class OrderApiTest {
     @Test
     fun `정상적으로 상품을 주문하면 기대하는 응답(성공)을 반환한다`() {
         val orderProductsRequest = OrderProductsRequest(
-            userId = 1L,
             receiverName = "홍길동",
             receiverPhone = "010-1234-5678",
             receiverZipCode = "12345",
@@ -61,6 +61,7 @@ class OrderApiTest {
         val response = RestAssured
             .given().log().all()
             .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, 1L)
             .body(orderProductsRequest)
             .`when`()
             .post(baseUrl)

@@ -23,16 +23,12 @@ import org.springframework.stereotype.Service
 class OrderService(
     private val orderRepository: OrderRepository,
     private val orderItemRepository: OrderItemRepository,
-    private val userInfoAccessor: UserInfoAccessor,
     private val productsAccessor: ProductsAccessor,
     private val paymentValidators: List<PaymentValidator>,
     private val paymentProcessor: PaymentProcessor,
 ) {
 
     fun makePaymentForOder(command: OrderPaymentUseCase.Command) : String {
-        if (userInfoAccessor.query(command.userId) == null)
-            throw OrderedUserNotFoundException()
-
         val order = orderRepository.findByOrderNum(command.orderNum)?: throw OrderNotFoundException()
         val orderItems = orderItemRepository.findByOrderId(order.id)
 

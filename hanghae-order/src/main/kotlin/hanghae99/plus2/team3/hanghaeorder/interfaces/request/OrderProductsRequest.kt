@@ -3,7 +3,6 @@ package hanghae99.plus2.team3.hanghaeorder.interfaces.request
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
 
 data class OrderProductsRequest(
-    val userId: Long,
     val receiverName: String,
     val receiverPhone: String,
     val receiverZipCode: String,
@@ -19,7 +18,7 @@ data class OrderProductsRequest(
         val productPrice: Long,
     )
 }
- fun OrderProductsRequest.toCommand(): RegisterOrderUseCase.Command {
+ fun OrderProductsRequest.toCommand(userId: Long): RegisterOrderUseCase.Command {
     return RegisterOrderUseCase.Command(
         userId = userId,
         receiverName = receiverName,

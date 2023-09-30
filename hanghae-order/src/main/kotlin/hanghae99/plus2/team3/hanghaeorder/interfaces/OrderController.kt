@@ -1,5 +1,7 @@
 package hanghae99.plus2.team3.hanghaeorder.interfaces
 
+import hanghae99.plus2.team3.hanghaeorder.common.CurrentUser
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.UserInfoAccessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
 import hanghae99.plus2.team3.hanghaeorder.interfaces.request.OrderProductsRequest
 import hanghae99.plus2.team3.hanghaeorder.interfaces.request.toCommand
@@ -27,9 +29,10 @@ class OrderController(
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     fun registerOrder(
-        @RequestBody orderProductsRequest: OrderProductsRequest
+        @RequestBody orderProductsRequest: OrderProductsRequest,
+        currentUser: CurrentUser,
     ) {
-        registerOrderUseCase.command(orderProductsRequest.toCommand())
+        registerOrderUseCase.command(orderProductsRequest.toCommand(currentUser.userId))
     }
 }
 

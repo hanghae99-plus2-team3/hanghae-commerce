@@ -12,13 +12,9 @@ class RegisterOrderUseCaseImpl(
     private val orderRepository: OrderRepository,
     private val orderItemRepository: OrderItemRepository,
     private val productsAccessor: ProductsAccessor,
-    private val userInfoAccessor: UserInfoAccessor,
 ) : RegisterOrderUseCase {
 
     override fun command(command: RegisterOrderUseCase.Command): String {
-        if (userInfoAccessor.query(command.userId) == null)
-            throw OrderedUserNotFoundException()
-
         val orderedProductInfo =
             productsAccessor.queryProduct(
                 command.orderItemList.map { it.productId }
