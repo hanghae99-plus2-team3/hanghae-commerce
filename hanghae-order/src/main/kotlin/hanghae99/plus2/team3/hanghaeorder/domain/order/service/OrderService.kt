@@ -8,6 +8,7 @@ import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.OrderPaymentUseCa
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentValidator
 import hanghae99.plus2.team3.hanghaeorder.exception.OrderNotFoundException
+import hanghae99.plus2.team3.hanghaeorder.exception.PaymentProcessException
 import hanghae99.plus2.team3.hanghaeorder.exception.ProductNotFoundException
 import hanghae99.plus2.team3.hanghaeorder.exception.ProductStockNotEnoughException
 import org.springframework.stereotype.Service
@@ -53,13 +54,22 @@ class OrderService(
             }
         )
 
-        paymentProcessor.pay(
-            PaymentProcessor.PaymentRequest(
-                orderNum = order.orderNum,
-                paymentVendor = command.paymentVendor,
-                paymentAmount = command.paymentAmount,
+        try{
+            paymentProcessor.pay(
+                PaymentProcessor.PaymentRequest(
+                    orderNum = order.orderNum,
+                    paymentVendor = command.paymentVendor,
+                    paymentAmount = command.paymentAmount,
+                )
             )
-        )
+        } catch (e: Exception) {
+            productsAccessor.updateProductStock(
+                orderItems.map {
+                    ProductsAccessor.UpdateProductStockRequest(it.productId, -it.quantity)
+                }
+            )
+            throw PaymentProcessException()
+        }
 
         return order.getPaymentNum()
     }
