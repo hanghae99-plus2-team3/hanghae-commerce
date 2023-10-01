@@ -1,6 +1,8 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.medium
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.config.TestConfig
+import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.OrderPaymentUseCase
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentVendor
 import hanghae99.plus2.team3.hanghaeorder.interfaces.request.OrderProductsRequest
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
@@ -71,4 +73,34 @@ class OrderApiTest {
         Assertions.assertThat(response.statusCode())
             .isEqualTo(HttpStatus.CREATED.value())
     }
+
+
+    @Test
+    fun `정상적으로 주문한 내역의 결제 요청을 하면 기대하는 응답(성공)을 반환한다`() {
+        val orderPaymentRequest = OrderPaymentRequest(
+            orderNum = "orderNum-1",
+            paymentVendor = PaymentVendor.KAKAO,
+            paymentAmount = 10000L
+        )
+
+        val response = RestAssured
+            .given().log().all()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, 1L)
+            .body(orderPaymentRequest)
+            .`when`()
+            .post("$baseUrl/payment")
+            .then().log().all()
+            .extract()
+
+        Assertions.assertThat(response.statusCode())
+            .isEqualTo(HttpStatus.OK.value())
+    }
+
 }
+
+data class OrderPaymentRequest(
+    val orderNum: String,
+    val paymentVendor: PaymentVendor,
+    val paymentAmount: Long
+)
