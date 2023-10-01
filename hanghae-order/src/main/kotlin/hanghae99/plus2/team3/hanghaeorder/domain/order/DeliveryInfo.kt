@@ -9,7 +9,7 @@ data class DeliveryInfo(
     val receiverZipCode: String,
     val receiverAddress1: String,
     val receiverAddress2: String,
-    val message: String? = null,
+    val message: String? = null
 ) {
     init {
         require(receiverName.isNotBlank()) { "수령인 이름은 필수입니다." }
@@ -18,6 +18,5 @@ data class DeliveryInfo(
         require(receiverZipCode.length == 5) { "수령인 우편번호는 5자리입니다." }
         require(receiverAddress1.isNotBlank()) { "수령인 주소는 필수입니다." }
         require(receiverAddress2.isNotBlank()) { "수령인 상세주소는 필수입니다." }
-
     }
 }

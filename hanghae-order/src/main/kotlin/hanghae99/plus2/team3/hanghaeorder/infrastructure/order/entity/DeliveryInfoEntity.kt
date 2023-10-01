@@ -1,4 +1,4 @@
-package hanghae99.plus2.team3.hanghaeorder.infrastructure
+package hanghae99.plus2.team3.hanghaeorder.infrastructure.order.entity
 
 data class DeliveryInfoEntity(
     val receiverName: String,
@@ -6,5 +6,5 @@ data class DeliveryInfoEntity(
     val receiverZipCode: String,
     val receiverAddress1: String,
     val receiverAddress2: String,
-    val message: String? = null,
+    val message: String? = null
 )

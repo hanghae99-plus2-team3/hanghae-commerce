@@ -1,10 +1,11 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.config
 
-import hanghae99.plus2.team3.hanghaeorder.domain.order.QueryProductsInfo
-import hanghae99.plus2.team3.hanghaeorder.domain.order.QueryUserInfo
-import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeQueryProductsInfoImpl
-import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeQueryUserInfoImpl
-import hanghae99.plus2.team3.hanghaeorder.infrastructure.QueryProductsInfoImpl
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.PaymentVendorCaller
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.UserInfoAccessor
+import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeKakaoPaymentVendorCaller
+import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeProductsAccessor
+import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeUserInfoAccessor
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
@@ -21,35 +22,40 @@ class TestConfig {
 
     @Primary
     @Bean
-    fun queryProductsInfo(): QueryProductsInfo =
-        FakeQueryProductsInfoImpl(
-            listOf(
-                QueryProductsInfo.ProductInfo(
+    fun queryProductsInfo(): ProductsAccessor =
+        FakeProductsAccessor(
+            mutableListOf(
+                ProductsAccessor.ProductInfo(
                     productId = 1L,
                     productName = "상품1",
                     productPrice = 2000L,
-                    productStock = 10,
+                    productStock = 10
                 ),
-                QueryProductsInfo.ProductInfo(
+                ProductsAccessor.ProductInfo(
                     productId = 2L,
                     productName = "상품2",
                     productPrice = 3000L,
-                    productStock = 5,
-                ),
-
+                    productStock = 5
                 )
+
+            )
         )
 
     @Primary
     @Bean
-    fun queryUserInfo(): QueryUserInfo =
-        FakeQueryUserInfoImpl(
+    fun queryUserInfo(): UserInfoAccessor =
+        FakeUserInfoAccessor(
             listOf(
-                QueryUserInfo.UserInfo(
+                UserInfoAccessor.UserInfo(
                     userId = 1L,
                     userName = "홍길동",
                     userEmail = "test@gmail.com"
                 )
             )
         )
+
+    @Primary
+    @Bean
+    fun paymentVendorCaller(): PaymentVendorCaller =
+        FakeKakaoPaymentVendorCaller()
 }

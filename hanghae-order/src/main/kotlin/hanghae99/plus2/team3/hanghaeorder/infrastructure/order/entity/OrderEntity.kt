@@ -1,12 +1,8 @@
-package hanghae99.plus2.team3.hanghaeorder.infrastructure
+package hanghae99.plus2.team3.hanghaeorder.infrastructure.order.entity
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.DeliveryInfo
 import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
-import jakarta.persistence.Embedded
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
+import jakarta.persistence.*
 
 @Entity
 class OrderEntity(
@@ -17,7 +13,8 @@ class OrderEntity(
     val userId: Long,
     @Embedded
     val deliveryInfo: DeliveryInfo,
-    val orderStatus: Order.OrderStatus,
+    @Enumerated(EnumType.STRING)
+    val orderStatus: Order.OrderStatus
 ) {
 
     fun toDomain() =
@@ -26,19 +23,19 @@ class OrderEntity(
             orderNum = orderNum,
             userId = userId,
             deliveryInfo = deliveryInfo,
-            orderStatus = orderStatus,
+            orderStatus = orderStatus
         )
 
     companion object {
         fun of(
             order: Order
-        ):OrderEntity{
+        ): OrderEntity {
             return OrderEntity(
                 id = order.id,
                 orderNum = order.orderNum,
                 userId = order.userId,
                 deliveryInfo = order.deliveryInfo,
-                orderStatus = order.orderStatus,
+                orderStatus = order.orderStatus
             )
         }
     }

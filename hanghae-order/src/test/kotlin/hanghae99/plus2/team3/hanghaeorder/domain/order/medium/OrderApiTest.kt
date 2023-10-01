@@ -1,17 +1,24 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.medium
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.config.TestConfig
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentVendor
+import hanghae99.plus2.team3.hanghaeorder.interfaces.request.OrderPaymentRequest
 import hanghae99.plus2.team3.hanghaeorder.interfaces.request.OrderProductsRequest
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.context.annotation.Import
+import org.springframework.core.io.ClassPathResource
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.jdbc.datasource.init.ScriptUtils
 import org.springframework.test.context.ActiveProfiles
+import javax.sql.DataSource
 
 /**
  * OrderApiTest
@@ -26,6 +33,9 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("test")
 class OrderApiTest {
 
+    @Autowired
+    lateinit var dataSource: DataSource
+
     @LocalServerPort
     val localServerPort: Int = 0
     val baseUrl = "/v1/orders"
@@ -33,12 +43,17 @@ class OrderApiTest {
     @BeforeEach
     fun setUp() {
         RestAssured.port = localServerPort
+        dataSource.connection.use { connection ->
+            ScriptUtils.executeSqlScript(
+                connection,
+                ClassPathResource("order-test-data.sql")
+            )
+        }
     }
 
     @Test
     fun `정상적으로 상품을 주문하면 기대하는 응답(성공)을 반환한다`() {
         val orderProductsRequest = OrderProductsRequest(
-            userId = 1L,
             receiverName = "홍길동",
             receiverPhone = "010-1234-5678",
             receiverZipCode = "12345",
@@ -49,18 +64,19 @@ class OrderApiTest {
                 OrderProductsRequest.OrderItemRequest(
                     productId = 1L,
                     quantity = 1,
-                    productPrice = 2000L,
+                    productPrice = 2000L
                 ),
                 OrderProductsRequest.OrderItemRequest(
                     productId = 2L,
                     quantity = 2,
-                    productPrice = 3000L,
-                ),
-            ),
+                    productPrice = 3000L
+                )
+            )
         )
         val response = RestAssured
             .given().log().all()
             .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, 1L)
             .body(orderProductsRequest)
             .`when`()
             .post(baseUrl)
@@ -70,5 +86,26 @@ class OrderApiTest {
         Assertions.assertThat(response.statusCode())
             .isEqualTo(HttpStatus.CREATED.value())
     }
-}
 
+    @Test
+    fun `정상적으로 주문한 내역의 결제 요청을 하면 기대하는 응답(성공)을 반환한다`() {
+        val orderPaymentRequest = OrderPaymentRequest(
+            orderNum = "orderNum-1",
+            paymentVendor = PaymentVendor.KAKAO,
+            paymentAmount = 10000L
+        )
+
+        val response = RestAssured
+            .given().log().all()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, 1L)
+            .body(orderPaymentRequest)
+            .`when`()
+            .post("$baseUrl/payment")
+            .then().log().all()
+            .extract()
+
+        Assertions.assertThat(response.statusCode())
+            .isEqualTo(HttpStatus.OK.value())
+    }
+}

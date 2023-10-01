@@ -15,10 +15,10 @@ interface RegisterOrderUseCase {
         val receiverAddress1: String,
         val receiverAddress2: String,
         val message: String,
-        val orderItemList: List<OrderItemCommand>,
+        val orderItemList: List<OrderItemCommand>
     ) {
 
-        fun toEntity(): Order {
+        fun toDomain(): Order {
             return Order.create(
                 userId = userId,
                 receiverName = receiverName,
@@ -26,24 +26,23 @@ interface RegisterOrderUseCase {
                 receiverZipCode = receiverZipCode,
                 receiverAddress1 = receiverAddress1,
                 receiverAddress2 = receiverAddress2,
-                message = message,
+                message = message
             )
         }
 
         data class OrderItemCommand(
             val productId: Long,
             val quantity: Int,
-            val productPrice: Long,
+            val productPrice: Long
         ) {
-            fun toEntity(orderId: Long): OrderItem {
+            fun toDomain(order: Order): OrderItem {
                 return OrderItem.create(
                     productId = productId,
                     quantity = quantity,
                     productPrice = productPrice,
-                    orderId = orderId,
+                    order = order
                 )
             }
         }
     }
 }
-

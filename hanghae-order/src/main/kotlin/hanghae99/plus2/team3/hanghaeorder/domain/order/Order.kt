@@ -7,11 +7,17 @@ data class Order(
     val orderNum: String,
     val userId: Long,
     val deliveryInfo: DeliveryInfo,
-    val orderStatus: OrderStatus,
+    val orderStatus: OrderStatus
 ) {
 
+    fun isPaymentCompleted(): Boolean {
+        return orderStatus != OrderStatus.ORDERED
+    }
 
     companion object {
+
+        private const val PAYMENT_PREFIX = "PAYMENT"
+
         fun create(
             userId: Long,
             receiverName: String,
@@ -19,7 +25,7 @@ data class Order(
             receiverZipCode: String,
             receiverAddress1: String,
             receiverAddress2: String,
-            message: String,
+            message: String
         ): Order {
             return Order(
                 id = 0L,
@@ -31,17 +37,23 @@ data class Order(
                     receiverZipCode = receiverZipCode,
                     receiverAddress1 = receiverAddress1,
                     receiverAddress2 = receiverAddress2,
-                    message = message,
+                    message = message
                 ),
-                orderStatus = OrderStatus.ORDERED,
+                orderStatus = OrderStatus.ORDERED
             )
         }
-
     }
+
+    fun getPaymentNum(): String {
+        return "$PAYMENT_PREFIX-$orderNum"
+    }
+
+    fun updateStatusToPaymentCompleted(): Order = this.copy(orderStatus = OrderStatus.PAYMENT_COMPLETED)
 
     enum class OrderStatus(
         val description: String
     ) {
-        ORDERED("주문 완료");
+        ORDERED("주문 완료"),
+        PAYMENT_COMPLETED("결제 완료");
     }
 }
