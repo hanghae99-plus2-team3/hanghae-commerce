@@ -1,7 +1,9 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.config
 
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.PaymentVendorCaller
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.UserInfoAccessor
+import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeKakaoPaymentVendorCaller
 import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeProductsAccessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeUserInfoAccessor
 import org.springframework.boot.test.context.TestConfiguration
@@ -51,4 +53,9 @@ class TestConfig {
                 )
             )
         )
+
+    @Primary
+    @Bean
+    fun paymentVendorCaller(): PaymentVendorCaller =
+        FakeKakaoPaymentVendorCaller()
 }

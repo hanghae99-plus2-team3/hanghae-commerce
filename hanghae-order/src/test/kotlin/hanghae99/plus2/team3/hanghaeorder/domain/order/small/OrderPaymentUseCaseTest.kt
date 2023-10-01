@@ -55,7 +55,7 @@ class OrderPaymentUseCaseTest {
                     PaymentRequestUserValidator(),
                     OrderItemValidator()
                 ),
-                PaymentProcessor(listOf(FakeTossErrorPaymentVendorCaller(), FakeKakaoErrorPaymentVendorCaller()))
+                PaymentProcessor(listOf(FakeTossErrorPaymentVendorCaller(), FakeKakaoPaymentVendorCaller()))
             ),
             PaymentService(paymentRepository)
         )

@@ -1,20 +1,24 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.medium
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.config.TestConfig
-import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.OrderPaymentUseCase
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentVendor
+import hanghae99.plus2.team3.hanghaeorder.interfaces.request.OrderPaymentRequest
 import hanghae99.plus2.team3.hanghaeorder.interfaces.request.OrderProductsRequest
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.context.annotation.Import
+import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.jdbc.datasource.init.ScriptUtils
 import org.springframework.test.context.ActiveProfiles
+import javax.sql.DataSource
 
 /**
  * OrderApiTest
@@ -29,6 +33,9 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("test")
 class OrderApiTest {
 
+    @Autowired
+    lateinit var dataSource:DataSource
+
     @LocalServerPort
     val localServerPort: Int = 0
     val baseUrl = "/v1/orders"
@@ -36,6 +43,12 @@ class OrderApiTest {
     @BeforeEach
     fun setUp() {
         RestAssured.port = localServerPort
+        dataSource.connection.use { connection ->
+            ScriptUtils.executeSqlScript(
+                connection,
+                ClassPathResource("order-test-data.sql")
+            )
+        }
     }
 
     @Test
@@ -98,9 +111,3 @@ class OrderApiTest {
     }
 
 }
-
-data class OrderPaymentRequest(
-    val orderNum: String,
-    val paymentVendor: PaymentVendor,
-    val paymentAmount: Long
-)

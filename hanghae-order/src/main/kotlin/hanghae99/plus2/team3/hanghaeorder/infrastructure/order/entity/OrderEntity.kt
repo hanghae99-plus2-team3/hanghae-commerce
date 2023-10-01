@@ -2,11 +2,7 @@ package hanghae99.plus2.team3.hanghaeorder.infrastructure.order.entity
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.DeliveryInfo
 import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
-import jakarta.persistence.Embedded
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
+import jakarta.persistence.*
 
 @Entity
 class OrderEntity(
@@ -17,6 +13,7 @@ class OrderEntity(
     val userId: Long,
     @Embedded
     val deliveryInfo: DeliveryInfo,
+    @Enumerated(EnumType.STRING)
     val orderStatus: Order.OrderStatus
 ) {
 

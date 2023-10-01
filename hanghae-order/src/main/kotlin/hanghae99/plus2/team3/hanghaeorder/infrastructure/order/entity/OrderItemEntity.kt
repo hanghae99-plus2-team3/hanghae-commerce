@@ -14,6 +14,7 @@ class OrderItemEntity(
     val productId: Long,
     val quantity: Int,
     val productPrice: Long,
+    @Enumerated(EnumType.STRING)
     val deliveryStatus: OrderItem.DeliveryStatus
 ) {
 
