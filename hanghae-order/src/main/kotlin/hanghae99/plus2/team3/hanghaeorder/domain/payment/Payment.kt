@@ -6,6 +6,7 @@ data class Payment(
     val paymentVendor: PaymentVendor,
     val paymentAmount: Long,
     val success: Boolean,
+    val paymentResultCode: PaymentResultCode,
 ){
     companion object{
         fun createSuccessPayment(
@@ -19,6 +20,7 @@ data class Payment(
                 paymentVendor = paymentVendor,
                 paymentAmount = paymentAmount,
                 success = true,
+                paymentResultCode = PaymentResultCode.PAYMENT_SUCCESS,
             )
         }
 
@@ -26,6 +28,7 @@ data class Payment(
             paymentNum: String,
             paymentVendor: PaymentVendor,
             paymentAmount: Long,
+            paymentResultCode: PaymentResultCode,
         ): Payment {
             return Payment(
                 id = 0L,
@@ -33,6 +36,7 @@ data class Payment(
                 paymentVendor = paymentVendor,
                 paymentAmount = paymentAmount,
                 success = false,
+                paymentResultCode = paymentResultCode,
             )
         }
     }

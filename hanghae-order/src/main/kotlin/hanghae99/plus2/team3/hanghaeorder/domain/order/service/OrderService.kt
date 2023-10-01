@@ -1,5 +1,6 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.service
 
+import hanghae99.plus2.team3.hanghaeorder.common.exception.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
 import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
@@ -9,10 +10,9 @@ import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentProcessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.OrderPaymentUseCase
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentValidator
-import hanghae99.plus2.team3.hanghaeorder.common.exception.PaymentProcessException
-import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductNotFoundException
-import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductStockNotEnoughException
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.Payment
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentProcessor.*
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentResultCode
 import org.springframework.stereotype.Service
 
 /**
@@ -44,26 +44,32 @@ class OrderService(
         return savedOrder.orderNum
     }
 
-    fun makePaymentForOder(command: OrderPaymentUseCase.Command) : Payment {
+    fun makePaymentForOder(command: OrderPaymentUseCase.Command): Payment {
         val order = orderRepository.getByOrderNum(command.orderNum)
         val orderItems = orderItemRepository.findByOrderId(order.id)
 
         validatePayment(order, orderItems, command)
         reduceProductStock(orderItems)
 
-        val paymentRequest = PaymentProcessor.PaymentRequest(
-            paymentNum = order.getPaymentNum(),
-            paymentVendor = command.paymentVendor,
-            paymentAmount = command.paymentAmount,
-        )
-        return try{
-            processPayment(paymentRequest)
+        return try {
+            processPayment(
+                PaymentRequest(
+                    paymentNum = order.getPaymentNum(),
+                    paymentVendor = command.paymentVendor,
+                    paymentAmount = command.paymentAmount,
+                )
+            )
         } catch (e: Exception) {
             rollbackProductStock(orderItems)
             return Payment.createFailPayment(
                 paymentNum = order.getPaymentNum(),
                 paymentVendor = command.paymentVendor,
                 paymentAmount = command.paymentAmount,
+                paymentResultCode = when (e) {
+                    is PaymentException -> e.paymentResultCode
+                    else -> PaymentResultCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT
+                }
+
             )
         }
     }
@@ -77,7 +83,7 @@ class OrderService(
     }
 
     private fun processPayment(
-        paymentRequest: PaymentProcessor.PaymentRequest
+        paymentRequest: PaymentRequest
     ) = paymentProcessor.pay(paymentRequest)
 
 

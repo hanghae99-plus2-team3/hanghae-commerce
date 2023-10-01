@@ -19,6 +19,6 @@ class PaymentService(
     fun savePaymentRequestLog(payment: Payment) {
         paymentRepository.save(payment)
         if(! payment.success)
-            throw PaymentProcessException()
+            throw PaymentProcessException(payment.paymentResultCode)
     }
 }

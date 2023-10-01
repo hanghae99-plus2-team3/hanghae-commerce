@@ -1,6 +1,7 @@
 package hanghae99.plus2.team3.hanghaeorder.infrastructure.payment.entity
 
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.Payment
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentResultCode
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentVendor
 import jakarta.persistence.*
 
@@ -21,6 +22,7 @@ class PaymentEntity(
     val paymentVendor: PaymentVendor,
     val paymentAmount: Long,
     val success: Boolean,
+    val paymentResultCode: PaymentResultCode,
 ){
 
     fun toDomain() =
@@ -30,6 +32,7 @@ class PaymentEntity(
             paymentVendor = paymentVendor,
             paymentAmount = paymentAmount,
             success = success,
+            paymentResultCode = paymentResultCode,
         )
 
     companion object {
@@ -42,6 +45,7 @@ class PaymentEntity(
                 paymentVendor = payment.paymentVendor,
                 paymentAmount = payment.paymentAmount,
                 success = payment.success,
+                paymentResultCode = payment.paymentResultCode,
             )
         }
     }
