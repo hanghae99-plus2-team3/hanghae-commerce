@@ -30,6 +30,8 @@ data class OrderItem(
         }
     }
 
+    fun updateStatusToPaymentCompleted(): OrderItem = this.copy(deliveryStatus = DeliveryStatus.READY)
+
     enum class DeliveryStatus(
         val description: String
     ) {

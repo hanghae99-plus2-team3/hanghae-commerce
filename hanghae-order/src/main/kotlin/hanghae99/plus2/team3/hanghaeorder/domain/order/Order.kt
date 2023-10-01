@@ -48,6 +48,9 @@ data class Order(
         return "$PAYMENT_PREFIX-$orderNum"
     }
 
+    fun updateStatusToPaymentCompleted() : Order = this.copy(orderStatus = OrderStatus.PAYMENT_COMPLETED)
+
+
     enum class OrderStatus(
         val description: String
     ) {

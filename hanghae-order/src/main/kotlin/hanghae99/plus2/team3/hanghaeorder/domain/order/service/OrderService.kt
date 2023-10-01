@@ -52,13 +52,15 @@ class OrderService(
         reduceProductStock(orderItems)
 
         return try {
-            processPayment(
+            val payment = processPayment(
                 PaymentRequest(
                     paymentNum = order.getPaymentNum(),
                     paymentVendor = command.paymentVendor,
                     paymentAmount = command.paymentAmount
                 )
             )
+            updateStatusToPaymentCompleted(order, orderItems)
+            return payment
         } catch (e: Exception) {
             rollbackProductStock(orderItems)
             return Payment.createFailPayment(
@@ -70,6 +72,16 @@ class OrderService(
                     else -> PaymentResultCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT
                 }
             )
+        }
+    }
+
+    private fun updateStatusToPaymentCompleted(
+        order: Order,
+        orderItems: List<OrderItem>
+    ) {
+        orderRepository.save(order.updateStatusToPaymentCompleted())
+        orderItems.forEach {
+            orderItemRepository.save(it.updateStatusToPaymentCompleted())
         }
     }
 
