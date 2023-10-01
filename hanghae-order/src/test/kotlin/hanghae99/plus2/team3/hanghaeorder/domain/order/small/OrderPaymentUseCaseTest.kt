@@ -72,6 +72,13 @@ class OrderPaymentUseCaseTest {
             )
         )
         assertThat(paymentId).isNotNull
+
+        val savedOrder = orderRepository.getByOrderNum("orderNum-1")
+        val savedOrderItems = orderItemRepository.findByOrderId(savedOrder.id)
+        assertThat(savedOrder.orderStatus).isEqualTo(Order.OrderStatus.PAYMENT_COMPLETED)
+        savedOrderItems.forEach {
+            assertThat(it.deliveryStatus).isEqualTo(OrderItem.DeliveryStatus.READY)
+        }
     }
 
     @Test
