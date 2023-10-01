@@ -147,7 +147,7 @@ class OrderPaymentUseCaseTest {
                 )
             )
         }.isInstanceOf(PaymentProcessException::class.java)
-            .hasMessage(ErrorCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT.message)
+            .hasMessage(PaymentResultCode.TIMEOUT_WHEN_PROCESSING_PAYMENT.message)
     }
 
     @Test
@@ -162,7 +162,7 @@ class OrderPaymentUseCaseTest {
                 )
             )
         }.isInstanceOf(PaymentProcessException::class.java)
-            .hasMessage(ErrorCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT.message)
+            .hasMessage(PaymentResultCode.NOT_SUPPORTED_PAYMENT_VENDOR.message)
     }
 
     @Test
@@ -177,7 +177,7 @@ class OrderPaymentUseCaseTest {
                 )
             )
         }.isInstanceOf(PaymentProcessException::class.java)
-            .hasMessage(ErrorCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT.message)
+            .hasMessage(PaymentResultCode.TIMEOUT_WHEN_PROCESSING_PAYMENT.message)
 
         val orderItems = orderItemRepository.findByOrderId(1L)
         assertThat(orderItems[0].quantity).isEqualTo(5)
@@ -215,16 +215,16 @@ class OrderPaymentUseCaseTest {
                 )
             )
         }.isInstanceOf(PaymentProcessException::class.java)
-            .hasMessage(ErrorCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT.message)
+            .hasMessage(PaymentResultCode.TIMEOUT_WHEN_PROCESSING_PAYMENT.message)
 
 
         val paymentRequests = paymentRepository.paymentRequests
         assertThat(paymentRequests.size).isEqualTo(1)
         assertThat(paymentRequests[0].paymentNum).isEqualTo("PAYMENT-orderNum-1")
-        assertThat(paymentRequests[0].paymentVendor).isEqualTo(PaymentVendor.KAKAO)
+        assertThat(paymentRequests[0].paymentVendor).isEqualTo(PaymentVendor.TOSS)
         assertThat(paymentRequests[0].paymentAmount).isEqualTo(10000L)
-        assertThat(paymentRequests[0].success).isEqualTo(true)
-        assertThat(paymentRequests[0].paymentResultCode).isEqualTo(PaymentResultCode.NOT_SUPPORTED_PAYMENT_VENDOR)
+        assertThat(paymentRequests[0].success).isEqualTo(false)
+        assertThat(paymentRequests[0].paymentResultCode).isEqualTo(PaymentResultCode.TIMEOUT_WHEN_PROCESSING_PAYMENT)
     }
 
 
