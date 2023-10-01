@@ -14,11 +14,12 @@ class FakeProductsAccessor(
     override fun updateProductStock(updateProductStock: List<ProductsAccessor.UpdateProductStockRequest>) {
         updateProductStock.forEach {
             val product = productInfo.find { product -> product.productId == it.productId }
-            if (product != null && product.productStock >= it.updateStockCount )
-                    productInfo[productInfo.indexOf(product)] =
-                        product.copy(productStock = product.productStock - it.updateStockCount)
-            else throw OrderedItemOutOfStockException()
+            if (product != null && product.productStock >= it.updateStockCount) {
+                productInfo[productInfo.indexOf(product)] =
+                    product.copy(productStock = product.productStock - it.updateStockCount)
+            } else {
+                throw OrderedItemOutOfStockException()
+            }
         }
-
     }
 }

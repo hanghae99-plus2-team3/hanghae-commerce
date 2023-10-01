@@ -6,7 +6,7 @@ data class OrderItem(
     val productId: Long,
     val quantity: Int,
     val productPrice: Long,
-    val deliveryStatus: DeliveryStatus,
+    val deliveryStatus: DeliveryStatus
 ) {
 
     companion object {
@@ -14,9 +14,8 @@ data class OrderItem(
             order: Order,
             productId: Long,
             quantity: Int,
-            productPrice: Long,
+            productPrice: Long
         ): OrderItem {
-
             require(quantity > 0) { "상품 수량은 0보다 커야 합니다." }
             require(productPrice > 0) { "상품 가격은 0보다 커야 합니다." }
 
@@ -26,7 +25,7 @@ data class OrderItem(
                 productId = productId,
                 quantity = quantity,
                 productPrice = productPrice,
-                deliveryStatus = DeliveryStatus.BEFORE_PAYMENT,
+                deliveryStatus = DeliveryStatus.BEFORE_PAYMENT
             )
         }
     }

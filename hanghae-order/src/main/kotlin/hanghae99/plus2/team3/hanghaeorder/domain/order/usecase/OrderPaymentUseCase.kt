@@ -9,6 +9,6 @@ interface OrderPaymentUseCase {
         val orderNum: String,
         val userId: Long,
         val paymentVendor: PaymentVendor,
-        val paymentAmount: Long,
+        val paymentAmount: Long
     )
 }

@@ -1,18 +1,18 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.payment
 
 data class Payment(
-    val id : Long,
+    val id: Long,
     val paymentNum: String,
     val paymentVendor: PaymentVendor,
     val paymentAmount: Long,
     val success: Boolean,
-    val paymentResultCode: PaymentResultCode,
-){
-    companion object{
+    val paymentResultCode: PaymentResultCode
+) {
+    companion object {
         fun createSuccessPayment(
             paymentNum: String,
             paymentVendor: PaymentVendor,
-            paymentAmount: Long,
+            paymentAmount: Long
         ): Payment {
             return Payment(
                 id = 0L,
@@ -20,7 +20,7 @@ data class Payment(
                 paymentVendor = paymentVendor,
                 paymentAmount = paymentAmount,
                 success = true,
-                paymentResultCode = PaymentResultCode.PAYMENT_SUCCESS,
+                paymentResultCode = PaymentResultCode.PAYMENT_SUCCESS
             )
         }
 
@@ -28,7 +28,7 @@ data class Payment(
             paymentNum: String,
             paymentVendor: PaymentVendor,
             paymentAmount: Long,
-            paymentResultCode: PaymentResultCode,
+            paymentResultCode: PaymentResultCode
         ): Payment {
             return Payment(
                 id = 0L,
@@ -36,7 +36,7 @@ data class Payment(
                 paymentVendor = paymentVendor,
                 paymentAmount = paymentAmount,
                 success = false,
-                paymentResultCode = paymentResultCode,
+                paymentResultCode = paymentResultCode
             )
         }
     }

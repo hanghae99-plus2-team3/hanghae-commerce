@@ -22,8 +22,8 @@ class PaymentEntity(
     val paymentVendor: PaymentVendor,
     val paymentAmount: Long,
     val success: Boolean,
-    val paymentResultCode: PaymentResultCode,
-){
+    val paymentResultCode: PaymentResultCode
+) {
 
     fun toDomain() =
         Payment(
@@ -32,7 +32,7 @@ class PaymentEntity(
             paymentVendor = paymentVendor,
             paymentAmount = paymentAmount,
             success = success,
-            paymentResultCode = paymentResultCode,
+            paymentResultCode = paymentResultCode
         )
 
     companion object {
@@ -45,9 +45,8 @@ class PaymentEntity(
                 paymentVendor = payment.paymentVendor,
                 paymentAmount = payment.paymentAmount,
                 success = payment.success,
-                paymentResultCode = payment.paymentResultCode,
+                paymentResultCode = payment.paymentResultCode
             )
         }
     }
 }
-

@@ -63,13 +63,12 @@ class OrderPaymentUseCaseTest {
 
     @Test
     fun `정상적으로 주문한 내역의 결제 요청을 하면 기대하는 응답(성공)을 반환한다`() {
-
         val paymentId = sut.command(
             OrderPaymentUseCase.Command(
                 orderNum = "orderNum-1",
                 userId = 1L,
                 paymentVendor = PaymentVendor.KAKAO,
-                paymentAmount = 10000L,
+                paymentAmount = 10000L
             )
         )
         assertThat(paymentId).isNotNull
@@ -83,7 +82,7 @@ class OrderPaymentUseCaseTest {
                     orderNum = "orderNum-999",
                     userId = 1L,
                     paymentVendor = PaymentVendor.TOSS,
-                    paymentAmount = 5000L,
+                    paymentAmount = 5000L
                 )
             )
         }.isInstanceOf(OrderNotFoundException::class.java)
@@ -98,7 +97,7 @@ class OrderPaymentUseCaseTest {
                     orderNum = "orderNum-1",
                     userId = 2L,
                     paymentVendor = PaymentVendor.TOSS,
-                    paymentAmount = 10000L,
+                    paymentAmount = 10000L
                 )
             )
         }.isInstanceOf(OrderInfoNotValidException::class.java)
@@ -113,7 +112,7 @@ class OrderPaymentUseCaseTest {
                     orderNum = "orderNum-1",
                     userId = 1L,
                     paymentVendor = PaymentVendor.TOSS,
-                    paymentAmount = 5000L,
+                    paymentAmount = 5000L
                 )
             )
         }.isInstanceOf(OrderedPriceNotMatchException::class.java)
@@ -128,7 +127,7 @@ class OrderPaymentUseCaseTest {
                     orderNum = "orderNum-4",
                     userId = 1L,
                     paymentVendor = PaymentVendor.TOSS,
-                    paymentAmount = 6000L,
+                    paymentAmount = 6000L
                 )
             )
         }.isInstanceOf(OrderAlreadyPayedException::class.java)
@@ -143,7 +142,7 @@ class OrderPaymentUseCaseTest {
                     orderNum = "orderNum-1",
                     userId = 1L,
                     paymentVendor = PaymentVendor.TOSS,
-                    paymentAmount = 10000L,
+                    paymentAmount = 10000L
                 )
             )
         }.isInstanceOf(PaymentProcessException::class.java)
@@ -158,7 +157,7 @@ class OrderPaymentUseCaseTest {
                     orderNum = "orderNum-1",
                     userId = 1L,
                     paymentVendor = PaymentVendor.NAVER,
-                    paymentAmount = 10000L,
+                    paymentAmount = 10000L
                 )
             )
         }.isInstanceOf(PaymentProcessException::class.java)
@@ -173,7 +172,7 @@ class OrderPaymentUseCaseTest {
                     orderNum = "orderNum-1",
                     userId = 1L,
                     paymentVendor = PaymentVendor.TOSS,
-                    paymentAmount = 10000L,
+                    paymentAmount = 10000L
                 )
             )
         }.isInstanceOf(PaymentProcessException::class.java)
@@ -190,7 +189,7 @@ class OrderPaymentUseCaseTest {
                 orderNum = "orderNum-1",
                 userId = 1L,
                 paymentVendor = PaymentVendor.KAKAO,
-                paymentAmount = 10000L,
+                paymentAmount = 10000L
             )
         )
         assertThat(paymentId).isNotNull
@@ -211,12 +210,11 @@ class OrderPaymentUseCaseTest {
                     orderNum = "orderNum-1",
                     userId = 1L,
                     paymentVendor = PaymentVendor.TOSS,
-                    paymentAmount = 10000L,
+                    paymentAmount = 10000L
                 )
             )
         }.isInstanceOf(PaymentProcessException::class.java)
             .hasMessage(PaymentResultCode.TIMEOUT_WHEN_PROCESSING_PAYMENT.message)
-
 
         val paymentRequests = paymentRepository.paymentRequests
         assertThat(paymentRequests.size).isEqualTo(1)
@@ -227,30 +225,34 @@ class OrderPaymentUseCaseTest {
         assertThat(paymentRequests[0].paymentResultCode).isEqualTo(PaymentResultCode.TIMEOUT_WHEN_PROCESSING_PAYMENT)
     }
 
-
-
-
-
     private fun prepareTest() {
         val users = listOf(
             UserInfoAccessor.UserInfo(userId = 1L, userName = "홍길동", userEmail = "test@gmail.com"),
-            UserInfoAccessor.UserInfo(userId = 2L, userName = "임꺽정", userEmail = "test2@gmail.com"),
+            UserInfoAccessor.UserInfo(userId = 2L, userName = "임꺽정", userEmail = "test2@gmail.com")
         )
         val productsInStock = mutableListOf(
             ProductInfo(productId = 1L, productName = "상품1", productPrice = 2000L, productStock = 5),
-            ProductInfo(productId = 2L, productName = "상품2", productPrice = 3000L, productStock = 5),
+            ProductInfo(productId = 2L, productName = "상품2", productPrice = 3000L, productStock = 5)
         )
         val orders = listOf(
             Order(
-                1L, "orderNum-1", 1L,
+                1L,
+                "orderNum-1",
+                1L,
                 DeliveryInfo("홍길동", "010-1234-5678", "13254", "서울시 강남구", "123-456"),
                 Order.OrderStatus.ORDERED
-            ), Order(
-                2L, "orderNum-3", 1L,
+            ),
+            Order(
+                2L,
+                "orderNum-3",
+                1L,
                 DeliveryInfo("홍길동", "010-1234-5678", "13254", "서울시 강남구", "123-456"),
                 Order.OrderStatus.ORDERED
-            ), Order(
-                3L, "orderNum-4", 1L,
+            ),
+            Order(
+                3L,
+                "orderNum-4",
+                1L,
                 DeliveryInfo("홍길동", "010-1234-5678", "13254", "서울시 강남구", "123-456"),
                 Order.OrderStatus.PAYMENT_COMPLETED
             )
@@ -258,15 +260,13 @@ class OrderPaymentUseCaseTest {
         val orderItems = listOf(
             OrderItem(1L, orders[0], 1L, 5, 2000L, OrderItem.DeliveryStatus.BEFORE_PAYMENT),
             OrderItem(2L, orders[1], 2L, 6, 3000L, OrderItem.DeliveryStatus.BEFORE_PAYMENT),
-            OrderItem(3L, orders[2], 2L, 2, 3000L, OrderItem.DeliveryStatus.READY),
+            OrderItem(3L, orders[2], 2L, 2, 3000L, OrderItem.DeliveryStatus.READY)
 
-            )
+        )
 
         orderRepository = FakeOrderRepositoryImpl(orders)
         orderItemRepository = FakeOrderItemRepositoryImpl(orderItems)
         productsAccessor = FakeProductsAccessor(productsInStock)
         userAccessor = FakeUserInfoAccessor(users)
     }
-
 }
-

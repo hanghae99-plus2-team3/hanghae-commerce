@@ -20,6 +20,6 @@ class PaymentProcessor(
     data class PaymentRequest(
         val paymentNum: String,
         val paymentVendor: PaymentVendor,
-        val paymentAmount: Long,
+        val paymentAmount: Long
     )
 }

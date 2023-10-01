@@ -49,14 +49,14 @@ class OrderApiTest {
                 OrderProductsRequest.OrderItemRequest(
                     productId = 1L,
                     quantity = 1,
-                    productPrice = 2000L,
+                    productPrice = 2000L
                 ),
                 OrderProductsRequest.OrderItemRequest(
                     productId = 2L,
                     quantity = 2,
-                    productPrice = 3000L,
-                ),
-            ),
+                    productPrice = 3000L
+                )
+            )
         )
         val response = RestAssured
             .given().log().all()
@@ -72,4 +72,3 @@ class OrderApiTest {
             .isEqualTo(HttpStatus.CREATED.value())
     }
 }
-

@@ -6,11 +6,10 @@ import org.springframework.stereotype.Component
 
 @Component
 class RegisterOrderUseCaseImpl(
-    private val orderService: OrderService,
+    private val orderService: OrderService
 ) : RegisterOrderUseCase {
 
     override fun command(command: RegisterOrderUseCase.Command): String {
         return orderService.makeOrder(command)
     }
-
 }

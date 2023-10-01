@@ -1,7 +1,7 @@
 package hanghae99.plus2.team3.hanghaeorder.common.exception
 
 enum class ErrorCode(
-    val message: String,
+    val message: String
 ) {
     NOT_ENOUGH_STOCK("주문할 상품의 재고가 부족합니다."),
     PRODUCT_NOT_FOUND("주문할 상품이 존재하지 않습니다."),

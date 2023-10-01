@@ -14,11 +14,12 @@ import org.springframework.stereotype.Service
  */
 @Service
 class PaymentService(
-    private val paymentRepository: PaymentRepository,
+    private val paymentRepository: PaymentRepository
 ) {
     fun savePaymentRequestLog(payment: Payment) {
         paymentRepository.save(payment)
-        if(! payment.success)
+        if (!payment.success) {
             throw PaymentProcessException(payment.paymentResultCode)
+        }
     }
 }

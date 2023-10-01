@@ -10,5 +10,5 @@ package hanghae99.plus2.team3.hanghaeorder.common
 data class CurrentUser(
     val userId: Long,
     val userName: String,
-    val userEmail: String,
+    val userEmail: String
 )

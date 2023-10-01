@@ -18,8 +18,8 @@ import org.springframework.web.method.support.ModelAndViewContainer
 
 @Component
 class AuthArgumentResolver : HandlerMethodArgumentResolver {
-    override fun supportsParameter(parameter: MethodParameter): Boolean
-    = parameter.parameterType == CurrentUser::class.java
+    override fun supportsParameter(parameter: MethodParameter): Boolean =
+        parameter.parameterType == CurrentUser::class.java
 
     override fun resolveArgument(
         parameter: MethodParameter,
@@ -27,5 +27,4 @@ class AuthArgumentResolver : HandlerMethodArgumentResolver {
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?
     ): Any? = AuthFilter.authThreadLocal.get()
-
 }

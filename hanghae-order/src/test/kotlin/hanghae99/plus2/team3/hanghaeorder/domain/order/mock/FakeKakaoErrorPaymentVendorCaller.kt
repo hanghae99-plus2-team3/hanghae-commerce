@@ -14,7 +14,7 @@ class FakeKakaoErrorPaymentVendorCaller : PaymentVendorCaller {
         return Payment.createSuccessPayment(
             paymentNum = request.paymentNum,
             paymentVendor = request.paymentVendor,
-            paymentAmount = request.paymentAmount,
+            paymentAmount = request.paymentAmount
         )
     }
 }

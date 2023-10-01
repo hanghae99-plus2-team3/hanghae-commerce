@@ -10,9 +10,8 @@ import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentResultCode
  * @since 2023/10/01
  */
 open class PaymentException(
-     val paymentResultCode: PaymentResultCode
+    val paymentResultCode: PaymentResultCode
 ) : RuntimeException(paymentResultCode.message)
-
 
 class PaymentProcessException(paymentResultCode: PaymentResultCode) : PaymentException(paymentResultCode)
 class NotSupportedPaymentVendorException : PaymentException(PaymentResultCode.NOT_SUPPORTED_PAYMENT_VENDOR)

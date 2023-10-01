@@ -9,16 +9,16 @@ data class OrderProductsRequest(
     val receiverAddress1: String,
     val receiverAddress2: String,
     val message: String,
-    val orderItemList: List<OrderItemRequest>,
+    val orderItemList: List<OrderItemRequest>
 ) {
 
     data class OrderItemRequest(
         val productId: Long,
         val quantity: Int,
-        val productPrice: Long,
+        val productPrice: Long
     )
 }
- fun OrderProductsRequest.toCommand(userId: Long): RegisterOrderUseCase.Command {
+fun OrderProductsRequest.toCommand(userId: Long): RegisterOrderUseCase.Command {
     return RegisterOrderUseCase.Command(
         userId = userId,
         receiverName = receiverName,
@@ -31,8 +31,8 @@ data class OrderProductsRequest(
             RegisterOrderUseCase.Command.OrderItemCommand(
                 productId = it.productId,
                 quantity = it.quantity,
-                productPrice = it.productPrice,
+                productPrice = it.productPrice
             )
-        },
+        }
     )
 }

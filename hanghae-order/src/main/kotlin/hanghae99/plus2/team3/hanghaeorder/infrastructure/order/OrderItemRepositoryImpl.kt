@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository
  */
 @Repository
 class OrderItemRepositoryImpl(
-    private val orderItemJpaRepository: OrderItemJpaRepository,
+    private val orderItemJpaRepository: OrderItemJpaRepository
 ) : OrderItemRepository {
     override fun save(orderItem: OrderItem): OrderItem {
         return orderItemJpaRepository.save(OrderItemEntity.of(orderItem)).toDomain()

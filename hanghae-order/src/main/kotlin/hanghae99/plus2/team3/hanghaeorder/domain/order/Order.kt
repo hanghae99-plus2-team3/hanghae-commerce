@@ -7,10 +7,8 @@ data class Order(
     val orderNum: String,
     val userId: Long,
     val deliveryInfo: DeliveryInfo,
-    val orderStatus: OrderStatus,
+    val orderStatus: OrderStatus
 ) {
-
-
 
     fun isPaymentCompleted(): Boolean {
         return orderStatus != OrderStatus.ORDERED
@@ -27,7 +25,7 @@ data class Order(
             receiverZipCode: String,
             receiverAddress1: String,
             receiverAddress2: String,
-            message: String,
+            message: String
         ): Order {
             return Order(
                 id = 0L,
@@ -39,12 +37,11 @@ data class Order(
                     receiverZipCode = receiverZipCode,
                     receiverAddress1 = receiverAddress1,
                     receiverAddress2 = receiverAddress2,
-                    message = message,
+                    message = message
                 ),
-                orderStatus = OrderStatus.ORDERED,
+                orderStatus = OrderStatus.ORDERED
             )
         }
-
     }
 
     fun getPaymentNum(): String {

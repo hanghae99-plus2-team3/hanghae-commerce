@@ -27,16 +27,16 @@ class TestConfig {
                     productId = 1L,
                     productName = "상품1",
                     productPrice = 2000L,
-                    productStock = 10,
+                    productStock = 10
                 ),
                 ProductsAccessor.ProductInfo(
                     productId = 2L,
                     productName = "상품2",
                     productPrice = 3000L,
-                    productStock = 5,
-                ),
-
+                    productStock = 5
                 )
+
+            )
         )
 
     @Primary

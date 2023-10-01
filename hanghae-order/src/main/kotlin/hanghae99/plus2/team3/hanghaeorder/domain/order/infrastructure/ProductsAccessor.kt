@@ -6,12 +6,12 @@ interface ProductsAccessor {
 
     data class UpdateProductStockRequest(
         val productId: Long,
-        val updateStockCount: Int,
+        val updateStockCount: Int
     )
-    data class ProductInfo (
+    data class ProductInfo(
         val productId: Long,
         val productName: String,
         val productPrice: Long,
-        val productStock: Int,
+        val productStock: Int
     )
 }

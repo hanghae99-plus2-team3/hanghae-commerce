@@ -29,7 +29,7 @@ class OrderService(
     private val orderItemRepository: OrderItemRepository,
     private val productsAccessor: ProductsAccessor,
     private val paymentValidators: List<PaymentValidator>,
-    private val paymentProcessor: PaymentProcessor,
+    private val paymentProcessor: PaymentProcessor
 ) {
 
     fun makeOrder(command: RegisterOrderUseCase.Command): String {
@@ -56,7 +56,7 @@ class OrderService(
                 PaymentRequest(
                     paymentNum = order.getPaymentNum(),
                     paymentVendor = command.paymentVendor,
-                    paymentAmount = command.paymentAmount,
+                    paymentAmount = command.paymentAmount
                 )
             )
         } catch (e: Exception) {
@@ -69,7 +69,6 @@ class OrderService(
                     is PaymentException -> e.paymentResultCode
                     else -> PaymentResultCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT
                 }
-
             )
         }
     }
@@ -86,7 +85,6 @@ class OrderService(
         paymentRequest: PaymentRequest
     ) = paymentProcessor.pay(paymentRequest)
 
-
     private fun reduceProductStock(orderItems: List<OrderItem>) {
         productsAccessor.updateProductStock(
             orderItems.map {
@@ -102,7 +100,6 @@ class OrderService(
     ) {
         paymentValidators.forEach { it.validate(order, orderItems, command) }
     }
-
 
     private fun validateOrderedProducts(
         command: RegisterOrderUseCase.Command,
@@ -124,6 +121,4 @@ class OrderService(
             command.orderItemList.map { it.productId }
         )
     }
-
-
 }

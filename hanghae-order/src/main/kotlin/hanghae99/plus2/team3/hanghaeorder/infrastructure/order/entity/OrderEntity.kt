@@ -17,7 +17,7 @@ class OrderEntity(
     val userId: Long,
     @Embedded
     val deliveryInfo: DeliveryInfo,
-    val orderStatus: Order.OrderStatus,
+    val orderStatus: Order.OrderStatus
 ) {
 
     fun toDomain() =
@@ -26,7 +26,7 @@ class OrderEntity(
             orderNum = orderNum,
             userId = userId,
             deliveryInfo = deliveryInfo,
-            orderStatus = orderStatus,
+            orderStatus = orderStatus
         )
 
     companion object {
@@ -38,7 +38,7 @@ class OrderEntity(
                 orderNum = order.orderNum,
                 userId = order.userId,
                 deliveryInfo = order.deliveryInfo,
-                orderStatus = order.orderStatus,
+                orderStatus = order.orderStatus
             )
         }
     }

@@ -11,31 +11,34 @@ interface PaymentValidator {
     fun validate(order: Order, orderItems: List<OrderItem>, command: OrderPaymentUseCase.Command)
 }
 
-
 class PaymentTotalValidator : PaymentValidator {
     override fun validate(order: Order, orderItems: List<OrderItem>, command: OrderPaymentUseCase.Command) {
-        if (orderItems.sumOf { it.productPrice * it.quantity } != command.paymentAmount)
+        if (orderItems.sumOf { it.productPrice * it.quantity } != command.paymentAmount) {
             throw OrderedPriceNotMatchException()
+        }
     }
 }
 
 class OrderStatusValidator : PaymentValidator {
     override fun validate(order: Order, orderItems: List<OrderItem>, command: OrderPaymentUseCase.Command) {
-        if (order.isPaymentCompleted())
+        if (order.isPaymentCompleted()) {
             throw OrderAlreadyPayedException()
+        }
     }
 }
 
-class PaymentRequestUserValidator: PaymentValidator {
+class PaymentRequestUserValidator : PaymentValidator {
     override fun validate(order: Order, orderItems: List<OrderItem>, command: OrderPaymentUseCase.Command) {
-        if (order.userId != command.userId)
+        if (order.userId != command.userId) {
             throw OrderInfoNotValidException()
+        }
     }
 }
 
 class OrderItemValidator : PaymentValidator {
     override fun validate(order: Order, orderItems: List<OrderItem>, command: OrderPaymentUseCase.Command) {
-        if (orderItems.isEmpty())
+        if (orderItems.isEmpty()) {
             throw OrderInfoNotValidException()
+        }
     }
 }

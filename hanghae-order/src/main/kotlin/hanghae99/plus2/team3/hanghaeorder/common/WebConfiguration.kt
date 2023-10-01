@@ -20,7 +20,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 class WebConfiguration(
     private val userInfoAccessor: UserInfoAccessor,
     private val authArgumentResolver: AuthArgumentResolver
-): WebMvcConfigurer {
+) : WebMvcConfigurer {
 
     @Bean
     fun authFilter(): FilterRegistrationBean<AuthFilter> {
@@ -29,7 +29,6 @@ class WebConfiguration(
         registrationBean.addUrlPatterns("/v1/orders/*")
         return registrationBean
     }
-
 
     override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {
         resolvers.add(authArgumentResolver)

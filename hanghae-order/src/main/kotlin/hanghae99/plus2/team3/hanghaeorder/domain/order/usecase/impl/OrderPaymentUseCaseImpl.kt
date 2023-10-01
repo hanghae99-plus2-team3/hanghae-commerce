@@ -6,7 +6,7 @@ import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.OrderPaymentUseCa
 
 class OrderPaymentUseCaseImpl(
     private val orderService: OrderService,
-    private val paymentService: PaymentService,
+    private val paymentService: PaymentService
 ) : OrderPaymentUseCase {
 
     override fun command(command: OrderPaymentUseCase.Command): String {

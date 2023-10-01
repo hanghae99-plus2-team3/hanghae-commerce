@@ -6,5 +6,5 @@ data class DeliveryInfoEntity(
     val receiverZipCode: String,
     val receiverAddress1: String,
     val receiverAddress2: String,
-    val message: String? = null,
+    val message: String? = null
 )
