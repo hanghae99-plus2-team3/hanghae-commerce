@@ -2,7 +2,7 @@ package hanghae99.plus2.team3.hanghaeorder.domain.order.small
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.*
-import hanghae99.plus2.team3.hanghaeorder.domain.order.payment.PaymentProcessor
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentProcessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.service.OrderService
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.impl.RegisterOrderUseCaseImpl

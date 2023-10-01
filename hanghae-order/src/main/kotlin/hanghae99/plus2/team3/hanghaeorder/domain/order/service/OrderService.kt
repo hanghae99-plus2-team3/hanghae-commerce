@@ -1,18 +1,18 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.service
 
+import hanghae99.plus2.team3.hanghaeorder.common.exception.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
 import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
-import hanghae99.plus2.team3.hanghaeorder.domain.order.payment.PaymentProcessor
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentProcessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.OrderPaymentUseCase
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentValidator
-import hanghae99.plus2.team3.hanghaeorder.common.exception.OrderNotFoundException
-import hanghae99.plus2.team3.hanghaeorder.common.exception.PaymentProcessException
-import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductNotFoundException
-import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductStockNotEnoughException
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.Payment
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentProcessor.*
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentResultCode
 import org.springframework.stereotype.Service
 
 /**
@@ -44,19 +44,33 @@ class OrderService(
         return savedOrder.orderNum
     }
 
-    fun makePaymentForOder(command: OrderPaymentUseCase.Command) : String {
+    fun makePaymentForOder(command: OrderPaymentUseCase.Command): Payment {
         val order = orderRepository.getByOrderNum(command.orderNum)
         val orderItems = orderItemRepository.findByOrderId(order.id)
 
         validatePayment(order, orderItems, command)
         reduceProductStock(orderItems)
 
-        return try{
-            processPayment(order, command)
-            order.getPaymentNum()
+        return try {
+            processPayment(
+                PaymentRequest(
+                    paymentNum = order.getPaymentNum(),
+                    paymentVendor = command.paymentVendor,
+                    paymentAmount = command.paymentAmount,
+                )
+            )
         } catch (e: Exception) {
             rollbackProductStock(orderItems)
-            throw PaymentProcessException()
+            return Payment.createFailPayment(
+                paymentNum = order.getPaymentNum(),
+                paymentVendor = command.paymentVendor,
+                paymentAmount = command.paymentAmount,
+                paymentResultCode = when (e) {
+                    is PaymentException -> e.paymentResultCode
+                    else -> PaymentResultCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT
+                }
+
+            )
         }
     }
 
@@ -69,17 +83,9 @@ class OrderService(
     }
 
     private fun processPayment(
-        order: Order,
-        command: OrderPaymentUseCase.Command
-    ) {
-        paymentProcessor.pay(
-            PaymentProcessor.PaymentRequest(
-                orderNum = order.orderNum,
-                paymentVendor = command.paymentVendor,
-                paymentAmount = command.paymentAmount,
-            )
-        )
-    }
+        paymentRequest: PaymentRequest
+    ) = paymentProcessor.pay(paymentRequest)
+
 
     private fun reduceProductStock(orderItems: List<OrderItem>) {
         productsAccessor.updateProductStock(

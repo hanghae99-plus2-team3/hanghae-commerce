@@ -1,4 +1,4 @@
-package hanghae99.plus2.team3.hanghaeorder.infrastructure.entity
+package hanghae99.plus2.team3.hanghaeorder.infrastructure.order.entity
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
 import jakarta.persistence.*

@@ -1,23 +1,26 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.small
 
 import hanghae99.plus2.team3.hanghaeorder.common.exception.*
-import hanghae99.plus2.team3.hanghaeorder.domain.order.*
+import hanghae99.plus2.team3.hanghaeorder.domain.order.DeliveryInfo
+import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
+import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor.ProductInfo
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.UserInfoAccessor
-import hanghae99.plus2.team3.hanghaeorder.domain.order.payment.PaymentVendor
 import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.*
-import hanghae99.plus2.team3.hanghaeorder.domain.order.payment.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.service.OrderService
+import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.OrderPaymentUseCase
+import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.impl.OrderPaymentUseCaseImpl
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.OrderItemValidator
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.OrderStatusValidator
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentRequestUserValidator
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentTotalValidator
-import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.OrderPaymentUseCase
-import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.impl.OrderPaymentUseCaseImpl
-import hanghae99.plus2.team3.hanghaeorder.exception.*
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentProcessor
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentResultCode
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentVendor
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.service.PaymentService
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
@@ -36,6 +39,7 @@ class OrderPaymentUseCaseTest {
     private lateinit var orderItemRepository: OrderItemRepository
     private lateinit var productsAccessor: ProductsAccessor
     private lateinit var userAccessor: UserInfoAccessor
+    private val paymentRepository: FakePaymentRepositoryImpl = FakePaymentRepositoryImpl()
 
     @BeforeEach
     fun setUp() {
@@ -52,7 +56,8 @@ class OrderPaymentUseCaseTest {
                     OrderItemValidator()
                 ),
                 PaymentProcessor(listOf(FakeTossErrorPaymentVendorCaller(), FakeKakaoErrorPaymentVendorCaller()))
-            )
+            ),
+            PaymentService(paymentRepository)
         )
     }
 
@@ -142,7 +147,7 @@ class OrderPaymentUseCaseTest {
                 )
             )
         }.isInstanceOf(PaymentProcessException::class.java)
-            .hasMessage(ErrorCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT.message)
+            .hasMessage(PaymentResultCode.TIMEOUT_WHEN_PROCESSING_PAYMENT.message)
     }
 
     @Test
@@ -157,7 +162,7 @@ class OrderPaymentUseCaseTest {
                 )
             )
         }.isInstanceOf(PaymentProcessException::class.java)
-            .hasMessage(ErrorCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT.message)
+            .hasMessage(PaymentResultCode.NOT_SUPPORTED_PAYMENT_VENDOR.message)
     }
 
     @Test
@@ -172,11 +177,57 @@ class OrderPaymentUseCaseTest {
                 )
             )
         }.isInstanceOf(PaymentProcessException::class.java)
-            .hasMessage(ErrorCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT.message)
+            .hasMessage(PaymentResultCode.TIMEOUT_WHEN_PROCESSING_PAYMENT.message)
 
         val orderItems = orderItemRepository.findByOrderId(1L)
         assertThat(orderItems[0].quantity).isEqualTo(5)
     }
+
+    @Test
+    fun `결제요청 발생시 요청 데이터를 결제 로그 테이블에 저장 한다`() {
+        val paymentId = sut.command(
+            OrderPaymentUseCase.Command(
+                orderNum = "orderNum-1",
+                userId = 1L,
+                paymentVendor = PaymentVendor.KAKAO,
+                paymentAmount = 10000L,
+            )
+        )
+        assertThat(paymentId).isNotNull
+
+        val paymentRequests = paymentRepository.paymentRequests
+        assertThat(paymentRequests.size).isEqualTo(1)
+        assertThat(paymentRequests[0].paymentNum).isEqualTo("PAYMENT-orderNum-1")
+        assertThat(paymentRequests[0].paymentVendor).isEqualTo(PaymentVendor.KAKAO)
+        assertThat(paymentRequests[0].paymentAmount).isEqualTo(10000L)
+        assertThat(paymentRequests[0].success).isEqualTo(true)
+    }
+
+    @Test
+    fun `결제요청 실패시 요청 데이터를 결제 로그와 결과 코드를 테이블에 저장 한다`() {
+        assertThatThrownBy {
+            sut.command(
+                OrderPaymentUseCase.Command(
+                    orderNum = "orderNum-1",
+                    userId = 1L,
+                    paymentVendor = PaymentVendor.TOSS,
+                    paymentAmount = 10000L,
+                )
+            )
+        }.isInstanceOf(PaymentProcessException::class.java)
+            .hasMessage(PaymentResultCode.TIMEOUT_WHEN_PROCESSING_PAYMENT.message)
+
+
+        val paymentRequests = paymentRepository.paymentRequests
+        assertThat(paymentRequests.size).isEqualTo(1)
+        assertThat(paymentRequests[0].paymentNum).isEqualTo("PAYMENT-orderNum-1")
+        assertThat(paymentRequests[0].paymentVendor).isEqualTo(PaymentVendor.TOSS)
+        assertThat(paymentRequests[0].paymentAmount).isEqualTo(10000L)
+        assertThat(paymentRequests[0].success).isEqualTo(false)
+        assertThat(paymentRequests[0].paymentResultCode).isEqualTo(PaymentResultCode.TIMEOUT_WHEN_PROCESSING_PAYMENT)
+    }
+
+
 
 
 

@@ -1,6 +1,6 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.usecase
 
-import hanghae99.plus2.team3.hanghaeorder.domain.order.payment.PaymentVendor
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentVendor
 
 interface OrderPaymentUseCase {
     fun command(command: Command): String

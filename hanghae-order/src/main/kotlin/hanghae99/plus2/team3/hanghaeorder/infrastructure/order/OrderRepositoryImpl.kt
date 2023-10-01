@@ -1,11 +1,10 @@
-package hanghae99.plus2.team3.hanghaeorder.infrastructure
+package hanghae99.plus2.team3.hanghaeorder.infrastructure.order
 
 import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
 import hanghae99.plus2.team3.hanghaeorder.common.exception.OrderNotFoundException
-import hanghae99.plus2.team3.hanghaeorder.infrastructure.entity.OrderEntity
+import hanghae99.plus2.team3.hanghaeorder.infrastructure.order.entity.OrderEntity
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
 /**
