@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1/orders")
 class OrderController(
     private val registerOrderUseCase: RegisterOrderUseCase,
-    private val orderPaymentUseCase: OrderPaymentUseCase,
+    private val orderPaymentUseCase: OrderPaymentUseCase
 ) {
 
     @ResponseStatus(HttpStatus.CREATED)

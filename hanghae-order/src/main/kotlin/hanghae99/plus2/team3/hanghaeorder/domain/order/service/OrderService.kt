@@ -51,7 +51,7 @@ class OrderService(
         validatePayment(order, orderItems, command)
         reduceProductStock(orderItems)
 
-        return try {
+        try {
             val payment = processPayment(
                 PaymentRequest(
                     paymentNum = order.getPaymentNum(),

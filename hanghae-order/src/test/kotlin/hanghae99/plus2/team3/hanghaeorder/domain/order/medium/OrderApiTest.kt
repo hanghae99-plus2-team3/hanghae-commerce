@@ -34,7 +34,7 @@ import javax.sql.DataSource
 class OrderApiTest {
 
     @Autowired
-    lateinit var dataSource:DataSource
+    lateinit var dataSource: DataSource
 
     @LocalServerPort
     val localServerPort: Int = 0
@@ -87,7 +87,6 @@ class OrderApiTest {
             .isEqualTo(HttpStatus.CREATED.value())
     }
 
-
     @Test
     fun `정상적으로 주문한 내역의 결제 요청을 하면 기대하는 응답(성공)을 반환한다`() {
         val orderPaymentRequest = OrderPaymentRequest(
@@ -109,5 +108,4 @@ class OrderApiTest {
         Assertions.assertThat(response.statusCode())
             .isEqualTo(HttpStatus.OK.value())
     }
-
 }
