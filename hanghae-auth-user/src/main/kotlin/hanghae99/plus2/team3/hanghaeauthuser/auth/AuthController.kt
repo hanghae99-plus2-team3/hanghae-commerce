@@ -9,28 +9,28 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/auth")
-class AuthController {
-
-    private var memberPkIndex: Long = 1
+class AuthController(
+    private val authService: AuthServiceUseCase
+) {
 
     @PostMapping("/register")
     fun registerMember(
         @RequestBody registerMemberRequest: RegisterMemberRequest
     ): RegisterMemberResponse {
-        return RegisterMemberResponse(memberPkIndex.toString())
+        return authService.register(registerMemberRequest)
     }
 
     @PostMapping("/login")
     fun login(
         @RequestBody loginRequest: LoginRequest
     ): LoginResponse {
-        return LoginResponse(memberPkIndex.toString())
+        return authService.login(loginRequest)
     }
 
     @GetMapping("/info")
     fun getTokenInfo(
         @RequestHeader(value = "authorization") authorization: String
     ): AuthTokenInfoResponse {
-        return AuthTokenInfoResponse(authorization.toLong())
+        return authService.getTokenInfo(authorization)
     }
 }
