@@ -103,6 +103,21 @@ class CancelOrderUseCaseTest {
             .hasMessage(ErrorCode.ORDER_NOT_FOUND.message)
     }
 
+    @Test
+    fun `주문의 상태가 배송 중 이후일 때 주문을 취소하면 기대하는 응답(실패)을 반환한다`() {
+        val orderNum = "orderNum-2"
+        val userId = 2L
+        assertThatThrownBy {
+            sut.command(
+                CancelOrderUseCase.Command(
+                    orderNum,
+                    userId,
+                )
+            )
+        }.isInstanceOf(CanNotCancelOrderException::class.java)
+            .hasMessage(ErrorCode.ORDER_PRODUCT_STARTED_DELIVERY.message)
+    }
+
     private fun prepareTest() {
         val users = listOf(
             UserInfoAccessor.UserInfo(userId = 1L, userName = "홍길동", userEmail = "test@gmail.com"),
