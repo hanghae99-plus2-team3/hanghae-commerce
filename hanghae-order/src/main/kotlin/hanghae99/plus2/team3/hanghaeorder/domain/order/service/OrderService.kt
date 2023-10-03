@@ -139,7 +139,10 @@ class OrderService(
     }
 
     fun cancelOrder(command: CancelOrderUseCase.Command): String {
-        return (orderRepository.getByOrderNum(command.orderNum) ?: throw OrderNotFoundException())
-            .orderNum
+        val order = orderRepository.getByOrderNum(command.orderNum)
+        if (order.userId != command.userId) {
+            throw OrderNotFoundException()
+        }
+        return order.orderNum
     }
 }
