@@ -2,6 +2,23 @@ package hanghae99.plus2.team3.hanghaeorder.domain.order.small
 
 import hanghae99.plus2.team3.hanghaeorder.common.exception.ErrorCode
 import hanghae99.plus2.team3.hanghaeorder.common.exception.OrderNotFoundException
+import hanghae99.plus2.team3.hanghaeorder.domain.order.DeliveryInfo
+import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
+import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.UserInfoAccessor
+import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.*
+import hanghae99.plus2.team3.hanghaeorder.domain.order.service.OrderService
+import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.CancelOrderUseCase
+import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.impl.CancelOrderUseCaseImpl
+import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.OrderItemValidator
+import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.OrderStatusValidator
+import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentRequestUserValidator
+import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentTotalValidator
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentProcessor
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.service.PaymentService
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
@@ -17,10 +34,30 @@ import org.junit.jupiter.api.Test
 class CancelOrderUseCaseTest {
 
     private lateinit var sut: CancelOrderUseCase
+    private lateinit var orderRepository: OrderRepository
+    private lateinit var orderItemRepository: OrderItemRepository
+    private lateinit var productsAccessor: ProductsAccessor
+    private val paymentRepository: FakePaymentRepositoryImpl = FakePaymentRepositoryImpl()
 
     @BeforeEach
     fun setUp() {
-        sut = CancelOrderUseCaseImpl()
+        prepareTest()
+        sut = CancelOrderUseCaseImpl(
+            OrderService(
+                orderRepository,
+                orderItemRepository,
+                productsAccessor,
+                listOf(
+                    PaymentTotalValidator(),
+                    OrderStatusValidator(),
+                    PaymentRequestUserValidator(),
+                    OrderItemValidator()
+                ),
+                PaymentProcessor(listOf(FakeTossErrorPaymentVendorCaller(), FakeKakaoPaymentVendorCaller()))
+            ),
+            PaymentService(paymentRepository)
+
+        )
     }
 
     @Test
@@ -51,21 +88,59 @@ class CancelOrderUseCaseTest {
             .hasMessage(ErrorCode.ORDER_NOT_FOUND.message)
     }
 
-}
-
-class CancelOrderUseCaseImpl : CancelOrderUseCase {
-    override fun command(command: CancelOrderUseCase.Command): String {
-        return command.orderNum
-    }
-
-}
-
-interface CancelOrderUseCase {
-    fun command(command: Command): String
-
-    data class Command(
-        val orderNum: String,
-        val userId: Long,
+    private fun prepareTest() {
+        val users = listOf(
+            UserInfoAccessor.UserInfo(userId = 1L, userName = "홍길동", userEmail = "test@gmail.com"),
+            UserInfoAccessor.UserInfo(userId = 2L, userName = "임꺽정", userEmail = "test2@gmail.com")
+        )
+        val productsInStock = mutableListOf(
+            ProductsAccessor.ProductInfo(
+                productId = 1L,
+                productName = "상품1",
+                productPrice = 2000L,
+                productStock = 5
+            ),
+            ProductsAccessor.ProductInfo(
+                productId = 2L,
+                productName = "상품2",
+                productPrice = 3000L,
+                productStock = 5
+            )
+        )
+        val orders = listOf(
+            Order(
+                1L,
+                "orderNum-1",
+                1L,
+                DeliveryInfo("홍길동", "010-1234-5678", "13254", "서울시 강남구", "123-456"),
+                Order.OrderStatus.ORDERED
+            ),
+            Order(
+                2L,
+                "orderNum-3",
+                1L,
+                DeliveryInfo("홍길동", "010-1234-5678", "13254", "서울시 강남구", "123-456"),
+                Order.OrderStatus.ORDERED
+            ),
+            Order(
+                3L,
+                "orderNum-4",
+                1L,
+                DeliveryInfo("홍길동", "010-1234-5678", "13254", "서울시 강남구", "123-456"),
+                Order.OrderStatus.PAYMENT_COMPLETED
+            )
+        )
+        val orderItems = listOf(
+            OrderItem(1L, orders[0], 1L, 5, 2000L, OrderItem.DeliveryStatus.BEFORE_PAYMENT),
+            OrderItem(2L, orders[1], 2L, 6, 3000L, OrderItem.DeliveryStatus.BEFORE_PAYMENT),
+            OrderItem(3L, orders[2], 2L, 2, 3000L, OrderItem.DeliveryStatus.READY)
 
         )
+
+        orderRepository = FakeOrderRepositoryImpl(orders)
+        orderItemRepository = FakeOrderItemRepositoryImpl(orderItems)
+        productsAccessor = FakeProductsAccessor(productsInStock)
+    }
 }
+
+

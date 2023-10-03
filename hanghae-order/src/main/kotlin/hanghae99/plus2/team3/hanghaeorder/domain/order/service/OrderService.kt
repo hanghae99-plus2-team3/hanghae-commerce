@@ -1,17 +1,21 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.service
 
-import hanghae99.plus2.team3.hanghaeorder.common.exception.*
+import hanghae99.plus2.team3.hanghaeorder.common.exception.OrderNotFoundException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.PaymentException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductNotFoundException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductStockNotEnoughException
 import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
 import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
-import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentProcessor
+import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.CancelOrderUseCase
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.OrderPaymentUseCase
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentValidator
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.Payment
-import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentProcessor.*
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentProcessor
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentProcessor.PaymentRequest
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentResultCode
 import org.springframework.stereotype.Service
 
@@ -132,5 +136,10 @@ class OrderService(
         return productsAccessor.queryProduct(
             command.orderItemList.map { it.productId }
         )
+    }
+
+    fun cancelOrder(command: CancelOrderUseCase.Command): String {
+        return (orderRepository.getByOrderNum(command.orderNum) ?: throw OrderNotFoundException())
+            .orderNum
     }
 }
