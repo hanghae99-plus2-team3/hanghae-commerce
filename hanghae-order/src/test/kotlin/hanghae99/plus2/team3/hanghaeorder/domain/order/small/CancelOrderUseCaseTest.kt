@@ -37,7 +37,7 @@ class CancelOrderUseCaseTest {
 
 class CancelOrderUseCaseImpl : CancelOrderUseCase {
     override fun command(command: CancelOrderUseCase.Command): String {
-        TODO("Not yet implemented")
+        return command.orderNum
     }
 
 }
