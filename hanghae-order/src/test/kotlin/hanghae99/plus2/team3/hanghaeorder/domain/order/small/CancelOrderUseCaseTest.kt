@@ -88,6 +88,21 @@ class CancelOrderUseCaseTest {
             .hasMessage(ErrorCode.ORDER_NOT_FOUND.message)
     }
 
+    @Test
+    fun `주문자의 정보와 취소 요청자의 정보가 다를 때 주문을 취소하면 기대하는 응답(실패)을 반환한다`() {
+        val orderNum = "orderNum-1"
+        val userId = 99L
+        assertThatThrownBy {
+            sut.command(
+                CancelOrderUseCase.Command(
+                    orderNum,
+                    userId,
+                )
+            )
+        }.isInstanceOf(OrderNotFoundException::class.java)
+            .hasMessage(ErrorCode.ORDER_NOT_FOUND.message)
+    }
+
     private fun prepareTest() {
         val users = listOf(
             UserInfoAccessor.UserInfo(userId = 1L, userName = "홍길동", userEmail = "test@gmail.com"),
