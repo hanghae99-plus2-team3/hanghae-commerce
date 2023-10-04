@@ -1,5 +1,6 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.small
 
+import hanghae99.plus2.team3.hanghaeorder.common.exception.CanNotCancelOrderException
 import hanghae99.plus2.team3.hanghaeorder.common.exception.ErrorCode
 import hanghae99.plus2.team3.hanghaeorder.common.exception.OrderNotFoundException
 import hanghae99.plus2.team3.hanghaeorder.domain.order.DeliveryInfo
@@ -147,10 +148,10 @@ class CancelOrderUseCaseTest {
             ),
             Order(
                 2L,
-                "orderNum-3",
-                1L,
+                "orderNum-2",
+                2L,
                 DeliveryInfo("홍길동", "010-1234-5678", "13254", "서울시 강남구", "123-456"),
-                Order.OrderStatus.ORDERED
+                Order.OrderStatus.DELIVERY
             ),
             Order(
                 3L,

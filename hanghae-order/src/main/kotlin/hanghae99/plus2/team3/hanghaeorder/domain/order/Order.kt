@@ -50,10 +50,14 @@ data class Order(
 
     fun updateStatusToPaymentCompleted(): Order = this.copy(orderStatus = OrderStatus.PAYMENT_COMPLETED)
 
+    fun canCancelOrder(): Boolean = orderStatus != OrderStatus.DELIVERY
+
+
     enum class OrderStatus(
         val description: String
     ) {
         ORDERED("주문 완료"),
-        PAYMENT_COMPLETED("결제 완료");
+        PAYMENT_COMPLETED("결제 완료"),
+        DELIVERY("배송 중"),
     }
 }

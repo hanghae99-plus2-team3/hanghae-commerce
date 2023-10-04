@@ -1,9 +1,6 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.service
 
-import hanghae99.plus2.team3.hanghaeorder.common.exception.OrderNotFoundException
-import hanghae99.plus2.team3.hanghaeorder.common.exception.PaymentException
-import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductNotFoundException
-import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductStockNotEnoughException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
 import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
@@ -140,9 +137,12 @@ class OrderService(
 
     fun cancelOrder(command: CancelOrderUseCase.Command): String {
         val order = orderRepository.getByOrderNum(command.orderNum)
-        if (order.userId != command.userId) {
+        if (order.userId != command.userId)
             throw OrderNotFoundException()
-        }
+
+        if (!order.canCancelOrder())
+            throw CanNotCancelOrderException(ErrorCode.ORDER_PRODUCT_STARTED_DELIVERY)
+
         return order.orderNum
     }
 }
