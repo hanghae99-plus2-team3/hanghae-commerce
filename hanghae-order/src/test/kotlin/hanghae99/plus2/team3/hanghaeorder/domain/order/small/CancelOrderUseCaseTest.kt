@@ -19,6 +19,7 @@ import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.OrderStatusVali
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentRequestUserValidator
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentTotalValidator
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentProcessor
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentResultCode
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.service.PaymentService
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -117,6 +118,24 @@ class CancelOrderUseCaseTest {
             )
         }.isInstanceOf(CanNotCancelOrderException::class.java)
             .hasMessage(ErrorCode.ORDER_PRODUCT_STARTED_DELIVERY.message)
+    }
+
+    @Test
+    fun `이미 결제된 취소 가능한 주문을 취소하면 결제를 취소한다`() {
+        val orderNum = "orderNum-3"
+        val userId = 3L
+
+        val result = sut.command(
+            CancelOrderUseCase.Command(
+                orderNum,
+                userId,
+            )
+        )
+
+        assertThat(result).isEqualTo(orderNum)
+        val refundPayment =
+            paymentRepository.paymentRequests.find { it.paymentNum == orderNum && it.paymentResultCode == PaymentResultCode.REFUND_SUCCESS }
+        assertThat(refundPayment).isNotNull
     }
 
     private fun prepareTest() {
