@@ -1,6 +1,5 @@
 package hanghae99.plus2.team3.hanghaeauthuser.auth
 
-import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.shouldBe
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
@@ -36,8 +35,5 @@ internal class RegisterMemberApiTest {
 
         rawResponse.then().log().all()
         rawResponse.statusCode shouldBe 200
-        shouldNotThrowAny {
-            rawResponse.body.`as`(RegisterMemberResponse::class.java)
-        }
     }
 }

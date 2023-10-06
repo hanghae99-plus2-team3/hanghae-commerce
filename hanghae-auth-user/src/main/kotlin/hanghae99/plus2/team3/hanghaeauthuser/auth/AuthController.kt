@@ -16,7 +16,7 @@ class AuthController(
     @PostMapping("/register")
     fun registerMember(
         @RequestBody registerMemberRequest: RegisterMemberRequest
-    ): RegisterMemberResponse {
+    ) {
         return authService.register(registerMemberRequest)
     }
 
