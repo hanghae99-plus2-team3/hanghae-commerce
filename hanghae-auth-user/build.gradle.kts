@@ -1,5 +1,6 @@
 dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:5.5.5")
+    implementation("org.springframework.security:spring-security-crypto:6.0.2")
 }
 
 docker {
