@@ -1,7 +1,7 @@
 package hanghae99.plus2.team3.hanghaeauthuser.auth
 
 data class RegisterMemberRequest(
-    val id: String,
+    val loginId: String,
     val pw: String
 )
 
@@ -10,7 +10,7 @@ data class RegisterMemberResponse(
 )
 
 data class LoginRequest(
-    val id: String,
+    val loginId: String,
     val pw: String
 )
 

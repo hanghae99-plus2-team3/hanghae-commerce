@@ -23,7 +23,7 @@ internal class RegisterMemberApiTest {
     @Test
     fun `회원 등록`() {
         val request = RegisterMemberRequest(
-            id = "jaeykweon",
+            loginId = "jaeykweon",
             pw = "1q2w3e4r"
         )
 
