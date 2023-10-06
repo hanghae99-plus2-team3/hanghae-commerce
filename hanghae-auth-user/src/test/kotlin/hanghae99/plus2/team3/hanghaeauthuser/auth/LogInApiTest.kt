@@ -21,9 +21,9 @@ internal class LogInApiTest {
     }
 
     @Test
-    fun `회원 등록`() {
+    fun `로그인`() {
         val request = LoginRequest(
-            loginId = "jaeykweon",
+            loginId = "jay",
             pw = "1q2w3e4r"
         )
 

@@ -18,10 +18,10 @@ class AuthService(
     }
 
     override fun login(request: LoginRequest): LoginResponse {
-        return LoginResponse("3")
+        return authDbPort.login(request)
     }
 
     override fun getTokenInfo(authorization: String): AuthTokenInfoResponse {
-        return AuthTokenInfoResponse(authorization.toLong())
+        return authDbPort.getTokenInfo(authorization)
     }
 }

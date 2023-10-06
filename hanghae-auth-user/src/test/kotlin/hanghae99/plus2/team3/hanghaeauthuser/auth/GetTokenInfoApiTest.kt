@@ -22,14 +22,14 @@ internal class GetTokenInfoApiTest {
     fun `토큰 정보 조회`() {
         val rawResponse = RestAssured
             .given()
-            .header("authorization", "3")
+            .header("authorization", "1")
             .log().all()
             .get("/api/auth/info")
 
         rawResponse.then().log().all()
         rawResponse.statusCode shouldBe 200
         with(rawResponse.body.`as`(AuthTokenInfoResponse::class.java)) {
-            memberPk shouldBe 3
+            memberPk shouldBe 1L
         }
     }
 }
