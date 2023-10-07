@@ -2,7 +2,7 @@ package hanghae99.plus2.team3.hanghaeorder.domain.order
 
 data class OrderItem(
     val id: Long,
-    val order: Order,
+    val orderId: Long,
     val productId: Long,
     val quantity: Int,
     val productPrice: Long,
@@ -21,7 +21,7 @@ data class OrderItem(
 
             return OrderItem(
                 id = 0L,
-                order = order,
+                orderId = order.id,
                 productId = productId,
                 quantity = quantity,
                 productPrice = productPrice,

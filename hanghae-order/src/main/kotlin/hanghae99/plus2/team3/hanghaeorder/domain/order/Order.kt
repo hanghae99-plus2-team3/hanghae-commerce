@@ -7,7 +7,8 @@ data class Order(
     val orderNum: String,
     val userId: Long,
     val deliveryInfo: DeliveryInfo,
-    val orderStatus: OrderStatus
+    val orderStatus: OrderStatus,
+    val orderItems: List<OrderItem> = emptyList()
 ) {
 
     fun isPaymentCompleted(): Boolean {
@@ -42,6 +43,12 @@ data class Order(
                 orderStatus = OrderStatus.ORDERED
             )
         }
+    }
+
+    fun addOrderItem(orderItem: OrderItem): Order {
+        val orderItems = this.orderItems.toMutableList()
+        orderItems.add(orderItem)
+        return this.copy(orderItems = orderItems)
     }
 
     fun getPaymentNum(): String {
