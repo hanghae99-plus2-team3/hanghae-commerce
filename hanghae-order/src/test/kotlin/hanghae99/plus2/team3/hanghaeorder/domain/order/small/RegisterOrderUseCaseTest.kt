@@ -1,14 +1,15 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.small
 
-import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
-import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.*
-import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentProcessor
-import hanghae99.plus2.team3.hanghaeorder.domain.order.service.OrderService
-import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.*
-import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.impl.RegisterOrderUseCaseImpl
 import hanghae99.plus2.team3.hanghaeorder.common.exception.ErrorCode
 import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductNotFoundException
 import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductStockNotEnoughException
+import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
+import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeOrderItemRepositoryImpl
+import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeOrderRepositoryImpl
+import hanghae99.plus2.team3.hanghaeorder.domain.order.mock.FakeProductsAccessor
+import hanghae99.plus2.team3.hanghaeorder.domain.order.service.OrderService
+import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
+import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.impl.RegisterOrderUseCaseImpl
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
@@ -37,8 +38,6 @@ class RegisterOrderUseCaseTest {
                     FakeOrderRepositoryImpl(listOf()),
                     FakeOrderItemRepositoryImpl(listOf()),
                     FakeProductsAccessor(productsInStock),
-                    listOf(),
-                    PaymentProcessor(listOf())
                 )
             )
     }

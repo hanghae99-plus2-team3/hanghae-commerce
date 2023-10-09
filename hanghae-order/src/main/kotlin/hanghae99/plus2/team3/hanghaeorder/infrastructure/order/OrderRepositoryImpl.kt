@@ -1,8 +1,8 @@
 package hanghae99.plus2.team3.hanghaeorder.infrastructure.order
 
+import hanghae99.plus2.team3.hanghaeorder.common.exception.OrderNotFoundException
 import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
-import hanghae99.plus2.team3.hanghaeorder.common.exception.OrderNotFoundException
 import hanghae99.plus2.team3.hanghaeorder.infrastructure.order.entity.OrderEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
@@ -23,9 +23,9 @@ class OrderRepositoryImpl(
         return orderJpaRepository.save(OrderEntity.of(order)).toDomain()
     }
 
-    override fun getByOrderNum(orderNum: String): Order {
+    override fun getByOrderNumAndUserId(orderNum: String, userId: Long): Order {
         return (
-            orderJpaRepository.findByOrderNum(orderNum)
+            orderJpaRepository.findByOrderNumAndUserId(orderNum, userId)
                 ?: throw OrderNotFoundException()
             )
             .toDomain()
@@ -33,5 +33,6 @@ class OrderRepositoryImpl(
 }
 
 interface OrderJpaRepository : JpaRepository<OrderEntity, Long> {
-    fun findByOrderNum(orderNum: String): OrderEntity?
+    fun findByOrderNumAndUserId(orderNum: String, userId: Long): OrderEntity?
+
 }

@@ -11,4 +11,5 @@ import hanghae99.plus2.team3.hanghaeorder.domain.payment.Payment
  */
 interface PaymentRepository {
     fun save(payment: Payment): Payment
+    fun getByOrderNum(orderNum: String): Payment
 }

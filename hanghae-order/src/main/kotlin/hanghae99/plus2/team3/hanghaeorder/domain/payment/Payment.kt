@@ -2,7 +2,7 @@ package hanghae99.plus2.team3.hanghaeorder.domain.payment
 
 data class Payment(
     val id: Long,
-    val paymentNum: String,
+    val orderNum: String,
     val paymentVendor: PaymentVendor,
     val paymentAmount: Long,
     val success: Boolean,
@@ -10,13 +10,13 @@ data class Payment(
 ) {
     companion object {
         fun createSuccessPayment(
-            paymentNum: String,
+            orderNum: String,
             paymentVendor: PaymentVendor,
             paymentAmount: Long
         ): Payment {
             return Payment(
                 id = 0L,
-                paymentNum = paymentNum,
+                orderNum = orderNum,
                 paymentVendor = paymentVendor,
                 paymentAmount = paymentAmount,
                 success = true,
@@ -25,14 +25,47 @@ data class Payment(
         }
 
         fun createFailPayment(
-            paymentNum: String,
+            orderNum: String,
             paymentVendor: PaymentVendor,
             paymentAmount: Long,
             paymentResultCode: PaymentResultCode
         ): Payment {
             return Payment(
                 id = 0L,
-                paymentNum = paymentNum,
+                orderNum = orderNum,
+                paymentVendor = paymentVendor,
+                paymentAmount = paymentAmount,
+                success = false,
+                paymentResultCode = paymentResultCode
+            )
+        }
+
+        fun createSuccessRefund(
+            id: Long,
+            orderNum: String,
+            paymentVendor: PaymentVendor,
+            paymentAmount: Long
+        ): Payment {
+            return Payment(
+                id = id,
+                orderNum = orderNum,
+                paymentVendor = paymentVendor,
+                paymentAmount = paymentAmount,
+                success = true,
+                paymentResultCode = PaymentResultCode.REFUND_SUCCESS
+            )
+        }
+
+        fun createFailRefund(
+            id: Long,
+            orderNum: String,
+            paymentVendor: PaymentVendor,
+            paymentAmount: Long,
+            paymentResultCode: PaymentResultCode
+        ): Payment {
+            return Payment(
+                id = id,
+                orderNum = orderNum,
                 paymentVendor = paymentVendor,
                 paymentAmount = paymentAmount,
                 success = false,
