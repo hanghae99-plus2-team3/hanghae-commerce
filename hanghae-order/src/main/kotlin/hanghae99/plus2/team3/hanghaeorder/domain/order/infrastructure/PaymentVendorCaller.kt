@@ -7,4 +7,5 @@ import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentVendor
 interface PaymentVendorCaller {
     fun support(paymentVendor: PaymentVendor): Boolean
     fun pay(request: PaymentProcessor.PaymentRequest): Payment
+    fun refund(request: PaymentProcessor.RefundRequest): Payment
 }

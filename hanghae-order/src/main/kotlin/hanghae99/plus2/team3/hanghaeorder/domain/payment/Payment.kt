@@ -2,7 +2,7 @@ package hanghae99.plus2.team3.hanghaeorder.domain.payment
 
 data class Payment(
     val id: Long,
-    val paymentNum: String,
+    val orderNum: String,
     val paymentVendor: PaymentVendor,
     val paymentAmount: Long,
     val success: Boolean,
@@ -16,7 +16,7 @@ data class Payment(
         ): Payment {
             return Payment(
                 id = 0L,
-                paymentNum = paymentNum,
+                orderNum = paymentNum,
                 paymentVendor = paymentVendor,
                 paymentAmount = paymentAmount,
                 success = true,
@@ -32,7 +32,7 @@ data class Payment(
         ): Payment {
             return Payment(
                 id = 0L,
-                paymentNum = paymentNum,
+                orderNum = paymentNum,
                 paymentVendor = paymentVendor,
                 paymentAmount = paymentAmount,
                 success = false,

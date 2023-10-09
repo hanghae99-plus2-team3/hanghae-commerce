@@ -5,6 +5,7 @@ import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductStockNotEnough
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
+import hanghae99.plus2.team3.hanghaeorder.domain.order.service.dto.OrderWithItemsDto
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.RegisterOrderUseCase
 import org.springframework.stereotype.Service
 
@@ -35,7 +36,13 @@ class OrderService(
         return savedOrder.orderNum
     }
 
-    fun getOrderWithOrderItems(orderNum: String) = orderRepository.getOrderWithOrderItemsByOrderNum(orderNum)
+    fun getOrderWithOrderItems(orderNum: String): OrderWithItemsDto {
+        val order = orderRepository.getByOrderNum(orderNum)
+        return OrderWithItemsDto(
+            order,
+            orderItemRepository.findByOrderId(order.id)
+        )
+    }
 
 
     private fun validateOrderedProducts(

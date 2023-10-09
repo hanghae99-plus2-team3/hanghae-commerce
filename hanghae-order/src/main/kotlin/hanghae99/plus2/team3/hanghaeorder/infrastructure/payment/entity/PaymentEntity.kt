@@ -17,7 +17,7 @@ class PaymentEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
-    val paymentNum: String,
+    val orderNum: String,
     @Enumerated(EnumType.STRING)
     val paymentVendor: PaymentVendor,
     val paymentAmount: Long,
@@ -28,7 +28,7 @@ class PaymentEntity(
     fun toDomain() =
         Payment(
             id = id,
-            paymentNum = paymentNum,
+            orderNum = orderNum,
             paymentVendor = paymentVendor,
             paymentAmount = paymentAmount,
             success = success,
@@ -41,7 +41,7 @@ class PaymentEntity(
         ): PaymentEntity {
             return PaymentEntity(
                 id = payment.id,
-                paymentNum = payment.paymentNum,
+                orderNum = payment.orderNum,
                 paymentVendor = payment.paymentVendor,
                 paymentAmount = payment.paymentAmount,
                 success = payment.success,

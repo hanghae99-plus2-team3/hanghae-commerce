@@ -2,11 +2,11 @@ package hanghae99.plus2.team3.hanghaeorder.domain.payment.service
 
 import hanghae99.plus2.team3.hanghaeorder.common.exception.PaymentException
 import hanghae99.plus2.team3.hanghaeorder.common.exception.PaymentProcessException
-import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
 import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
+import hanghae99.plus2.team3.hanghaeorder.domain.order.service.dto.OrderWithItemsDto
 import hanghae99.plus2.team3.hanghaeorder.domain.order.usecase.OrderPaymentUseCase
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentValidator
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.Payment
@@ -45,27 +45,27 @@ class PaymentService(
 
     @Transactional
     fun requestPaymentOf(
-        order: Order,
+        orderWithItems: OrderWithItemsDto,
         command: OrderPaymentUseCase.Command
     ): Payment {
 
-        validatePayment(order, command)
-        reduceProductStock(order.orderItems)
+        validatePayment(orderWithItems, command)
+        reduceProductStock(orderWithItems.orderItems)
 
         try {
             val payment = processPayment(
                 PaymentProcessor.PaymentRequest(
-                    paymentNum = order.getPaymentNum(),
+                    paymentNum = orderWithItems.order.getPaymentNum(),
                     paymentVendor = command.paymentVendor,
                     paymentAmount = command.paymentAmount
                 )
             )
-            updateOrderStatusToPaymentCompleted(order)
+            updateOrderStatusToPaymentCompleted(orderWithItems)
             return payment
         } catch (e: Exception) {
-            rollbackProductStock(order.orderItems)
+            rollbackProductStock(orderWithItems.orderItems)
             return Payment.createFailPayment(
-                paymentNum = order.getPaymentNum(),
+                paymentNum = orderWithItems.order.getPaymentNum(),
                 paymentVendor = command.paymentVendor,
                 paymentAmount = command.paymentAmount,
                 paymentResultCode = when (e) {
@@ -77,19 +77,19 @@ class PaymentService(
     }
 
     private fun updateOrderStatusToPaymentCompleted(
-        order: Order,
+        orderWithItems: OrderWithItemsDto,
     ) {
-        orderRepository.save(order.updateStatusToPaymentCompleted())
-        order.orderItems.forEach {
+        orderRepository.save(orderWithItems.order.updateStatusToPaymentCompleted())
+        orderWithItems.orderItems.forEach {
             orderItemRepository.save(it.updateStatusToPaymentCompleted())
         }
     }
 
     private fun validatePayment(
-        order: Order,
+        orderWithItems: OrderWithItemsDto,
         command: OrderPaymentUseCase.Command
     ) {
-        paymentValidators.forEach { it.validate(order, command) }
+        paymentValidators.forEach { it.validate(orderWithItems, command) }
     }
 
     private fun rollbackProductStock(orderItems: List<OrderItem>) {

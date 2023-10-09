@@ -45,12 +45,4 @@ class FakeOrderRepositoryImpl(
             )
             .toDomain()
     }
-
-    override fun getOrderWithOrderItemsByOrderNum(orderNum: String): Order {
-        return (
-            orders.find { it.orderNum == orderNum }
-                ?: throw OrderNotFoundException()
-            )
-            .toDomain()
-    }
 }

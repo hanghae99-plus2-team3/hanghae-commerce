@@ -38,7 +38,6 @@ class OrderPaymentUseCaseTest {
     private lateinit var orderRepository: OrderRepository
     private lateinit var orderItemRepository: OrderItemRepository
     private lateinit var productsAccessor: ProductsAccessor
-    private lateinit var userAccessor: UserInfoAccessor
     private val paymentRepository: FakePaymentRepositoryImpl = FakePaymentRepositoryImpl()
 
     @BeforeEach
@@ -49,15 +48,20 @@ class OrderPaymentUseCaseTest {
                 orderRepository,
                 orderItemRepository,
                 productsAccessor,
+            ),
+            PaymentService(
+                paymentRepository,
+                orderRepository,
+                orderItemRepository,
+                productsAccessor,
                 listOf(
                     PaymentTotalValidator(),
                     OrderStatusValidator(),
                     PaymentRequestUserValidator(),
                     OrderItemValidator()
                 ),
-                PaymentProcessor(listOf(FakeTossErrorPaymentVendorCaller(), FakeKakaoPaymentVendorCaller()))
-            ),
-            PaymentService(paymentRepository)
+                PaymentProcessor(listOf(FakeTossErrorPaymentVendorCaller(), FakeKakaoPaymentVendorCaller())),
+            )
         )
     }
 
@@ -203,7 +207,7 @@ class OrderPaymentUseCaseTest {
 
         val paymentRequests = paymentRepository.paymentRequests
         assertThat(paymentRequests.size).isEqualTo(1)
-        assertThat(paymentRequests[0].paymentNum).isEqualTo("PAYMENT-orderNum-1")
+        assertThat(paymentRequests[0].orderNum).isEqualTo("PAYMENT-orderNum-1")
         assertThat(paymentRequests[0].paymentVendor).isEqualTo(PaymentVendor.KAKAO)
         assertThat(paymentRequests[0].paymentAmount).isEqualTo(10000L)
         assertThat(paymentRequests[0].success).isEqualTo(true)
@@ -225,7 +229,7 @@ class OrderPaymentUseCaseTest {
 
         val paymentRequests = paymentRepository.paymentRequests
         assertThat(paymentRequests.size).isEqualTo(1)
-        assertThat(paymentRequests[0].paymentNum).isEqualTo("PAYMENT-orderNum-1")
+        assertThat(paymentRequests[0].orderNum).isEqualTo("PAYMENT-orderNum-1")
         assertThat(paymentRequests[0].paymentVendor).isEqualTo(PaymentVendor.TOSS)
         assertThat(paymentRequests[0].paymentAmount).isEqualTo(10000L)
         assertThat(paymentRequests[0].success).isEqualTo(false)
@@ -274,6 +278,5 @@ class OrderPaymentUseCaseTest {
         orderRepository = FakeOrderRepositoryImpl(orders)
         orderItemRepository = FakeOrderItemRepositoryImpl(orderItems)
         productsAccessor = FakeProductsAccessor(productsInStock)
-        userAccessor = FakeUserInfoAccessor(users)
     }
 }
