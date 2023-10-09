@@ -77,7 +77,7 @@ class OrderPaymentUseCaseTest {
         )
         assertThat(paymentId).isNotNull
 
-        val savedOrder = orderRepository.getByOrderNum("orderNum-1")
+        val savedOrder = orderRepository.getByOrderNumAndUserId("orderNum-1", 1L)
         val savedOrderItems = orderItemRepository.findByOrderId(savedOrder.id)
         assertThat(savedOrder.orderStatus).isEqualTo(Order.OrderStatus.PAYMENT_COMPLETED)
         savedOrderItems.forEach {
@@ -111,8 +111,8 @@ class OrderPaymentUseCaseTest {
                     paymentAmount = 10000L
                 )
             )
-        }.isInstanceOf(OrderInfoNotValidException::class.java)
-            .hasMessage(ErrorCode.ORDER_INFO_NOT_VALID.message)
+        }.isInstanceOf(OrderNotFoundException::class.java)
+            .hasMessage(ErrorCode.ORDER_NOT_FOUND.message)
     }
 
     @Test

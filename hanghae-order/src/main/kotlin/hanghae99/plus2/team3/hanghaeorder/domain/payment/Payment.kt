@@ -39,5 +39,38 @@ data class Payment(
                 paymentResultCode = paymentResultCode
             )
         }
+
+        fun createSuccessRefund(
+            id: Long,
+            paymentNum: String,
+            paymentVendor: PaymentVendor,
+            paymentAmount: Long
+        ): Payment {
+            return Payment(
+                id = id,
+                orderNum = paymentNum,
+                paymentVendor = paymentVendor,
+                paymentAmount = paymentAmount,
+                success = true,
+                paymentResultCode = PaymentResultCode.REFUND_SUCCESS
+            )
+        }
+
+        fun createFailRefund(
+            id: Long,
+            paymentNum: String,
+            paymentVendor: PaymentVendor,
+            paymentAmount: Long,
+            paymentResultCode: PaymentResultCode
+        ): Payment {
+            return Payment(
+                id = id,
+                orderNum = paymentNum,
+                paymentVendor = paymentVendor,
+                paymentAmount = paymentAmount,
+                success = false,
+                paymentResultCode = paymentResultCode
+            )
+        }
     }
 }

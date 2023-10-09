@@ -2,6 +2,7 @@ package hanghae99.plus2.team3.hanghaeorder.domain.payment.service
 
 import hanghae99.plus2.team3.hanghaeorder.common.exception.PaymentException
 import hanghae99.plus2.team3.hanghaeorder.common.exception.PaymentProcessException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.PaymentRefundProcessException
 import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
@@ -76,6 +77,24 @@ class PaymentService(
         }
     }
 
+
+    @Transactional
+    fun requestRefundOf(cancelableOrder: OrderWithItemsDto) {
+        val payment = paymentRepository.getByOrderNum(cancelableOrder.order.orderNum)
+
+        try {
+            paymentProcessor.refund(
+                PaymentProcessor.RefundRequest(
+                    orderNum = cancelableOrder.order.orderNum,
+                    paymentVendor = payment.paymentVendor
+                )
+            )
+            rollbackProductStock(cancelableOrder.orderItems)
+        } catch (e: Exception) {
+            throw PaymentRefundProcessException(PaymentResultCode.)
+        }
+    }
+
     private fun updateOrderStatusToPaymentCompleted(
         orderWithItems: OrderWithItemsDto,
     ) {
@@ -111,5 +130,6 @@ class PaymentService(
             }
         )
     }
+
 
 }

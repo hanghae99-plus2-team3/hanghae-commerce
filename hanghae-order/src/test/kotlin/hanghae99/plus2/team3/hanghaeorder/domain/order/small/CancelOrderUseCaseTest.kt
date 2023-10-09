@@ -49,16 +49,20 @@ class CancelOrderUseCaseTest {
                 orderRepository,
                 orderItemRepository,
                 productsAccessor,
+            ),
+            PaymentService(
+                paymentRepository,
+                orderRepository,
+                orderItemRepository,
+                productsAccessor,
                 listOf(
                     PaymentTotalValidator(),
                     OrderStatusValidator(),
                     PaymentRequestUserValidator(),
                     OrderItemValidator()
                 ),
-                PaymentProcessor(listOf(FakeTossErrorPaymentVendorCaller(), FakeKakaoPaymentVendorCaller()))
-            ),
-            PaymentService(paymentRepository)
-
+                PaymentProcessor(listOf(FakeTossErrorPaymentVendorCaller(), FakeKakaoPaymentVendorCaller())),
+            )
         )
     }
 
@@ -134,7 +138,7 @@ class CancelOrderUseCaseTest {
 
         assertThat(result).isEqualTo(orderNum)
         val refundPayment =
-            paymentRepository.paymentRequests.find { it.paymentNum == orderNum && it.paymentResultCode == PaymentResultCode.REFUND_SUCCESS }
+            paymentRepository.paymentRequests.find { it.orderNum == orderNum && it.paymentResultCode == PaymentResultCode.REFUND_SUCCESS }
         assertThat(refundPayment).isNotNull
     }
 

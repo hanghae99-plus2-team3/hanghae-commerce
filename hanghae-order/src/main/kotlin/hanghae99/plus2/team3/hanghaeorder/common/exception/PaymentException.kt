@@ -16,3 +16,5 @@ open class PaymentException(
 class PaymentProcessException(paymentResultCode: PaymentResultCode) : PaymentException(paymentResultCode)
 class NotSupportedPaymentVendorException : PaymentException(PaymentResultCode.NOT_SUPPORTED_PAYMENT_VENDOR)
 class PaymentTimeOutException : PaymentException(PaymentResultCode.TIMEOUT_WHEN_PROCESSING_PAYMENT)
+class PaymentNotFoundException : PaymentException(PaymentResultCode.PAYMENT_NOT_FOUND)
+class PaymentRefundProcessException(paymentResultCode: PaymentResultCode) : PaymentException(paymentResultCode)

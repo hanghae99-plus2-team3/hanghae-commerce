@@ -6,6 +6,5 @@ interface CancelOrderUseCase {
     data class Command(
         val orderNum: String,
         val userId: Long,
-
-        )
+    )
 }

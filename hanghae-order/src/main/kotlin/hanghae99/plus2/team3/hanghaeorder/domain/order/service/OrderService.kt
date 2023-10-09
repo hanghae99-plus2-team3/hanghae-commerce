@@ -1,5 +1,7 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.service
 
+import hanghae99.plus2.team3.hanghaeorder.common.exception.CanNotCancelOrderException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.ErrorCode
 import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductNotFoundException
 import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductStockNotEnoughException
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
@@ -36,8 +38,8 @@ class OrderService(
         return savedOrder.orderNum
     }
 
-    fun getOrderWithOrderItems(orderNum: String): OrderWithItemsDto {
-        val order = orderRepository.getByOrderNum(orderNum)
+    fun getOrderWithOrderItems(orderNum: String, userId: Long): OrderWithItemsDto {
+        val order = orderRepository.getByOrderNumAndUserId(orderNum, userId)
         return OrderWithItemsDto(
             order,
             orderItemRepository.findByOrderId(order.id)
@@ -67,9 +69,7 @@ class OrderService(
     }
 
 //    fun cancelOrder(command: CancelOrderUseCase.Command): String {
-//        val order = orderRepository.getByOrderNum(command.orderNum)
-//        if (order.userId != command.userId)
-//            throw OrderNotFoundException()
+//        val order = orderRepository.getByOrderNumAndUserId(command.orderNum, command.userId)
 //
 //        if (!order.canCancelOrder())
 //            throw CanNotCancelOrderException(ErrorCode.ORDER_PRODUCT_STARTED_DELIVERY)
@@ -99,4 +99,16 @@ class OrderService(
 //            )
 //        }
 //    }
+
+    fun getCancelableOrder(orderNum: String, userId: Long): OrderWithItemsDto {
+        val order = orderRepository.getByOrderNumAndUserId(orderNum, userId)
+
+        if (!order.canCancelOrder())
+            throw CanNotCancelOrderException(ErrorCode.ORDER_PRODUCT_STARTED_DELIVERY)
+
+        return OrderWithItemsDto(
+            order,
+            orderItemRepository.findByOrderId(order.id)
+        )
+    }
 }

@@ -38,9 +38,9 @@ class FakeOrderRepositoryImpl(
         }
     }
 
-    override fun getByOrderNum(orderNum: String): Order {
+    override fun getByOrderNumAndUserId(orderNum: String, userId: Long): Order {
         return (
-            orders.find { it.orderNum == orderNum }
+            orders.find { it.orderNum == orderNum && it.userId == userId }
                 ?: throw OrderNotFoundException()
             )
             .toDomain()
