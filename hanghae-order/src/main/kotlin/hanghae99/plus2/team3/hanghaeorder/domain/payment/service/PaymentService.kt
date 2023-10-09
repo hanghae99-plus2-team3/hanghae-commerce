@@ -2,7 +2,6 @@ package hanghae99.plus2.team3.hanghaeorder.domain.payment.service
 
 import hanghae99.plus2.team3.hanghaeorder.common.exception.PaymentException
 import hanghae99.plus2.team3.hanghaeorder.common.exception.PaymentProcessException
-import hanghae99.plus2.team3.hanghaeorder.common.exception.PaymentRefundProcessException
 import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
@@ -56,7 +55,7 @@ class PaymentService(
         try {
             val payment = processPayment(
                 PaymentProcessor.PaymentRequest(
-                    paymentNum = orderWithItems.order.getPaymentNum(),
+                    paymentNum = orderWithItems.order.orderNum,
                     paymentVendor = command.paymentVendor,
                     paymentAmount = command.paymentAmount
                 )
@@ -66,7 +65,7 @@ class PaymentService(
         } catch (e: Exception) {
             rollbackProductStock(orderWithItems.orderItems)
             return Payment.createFailPayment(
-                paymentNum = orderWithItems.order.getPaymentNum(),
+                orderNum = orderWithItems.order.orderNum,
                 paymentVendor = command.paymentVendor,
                 paymentAmount = command.paymentAmount,
                 paymentResultCode = when (e) {
@@ -79,19 +78,28 @@ class PaymentService(
 
 
     @Transactional
-    fun requestRefundOf(cancelableOrder: OrderWithItemsDto) {
+    fun requestRefundOf(cancelableOrder: OrderWithItemsDto): Payment {
         val payment = paymentRepository.getByOrderNum(cancelableOrder.order.orderNum)
 
         try {
-            paymentProcessor.refund(
+            val refundedPayment = paymentProcessor.refund(
                 PaymentProcessor.RefundRequest(
-                    orderNum = cancelableOrder.order.orderNum,
-                    paymentVendor = payment.paymentVendor
+                    payment = payment,
                 )
             )
             rollbackProductStock(cancelableOrder.orderItems)
+            return refundedPayment
         } catch (e: Exception) {
-            throw PaymentRefundProcessException(PaymentResultCode.)
+            return Payment.createFailRefund(
+                id = payment.id,
+                orderNum = payment.orderNum,
+                paymentVendor = payment.paymentVendor,
+                paymentAmount = payment.paymentAmount,
+                paymentResultCode = when (e) {
+                    is PaymentException -> e.paymentResultCode
+                    else -> PaymentResultCode.ERROR_ACCRUED_WHEN_PROCESSING_REFUND
+                }
+            )
         }
     }
 

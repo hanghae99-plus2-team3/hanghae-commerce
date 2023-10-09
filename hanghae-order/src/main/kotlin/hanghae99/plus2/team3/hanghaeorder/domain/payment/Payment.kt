@@ -10,13 +10,13 @@ data class Payment(
 ) {
     companion object {
         fun createSuccessPayment(
-            paymentNum: String,
+            orderNum: String,
             paymentVendor: PaymentVendor,
             paymentAmount: Long
         ): Payment {
             return Payment(
                 id = 0L,
-                orderNum = paymentNum,
+                orderNum = orderNum,
                 paymentVendor = paymentVendor,
                 paymentAmount = paymentAmount,
                 success = true,
@@ -25,14 +25,14 @@ data class Payment(
         }
 
         fun createFailPayment(
-            paymentNum: String,
+            orderNum: String,
             paymentVendor: PaymentVendor,
             paymentAmount: Long,
             paymentResultCode: PaymentResultCode
         ): Payment {
             return Payment(
                 id = 0L,
-                orderNum = paymentNum,
+                orderNum = orderNum,
                 paymentVendor = paymentVendor,
                 paymentAmount = paymentAmount,
                 success = false,
@@ -42,13 +42,13 @@ data class Payment(
 
         fun createSuccessRefund(
             id: Long,
-            paymentNum: String,
+            orderNum: String,
             paymentVendor: PaymentVendor,
             paymentAmount: Long
         ): Payment {
             return Payment(
                 id = id,
-                orderNum = paymentNum,
+                orderNum = orderNum,
                 paymentVendor = paymentVendor,
                 paymentAmount = paymentAmount,
                 success = true,
@@ -58,14 +58,14 @@ data class Payment(
 
         fun createFailRefund(
             id: Long,
-            paymentNum: String,
+            orderNum: String,
             paymentVendor: PaymentVendor,
             paymentAmount: Long,
             paymentResultCode: PaymentResultCode
         ): Payment {
             return Payment(
                 id = id,
-                orderNum = paymentNum,
+                orderNum = orderNum,
                 paymentVendor = paymentVendor,
                 paymentAmount = paymentAmount,
                 success = false,

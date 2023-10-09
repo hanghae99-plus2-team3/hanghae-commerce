@@ -16,8 +16,6 @@ data class Order(
 
     companion object {
 
-        private const val PAYMENT_PREFIX = "PAYMENT"
-
         fun create(
             userId: Long,
             receiverName: String,
@@ -42,10 +40,6 @@ data class Order(
                 orderStatus = OrderStatus.ORDERED
             )
         }
-    }
-
-    fun getPaymentNum(): String {
-        return "$PAYMENT_PREFIX-$orderNum"
     }
 
     fun updateStatusToPaymentCompleted(): Order = this.copy(orderStatus = OrderStatus.PAYMENT_COMPLETED)

@@ -10,7 +10,8 @@ class CancelOrderUseCaseImpl(
 ) : CancelOrderUseCase {
     override fun command(command: CancelOrderUseCase.Command): String {
         val cancelableOrder = orderService.getCancelableOrder(command.orderNum, command.userId)
-        paymentService.requestRefundOf(cancelableOrder)
+        val refundedPayment = paymentService.requestRefundOf(cancelableOrder)
+        paymentService.savePaymentRequestLog(refundedPayment)
         return cancelableOrder.order.orderNum
     }
 

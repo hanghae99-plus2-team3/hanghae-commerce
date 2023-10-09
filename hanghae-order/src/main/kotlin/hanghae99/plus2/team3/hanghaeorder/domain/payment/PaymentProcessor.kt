@@ -14,7 +14,7 @@ class PaymentProcessor(
     }
 
     fun refund(request: RefundRequest): Payment {
-        return findRequestedPaymentVendor(request.paymentVendor)
+        return findRequestedPaymentVendor(request.payment.paymentVendor)
             .refund(request)
     }
 
@@ -29,7 +29,6 @@ class PaymentProcessor(
     )
 
     data class RefundRequest(
-        val orderNum: String,
-        val paymentVendor: PaymentVendor,
+        val payment: Payment,
     )
 }

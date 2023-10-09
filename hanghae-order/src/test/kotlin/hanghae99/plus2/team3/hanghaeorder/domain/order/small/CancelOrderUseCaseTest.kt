@@ -18,8 +18,11 @@ import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.OrderItemValida
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.OrderStatusValidator
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentRequestUserValidator
 import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentTotalValidator
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.Payment
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentProcessor
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentResultCode
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentVendor
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.infrastructure.PaymentRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.service.PaymentService
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -39,7 +42,7 @@ class CancelOrderUseCaseTest {
     private lateinit var orderRepository: OrderRepository
     private lateinit var orderItemRepository: OrderItemRepository
     private lateinit var productsAccessor: ProductsAccessor
-    private val paymentRepository: FakePaymentRepositoryImpl = FakePaymentRepositoryImpl()
+    private lateinit var paymentRepository: PaymentRepository
 
     @BeforeEach
     fun setUp() {
@@ -126,8 +129,8 @@ class CancelOrderUseCaseTest {
 
     @Test
     fun `이미 결제된 취소 가능한 주문을 취소하면 결제를 취소한다`() {
-        val orderNum = "orderNum-3"
-        val userId = 3L
+        val orderNum = "orderNum-1"
+        val userId = 1L
 
         val result = sut.command(
             CancelOrderUseCase.Command(
@@ -137,9 +140,10 @@ class CancelOrderUseCaseTest {
         )
 
         assertThat(result).isEqualTo(orderNum)
-        val refundPayment =
-            paymentRepository.paymentRequests.find { it.orderNum == orderNum && it.paymentResultCode == PaymentResultCode.REFUND_SUCCESS }
+        val refundPayment = paymentRepository.getByOrderNum(orderNum)
         assertThat(refundPayment).isNotNull
+        assertThat(refundPayment.paymentResultCode).isEqualTo(PaymentResultCode.REFUND_SUCCESS)
+
     }
 
     private fun prepareTest() {
@@ -191,6 +195,26 @@ class CancelOrderUseCaseTest {
 
         )
 
+        val payments = listOf(
+            Payment(
+                1L,
+                "orderNum-1",
+                PaymentVendor.KAKAO,
+                10000L,
+                true,
+                PaymentResultCode.PAYMENT_SUCCESS
+            ),
+            Payment(
+                2L,
+                "orderNum-3",
+                PaymentVendor.KAKAO,
+                10000L,
+                true,
+                PaymentResultCode.PAYMENT_SUCCESS
+            ),
+        )
+
+        paymentRepository = FakePaymentRepositoryImpl(payments)
         orderRepository = FakeOrderRepositoryImpl(orders)
         orderItemRepository = FakeOrderItemRepositoryImpl(orderItems)
         productsAccessor = FakeProductsAccessor(productsInStock)

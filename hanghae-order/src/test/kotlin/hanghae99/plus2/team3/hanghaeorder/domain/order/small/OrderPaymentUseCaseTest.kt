@@ -20,6 +20,7 @@ import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentTotalVal
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentProcessor
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentResultCode
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentVendor
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.infrastructure.PaymentRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.service.PaymentService
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -38,7 +39,7 @@ class OrderPaymentUseCaseTest {
     private lateinit var orderRepository: OrderRepository
     private lateinit var orderItemRepository: OrderItemRepository
     private lateinit var productsAccessor: ProductsAccessor
-    private val paymentRepository: FakePaymentRepositoryImpl = FakePaymentRepositoryImpl()
+    private lateinit var paymentRepository: PaymentRepository
 
     @BeforeEach
     fun setUp() {
@@ -205,12 +206,12 @@ class OrderPaymentUseCaseTest {
         )
         assertThat(paymentId).isNotNull
 
-        val paymentRequests = paymentRepository.paymentRequests
-        assertThat(paymentRequests.size).isEqualTo(1)
-        assertThat(paymentRequests[0].orderNum).isEqualTo("PAYMENT-orderNum-1")
-        assertThat(paymentRequests[0].paymentVendor).isEqualTo(PaymentVendor.KAKAO)
-        assertThat(paymentRequests[0].paymentAmount).isEqualTo(10000L)
-        assertThat(paymentRequests[0].success).isEqualTo(true)
+
+        val paymentRequests = paymentRepository.getByOrderNum("orderNum-1")
+        assertThat(paymentRequests.orderNum).isEqualTo("orderNum-1")
+        assertThat(paymentRequests.paymentVendor).isEqualTo(PaymentVendor.KAKAO)
+        assertThat(paymentRequests.paymentAmount).isEqualTo(10000L)
+        assertThat(paymentRequests.success).isEqualTo(true)
     }
 
     @Test
@@ -227,13 +228,12 @@ class OrderPaymentUseCaseTest {
         }.isInstanceOf(PaymentProcessException::class.java)
             .hasMessage(PaymentResultCode.TIMEOUT_WHEN_PROCESSING_PAYMENT.message)
 
-        val paymentRequests = paymentRepository.paymentRequests
-        assertThat(paymentRequests.size).isEqualTo(1)
-        assertThat(paymentRequests[0].orderNum).isEqualTo("PAYMENT-orderNum-1")
-        assertThat(paymentRequests[0].paymentVendor).isEqualTo(PaymentVendor.TOSS)
-        assertThat(paymentRequests[0].paymentAmount).isEqualTo(10000L)
-        assertThat(paymentRequests[0].success).isEqualTo(false)
-        assertThat(paymentRequests[0].paymentResultCode).isEqualTo(PaymentResultCode.TIMEOUT_WHEN_PROCESSING_PAYMENT)
+        val paymentRequests = paymentRepository.getByOrderNum("orderNum-1")
+        assertThat(paymentRequests.orderNum).isEqualTo("orderNum-1")
+        assertThat(paymentRequests.paymentVendor).isEqualTo(PaymentVendor.TOSS)
+        assertThat(paymentRequests.paymentAmount).isEqualTo(10000L)
+        assertThat(paymentRequests.success).isEqualTo(false)
+        assertThat(paymentRequests.paymentResultCode).isEqualTo(PaymentResultCode.TIMEOUT_WHEN_PROCESSING_PAYMENT)
     }
 
     private fun prepareTest() {
@@ -274,7 +274,7 @@ class OrderPaymentUseCaseTest {
             OrderItem(3L, orders[2], 2L, 2, 3000L, OrderItem.DeliveryStatus.READY)
 
         )
-
+        paymentRepository = FakePaymentRepositoryImpl(listOf())
         orderRepository = FakeOrderRepositoryImpl(orders)
         orderItemRepository = FakeOrderItemRepositoryImpl(orderItems)
         productsAccessor = FakeProductsAccessor(productsInStock)

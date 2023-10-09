@@ -12,13 +12,18 @@ class FakeKakaoPaymentVendorCaller : PaymentVendorCaller {
 
     override fun pay(request: PaymentProcessor.PaymentRequest): Payment {
         return Payment.createSuccessPayment(
-            paymentNum = request.paymentNum,
+            orderNum = request.paymentNum,
             paymentVendor = request.paymentVendor,
             paymentAmount = request.paymentAmount
         )
     }
 
     override fun refund(request: PaymentProcessor.RefundRequest): Payment {
-        TODO("Not yet implemented")
+        return Payment.createSuccessRefund(
+            id = request.payment.id,
+            orderNum = request.payment.orderNum,
+            paymentVendor = request.payment.paymentVendor,
+            paymentAmount = request.payment.paymentAmount
+        )
     }
 }

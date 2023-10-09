@@ -16,6 +16,6 @@ class FakeTossErrorPaymentVendorCaller : PaymentVendorCaller {
     }
 
     override fun refund(request: PaymentProcessor.RefundRequest): Payment {
-        TODO("Not yet implemented")
+        throw PaymentTimeOutException()
     }
 }
