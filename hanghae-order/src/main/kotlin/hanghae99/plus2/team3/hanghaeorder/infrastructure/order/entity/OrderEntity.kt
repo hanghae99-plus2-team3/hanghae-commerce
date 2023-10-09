@@ -11,8 +11,6 @@ class OrderEntity(
     val id: Long,
     val orderNum: String,
     val userId: Long,
-    @OneToMany(mappedBy = "orderEntity", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val orderItems: List<OrderItemEntity>,
     @Embedded
     val deliveryInfo: DeliveryInfo,
     @Enumerated(EnumType.STRING)
@@ -36,7 +34,6 @@ class OrderEntity(
                 id = order.id,
                 orderNum = order.orderNum,
                 userId = order.userId,
-                orderItems = order.orderItems.map { OrderItemEntity.of(it) },
                 deliveryInfo = order.deliveryInfo,
                 orderStatus = order.orderStatus
             )

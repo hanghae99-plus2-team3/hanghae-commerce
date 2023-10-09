@@ -9,10 +9,8 @@ class OrderItemEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", updatable = false, insertable = false)
-    val orderEntity: OrderEntity?,
-    @Column(name = "order_id", updatable = false)
-    val orderId: Long,
+    @JoinColumn(name = "order_id", updatable = false)
+    val orderEntity: OrderEntity,
     val productId: Long,
     val quantity: Int,
     val productPrice: Long,
@@ -23,7 +21,7 @@ class OrderItemEntity(
     fun toDomain() =
         OrderItem(
             id = id,
-            orderId = orderId,
+            order = orderEntity.toDomain(),
             productId = productId,
             quantity = quantity,
             productPrice = productPrice,
@@ -36,12 +34,11 @@ class OrderItemEntity(
         ): OrderItemEntity {
             return OrderItemEntity(
                 id = orderItem.id,
-                orderId = orderItem.orderId,
+                orderEntity = OrderEntity.of(orderItem.order),
                 productId = orderItem.productId,
                 quantity = orderItem.quantity,
                 productPrice = orderItem.productPrice,
-                deliveryStatus = orderItem.deliveryStatus,
-                orderEntity = null
+                deliveryStatus = orderItem.deliveryStatus
             )
         }
     }

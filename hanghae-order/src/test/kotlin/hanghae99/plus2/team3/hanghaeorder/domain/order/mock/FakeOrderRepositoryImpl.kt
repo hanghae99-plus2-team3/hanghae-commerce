@@ -4,7 +4,6 @@ import hanghae99.plus2.team3.hanghaeorder.common.exception.OrderNotFoundExceptio
 import hanghae99.plus2.team3.hanghaeorder.domain.order.Order
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
 import hanghae99.plus2.team3.hanghaeorder.infrastructure.order.entity.OrderEntity
-import hanghae99.plus2.team3.hanghaeorder.infrastructure.order.entity.OrderItemEntity
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 
@@ -26,9 +25,8 @@ class FakeOrderRepositoryImpl(
                 userId = order.userId,
                 deliveryInfo = order.deliveryInfo,
                 orderStatus = order.orderStatus,
-                orderItems = order.orderItems.map { OrderItemEntity.of(it) }
 
-            )
+                )
             orders.add(entity)
             return order.copy(id = entity.id)
         } else {
@@ -41,6 +39,14 @@ class FakeOrderRepositoryImpl(
     }
 
     override fun getByOrderNum(orderNum: String): Order {
+        return (
+            orders.find { it.orderNum == orderNum }
+                ?: throw OrderNotFoundException()
+            )
+            .toDomain()
+    }
+
+    override fun getOrderWithOrderItemsByOrderNum(orderNum: String): Order {
         return (
             orders.find { it.orderNum == orderNum }
                 ?: throw OrderNotFoundException()
