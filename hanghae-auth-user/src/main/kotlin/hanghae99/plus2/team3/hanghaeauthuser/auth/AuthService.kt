@@ -11,14 +11,17 @@ interface AuthServiceUseCase {
 
 @Service
 class AuthService(
-    private val authDbPort: AuthDbPort
+    private val authDbPort: AuthDbPort,
+    private val authPasswordHandler: AuthPasswordHandler,
+    private val authTokenHandler: AuthTokenHandler
 ) : AuthServiceUseCase {
 
     override fun register(request: RegisterMemberRequest): AuthMember {
+        val encryptedPassword = authPasswordHandler.encrypt(request.pw)
         val newMember = AuthMember(
             pk = 0L,
             loginId = request.loginId,
-            pw = request.pw,
+            pw = encryptedPassword,
             createdTime = LocalDateTime.now()
         )
         return authDbPort.register(newMember)
@@ -31,12 +34,24 @@ class AuthService(
 
     private fun getAuthedMember(request: LoginRequest): AuthMember {
         val member = authDbPort.getUser(request.id)
-        require(member.pw == request.pw)
+        require(
+            authPasswordHandler.matches(
+                requestPassword = request.pw,
+                realPassword = member.pw
+            )
+        )
         return member
     }
 
     private fun issueNewToken(member: AuthMember): AuthToken {
-        val newToken = AuthToken.create(member.pk, "HangHae", LocalDateTime.now())
+        val createdTime = LocalDateTime.now()
+        val newToken =
+            authTokenHandler.createToken(
+                memberPk = member.pk,
+                loginId = member.loginId,
+                createdTime = createdTime
+            )
+
         return authDbPort.saveToken(newToken)
     }
 

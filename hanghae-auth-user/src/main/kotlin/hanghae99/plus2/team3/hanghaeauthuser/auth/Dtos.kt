@@ -5,17 +5,9 @@ data class RegisterMemberRequest(
     val pw: String
 )
 
-data class RegisterMemberResponse(
-    val token: String
-)
-
 data class LoginRequest(
     val id: String,
     val pw: String
-)
-
-data class LoginResponse(
-    val token: String
 )
 
 data class AuthTokenInfoResponse(
