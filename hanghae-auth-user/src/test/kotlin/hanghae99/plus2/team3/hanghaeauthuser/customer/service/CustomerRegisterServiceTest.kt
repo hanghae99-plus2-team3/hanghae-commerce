@@ -26,8 +26,8 @@ class CustomerRegisterServiceTest {
     fun `회원이 정상적으로 회원가입에 성공한다`() {
         val customerId = sut.createCustomer(
             CustomerRegisterRequest(
-                loginId = "testId3",
-                password = "test123"
+                loginId = "testId33",
+                password = "testPassword123"
             )
         )
 
