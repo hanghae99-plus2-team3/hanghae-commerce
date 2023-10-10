@@ -15,7 +15,6 @@ class AuthMemberEntityRepository(
         return authMemberEntityJpaRepository.save(authMemberEntity)
     }
 
-    // request로? 아니면 id로?
     fun getAuthMemberEntityByLoginId(loginId: String): AuthMemberEntity {
         return authMemberEntityJpaRepository.findByLoginId(loginId)
             ?: throw IllegalArgumentException("해당 아이디의 회원이 없습니다.")

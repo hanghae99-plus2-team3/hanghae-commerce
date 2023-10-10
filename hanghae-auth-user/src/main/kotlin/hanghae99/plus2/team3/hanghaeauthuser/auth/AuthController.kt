@@ -17,13 +17,13 @@ class AuthController(
     fun registerMember(
         @RequestBody registerMemberRequest: RegisterMemberRequest
     ) {
-        return authService.register(registerMemberRequest)
+        authService.register(registerMemberRequest)
     }
 
     @PostMapping("/login")
     fun login(
         @RequestBody loginRequest: LoginRequest
-    ): LoginResponse {
+    ): AuthToken {
         return authService.login(loginRequest)
     }
 

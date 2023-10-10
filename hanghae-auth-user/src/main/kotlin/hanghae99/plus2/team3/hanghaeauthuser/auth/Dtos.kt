@@ -10,7 +10,7 @@ data class RegisterMemberResponse(
 )
 
 data class LoginRequest(
-    val loginId: String,
+    val id: String,
     val pw: String
 )
 

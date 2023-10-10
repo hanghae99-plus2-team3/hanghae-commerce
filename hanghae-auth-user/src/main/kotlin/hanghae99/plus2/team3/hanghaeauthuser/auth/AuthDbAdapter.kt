@@ -1,52 +1,38 @@
 package hanghae99.plus2.team3.hanghaeauthuser.auth
 
 import org.springframework.stereotype.Component
-import java.time.LocalDateTime
+import org.springframework.transaction.annotation.Transactional
 
 interface AuthDbPort {
-    fun register(registerMemberRequest: RegisterMemberRequest)
-    fun login(loginRequest: LoginRequest): LoginResponse
+    fun register(member: AuthMember): AuthMember
+    fun getUser(loginId: String): AuthMember
+    fun saveToken(authToken: AuthToken): AuthToken
     fun getTokenInfo(authorization: String): AuthTokenInfoResponse
 }
 
 @Component
+@Transactional
 class AuthDbAdapter(
     private val authMemberEntityRepository: AuthMemberEntityRepository,
-    private val authTokenEntityRepository: AuthTokenEntityRepository
+    private val authTokenEntityRepository: AuthTokenEntityRepository,
+    private val authMemberMapper: AuthMemberMapper,
+    private val authTokenMapper: AuthTokenMapper
 ) : AuthDbPort {
 
-    override fun register(registerMemberRequest: RegisterMemberRequest) {
-        val newEntity = AuthMemberEntity(
-            pk = 0,
-            loginId = registerMemberRequest.loginId,
-            pw = registerMemberRequest.pw,
-            createdTime = LocalDateTime.now()
-        )
-        authMemberEntityRepository.save(newEntity)
+    override fun register(member: AuthMember): AuthMember {
+        val newEntity = authMemberMapper.toEntity(member)
+        val savedEntity = authMemberEntityRepository.save(newEntity)
+        return authMemberMapper.toDomain(savedEntity)
     }
 
-    // 이렇게 되면 로직을 여기서 가지게 되는데 서비스로 내려야하나
-    override fun login(loginRequest: LoginRequest): LoginResponse {
-        val authMemberEntity = authMemberEntityRepository.getAuthMemberEntityByLoginId(loginRequest.loginId)
-        validatePasswordMatches(authMemberEntity, loginRequest.pw)
-        val tokenEntity = issueNewToken(authMemberEntity)
-        return LoginResponse(
-            token = tokenEntity.token
-        )
+    override fun getUser(loginId: String): AuthMember {
+        val entity = authMemberEntityRepository.getAuthMemberEntityByLoginId(loginId)
+        return authMemberMapper.toDomain(entity)
     }
 
-    private fun validatePasswordMatches(authMemberEntity: AuthMemberEntity, requestPw: String) {
-        require(authMemberEntity.pw == requestPw)
-    }
-
-    private fun issueNewToken(authMemberEntity: AuthMemberEntity): AuthTokenEntity {
-        val newTokenEntity = AuthTokenEntity(
-            pk = 0,
-            token = authMemberEntity.pk.toString(),
-            memberPk = authMemberEntity.pk,
-            createdTime = LocalDateTime.now()
-        )
-        return authTokenEntityRepository.save(newTokenEntity)
+    override fun saveToken(authToken: AuthToken): AuthToken {
+        val entity = authTokenMapper.toEntity(authToken)
+        return authTokenMapper.toDomain(entity)
     }
 
     override fun getTokenInfo(authorization: String): AuthTokenInfoResponse {

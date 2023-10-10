@@ -28,5 +28,6 @@ class AuthTokenEntity(
     pk: Long,
     val token: String,
     val memberPk: Long,
-    createdTime: LocalDateTime
+    createdTime: LocalDateTime,
+    val expireTime: LocalDateTime
 ) : BaseEntity(pk = pk, createdTime = createdTime)

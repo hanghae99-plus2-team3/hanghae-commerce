@@ -23,7 +23,7 @@ internal class LogInApiTest {
     @Test
     fun `로그인`() {
         val request = LoginRequest(
-            loginId = "jay",
+            id = "jay",
             pw = "1q2w3e4r"
         )
 
@@ -37,7 +37,7 @@ internal class LogInApiTest {
         rawResponse.then().log().all()
         rawResponse.statusCode shouldBe 200
         shouldNotThrowAny {
-            rawResponse.body.`as`(LoginResponse::class.java)
+            rawResponse.body.`as`(AuthToken::class.java)
         }
     }
 }
