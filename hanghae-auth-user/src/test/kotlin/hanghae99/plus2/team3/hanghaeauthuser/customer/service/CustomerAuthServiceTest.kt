@@ -76,6 +76,18 @@ class CustomerAuthServiceTest {
         assertThat(loginFlag).isTrue
     }
 
+    @Test
+    fun `아이디, 패스워드 불일치 시 로그인에 실패한다`() {
+        assertThatThrownBy {
+            sut.login(
+                CustomerLoginRequest(
+                    loginId = "testId114442",
+                    password = "testPassword123"
+                )
+            )
+        }.isInstanceOf(IllegalArgumentException::class.java)
+    }
+
     private fun prepareTest() {
         val customerEntities = listOf(
             CustomerEntity(1L, "testId11", "testPassword123", "정찬우"),

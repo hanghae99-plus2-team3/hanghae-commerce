@@ -29,7 +29,7 @@ class FakeCustomerRepositoryImpl(
         return customers.any { it.loginId == loginId }
     }
 
-    override fun findByLoginIdAndPassword(loginId: String, password: String): CustomerEntity {
-        return customers.first { it.loginId == loginId && it.password == password }
+    override fun findByLoginIdAndPassword(loginId: String, password: String): CustomerEntity? {
+        return customers.firstOrNull { it.loginId == loginId && it.password == password }
     }
 }

@@ -20,6 +20,13 @@ class CustomerAuthService(
     }
 
     fun login(customerLoginRequest: CustomerLoginRequest): Boolean {
-        return true
+        val findCustomer = customerRepository.findByLoginIdAndPassword(
+            customerLoginRequest.loginId,
+            customerLoginRequest.password
+        )
+
+        return findCustomer?.let {
+            true
+        } ?: throw IllegalArgumentException("해당 로그인 정보를 찾을 수 없습니다.")
     }
 }
