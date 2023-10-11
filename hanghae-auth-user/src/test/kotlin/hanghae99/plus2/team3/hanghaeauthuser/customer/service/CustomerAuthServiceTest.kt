@@ -1,6 +1,7 @@
 package hanghae99.plus2.team3.hanghaeauthuser.customer.service
 
 
+import hanghae99.plus2.team3.hanghaeauthuser.customer.controller.request.CustomerLoginRequest
 import hanghae99.plus2.team3.hanghaeauthuser.customer.controller.request.CustomerRegisterRequest
 import hanghae99.plus2.team3.hanghaeauthuser.customer.domain.CustomerEntity
 import hanghae99.plus2.team3.hanghaeauthuser.customer.exception.AlreadyExistCustomerException
@@ -65,7 +66,14 @@ class CustomerAuthServiceTest {
 
     @Test
     fun `사용자가 로그인에 성공한다`() {
-        
+        val loginFlag = sut.login(
+            CustomerLoginRequest(
+                loginId = "testId11",
+                password = "testPassword123"
+            )
+        )
+
+        assertThat(loginFlag).isTrue
     }
 
     private fun prepareTest() {

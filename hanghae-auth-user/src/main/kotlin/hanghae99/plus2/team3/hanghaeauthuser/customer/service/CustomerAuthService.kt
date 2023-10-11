@@ -1,5 +1,6 @@
 package hanghae99.plus2.team3.hanghaeauthuser.customer.service
 
+import hanghae99.plus2.team3.hanghaeauthuser.customer.controller.request.CustomerLoginRequest
 import hanghae99.plus2.team3.hanghaeauthuser.customer.controller.request.CustomerRegisterRequest
 import hanghae99.plus2.team3.hanghaeauthuser.customer.controller.request.toEntity
 import hanghae99.plus2.team3.hanghaeauthuser.customer.exception.AlreadyExistCustomerException
@@ -16,5 +17,9 @@ class CustomerAuthService(
         }
 
         return customerRepository.save(customerRegisterRequest.toEntity(0L))
+    }
+
+    fun login(customerLoginRequest: CustomerLoginRequest): Boolean {
+        return true
     }
 }
