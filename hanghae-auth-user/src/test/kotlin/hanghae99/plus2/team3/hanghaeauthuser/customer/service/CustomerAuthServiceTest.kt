@@ -12,9 +12,9 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class CustomerRegisterServiceTest {
+class CustomerAuthServiceTest {
 
-    private lateinit var sut: CustomerService
+    private lateinit var sut: CustomerAuthService
     private lateinit var customerRepository: CustomerRepository
 
     @BeforeEach
@@ -27,7 +27,8 @@ class CustomerRegisterServiceTest {
         val customerId = sut.createCustomer(
             CustomerRegisterRequest(
                 loginId = "testId33",
-                password = "testPassword123"
+                password = "testPassword123",
+                name = "testMan"
             )
         )
 
@@ -40,7 +41,8 @@ class CustomerRegisterServiceTest {
             sut.createCustomer(
                 CustomerRegisterRequest(
                     loginId = "",
-                    password = "test123"
+                    password = "test123",
+                    name = "testMan"
                 )
             )
         }.isInstanceOf(IllegalArgumentException::class.java)
@@ -53,11 +55,17 @@ class CustomerRegisterServiceTest {
             sut.createCustomer(
                 CustomerRegisterRequest(
                     loginId = "testId11",
-                    password = "testPassword123"
+                    password = "testPassword123",
+                    name = "testMan"
                 )
             )
         }.isInstanceOf(AlreadyExistCustomerException::class.java)
             .hasMessage(ErrorCode.ALREADY_EXIST_CUSTOMER.message)
+    }
+
+    @Test
+    fun `사용자가 로그인에 성공한다`() {
+        
     }
 
     private fun prepareTest() {
@@ -67,6 +75,6 @@ class CustomerRegisterServiceTest {
         )
 
         customerRepository = FakeCustomerRepositoryImpl(customerEntities)
-        sut = CustomerService(customerRepository)
+        sut = CustomerAuthService(customerRepository)
     }
 }

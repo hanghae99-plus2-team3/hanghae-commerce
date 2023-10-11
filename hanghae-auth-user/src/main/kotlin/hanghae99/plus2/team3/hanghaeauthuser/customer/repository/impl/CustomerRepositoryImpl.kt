@@ -16,6 +16,10 @@ class CustomerRepositoryImpl(
     override fun findByLoginIdAndPassword(loginId: String, password: String): CustomerEntity {
         return findByLoginIdAndPassword(loginId, password)
     }
+
+    override fun save(customerEntity: CustomerEntity): Long {
+        return customerJpaRepository.save(customerEntity).pk
+    }
 }
 
 interface CustomerJpaRepository : JpaRepository<CustomerEntity, Long> {

@@ -20,9 +20,9 @@ class FakeCustomerRepositoryImpl(
         preRegisterCustomers.forEach { save(it) }
     }
 
-    private fun save(customerEntity: CustomerEntity): CustomerEntity {
+    override fun save(customerEntity: CustomerEntity): Long {
         customers.add(customerEntity)
-        return customerEntity
+        return customerEntity.pk
     }
 
     override fun existsByLoginId(loginId: String): Boolean {
