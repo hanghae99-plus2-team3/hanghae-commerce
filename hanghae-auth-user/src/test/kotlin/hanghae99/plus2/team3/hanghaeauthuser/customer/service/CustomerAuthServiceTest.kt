@@ -6,6 +6,7 @@ import hanghae99.plus2.team3.hanghaeauthuser.customer.controller.request.Custome
 import hanghae99.plus2.team3.hanghaeauthuser.customer.domain.CustomerEntity
 import hanghae99.plus2.team3.hanghaeauthuser.customer.exception.AlreadyExistCustomerException
 import hanghae99.plus2.team3.hanghaeauthuser.customer.exception.ErrorCode
+import hanghae99.plus2.team3.hanghaeauthuser.customer.exception.NotExistedCustomerException
 import hanghae99.plus2.team3.hanghaeauthuser.customer.mock.FakeCustomerRepositoryImpl
 import hanghae99.plus2.team3.hanghaeauthuser.customer.repository.CustomerRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -85,7 +86,8 @@ class CustomerAuthServiceTest {
                     password = "testPassword123"
                 )
             )
-        }.isInstanceOf(IllegalArgumentException::class.java)
+        }.isInstanceOf(NotExistedCustomerException::class.java)
+            .hasMessage(ErrorCode.NOT_EXISTED_CUSTOMER.message)
     }
 
     private fun prepareTest() {

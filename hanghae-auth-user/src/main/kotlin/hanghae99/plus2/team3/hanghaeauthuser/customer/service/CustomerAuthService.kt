@@ -4,6 +4,7 @@ import hanghae99.plus2.team3.hanghaeauthuser.customer.controller.request.Custome
 import hanghae99.plus2.team3.hanghaeauthuser.customer.controller.request.CustomerRegisterRequest
 import hanghae99.plus2.team3.hanghaeauthuser.customer.controller.request.toEntity
 import hanghae99.plus2.team3.hanghaeauthuser.customer.exception.AlreadyExistCustomerException
+import hanghae99.plus2.team3.hanghaeauthuser.customer.exception.NotExistedCustomerException
 import hanghae99.plus2.team3.hanghaeauthuser.customer.repository.CustomerRepository
 import org.springframework.stereotype.Service
 
@@ -27,6 +28,6 @@ class CustomerAuthService(
 
         return findCustomer?.let {
             true
-        } ?: throw IllegalArgumentException("해당 로그인 정보를 찾을 수 없습니다.")
+        } ?: throw NotExistedCustomerException()
     }
 }
