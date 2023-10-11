@@ -14,7 +14,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class CustomerAuthServiceTest {
+internal class CustomerAuthServiceTest {
 
     private lateinit var sut: CustomerAuthService
     private lateinit var customerRepository: CustomerRepository
