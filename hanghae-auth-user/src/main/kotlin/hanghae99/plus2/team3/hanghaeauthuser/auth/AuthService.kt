@@ -33,7 +33,7 @@ class AuthService(
     }
 
     private fun getAuthedMember(request: LoginRequest): AuthMember {
-        val member = authDbPort.getUser(request.id)
+        val member = authDbPort.getUser(request.loginId)
         require(
             authPasswordHandler.matches(
                 requestPassword = request.pw,

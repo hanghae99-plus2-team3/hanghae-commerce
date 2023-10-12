@@ -31,8 +31,9 @@ class AuthDbAdapter(
     }
 
     override fun saveToken(authToken: AuthToken): AuthToken {
-        val entity = authTokenMapper.toEntity(authToken)
-        return authTokenMapper.toDomain(entity)
+        val newEntity = authTokenMapper.toEntity(authToken)
+        val savedEntity = authTokenEntityRepository.save(newEntity)
+        return authTokenMapper.toDomain(savedEntity)
     }
 
     override fun getTokenInfo(authorization: String): AuthTokenInfoResponse {

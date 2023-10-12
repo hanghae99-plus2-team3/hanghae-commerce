@@ -6,7 +6,7 @@ data class RegisterMemberRequest(
 )
 
 data class LoginRequest(
-    val id: String,
+    val loginId: String,
     val pw: String
 )
 
