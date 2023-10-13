@@ -1,5 +1,6 @@
 dependencies {
-
+    implementation("com.google.guava:guava:32.1.3-jre")
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.0.3")
 }
 
 docker {
