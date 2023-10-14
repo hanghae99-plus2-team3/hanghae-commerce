@@ -12,3 +12,4 @@ class OrderInfoNotValidException : OrderException(ErrorCode.ORDER_INFO_NOT_VALID
 class OrderedPriceNotMatchException : OrderException(ErrorCode.ORDER_PRICE_NOT_MATCH)
 class OrderedItemOutOfStockException : OrderException(ErrorCode.ORDERED_ITEM_OUT_OF_STOCK)
 class OrderAlreadyPayedException : OrderException(ErrorCode.ORDER_ALREADY_PAYED)
+class CanNotCancelOrderException(errorCode: ErrorCode) : OrderException(errorCode)

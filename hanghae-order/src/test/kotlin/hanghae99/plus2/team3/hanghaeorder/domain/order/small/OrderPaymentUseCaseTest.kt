@@ -20,6 +20,7 @@ import hanghae99.plus2.team3.hanghaeorder.domain.order.validator.PaymentTotalVal
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentProcessor
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentResultCode
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentVendor
+import hanghae99.plus2.team3.hanghaeorder.domain.payment.infrastructure.PaymentRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.service.PaymentService
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -38,8 +39,7 @@ class OrderPaymentUseCaseTest {
     private lateinit var orderRepository: OrderRepository
     private lateinit var orderItemRepository: OrderItemRepository
     private lateinit var productsAccessor: ProductsAccessor
-    private lateinit var userAccessor: UserInfoAccessor
-    private val paymentRepository: FakePaymentRepositoryImpl = FakePaymentRepositoryImpl()
+    private lateinit var paymentRepository: PaymentRepository
 
     @BeforeEach
     fun setUp() {
@@ -49,15 +49,20 @@ class OrderPaymentUseCaseTest {
                 orderRepository,
                 orderItemRepository,
                 productsAccessor,
+            ),
+            PaymentService(
+                paymentRepository,
+                orderRepository,
+                orderItemRepository,
+                productsAccessor,
                 listOf(
                     PaymentTotalValidator(),
                     OrderStatusValidator(),
                     PaymentRequestUserValidator(),
                     OrderItemValidator()
                 ),
-                PaymentProcessor(listOf(FakeTossErrorPaymentVendorCaller(), FakeKakaoPaymentVendorCaller()))
-            ),
-            PaymentService(paymentRepository)
+                PaymentProcessor(listOf(FakeTossErrorPaymentVendorCaller(), FakeKakaoPaymentVendorCaller())),
+            )
         )
     }
 
@@ -73,7 +78,7 @@ class OrderPaymentUseCaseTest {
         )
         assertThat(paymentId).isNotNull
 
-        val savedOrder = orderRepository.getByOrderNum("orderNum-1")
+        val savedOrder = orderRepository.getByOrderNumAndUserId("orderNum-1", 1L)
         val savedOrderItems = orderItemRepository.findByOrderId(savedOrder.id)
         assertThat(savedOrder.orderStatus).isEqualTo(Order.OrderStatus.PAYMENT_COMPLETED)
         savedOrderItems.forEach {
@@ -107,8 +112,8 @@ class OrderPaymentUseCaseTest {
                     paymentAmount = 10000L
                 )
             )
-        }.isInstanceOf(OrderInfoNotValidException::class.java)
-            .hasMessage(ErrorCode.ORDER_INFO_NOT_VALID.message)
+        }.isInstanceOf(OrderNotFoundException::class.java)
+            .hasMessage(ErrorCode.ORDER_NOT_FOUND.message)
     }
 
     @Test
@@ -201,12 +206,12 @@ class OrderPaymentUseCaseTest {
         )
         assertThat(paymentId).isNotNull
 
-        val paymentRequests = paymentRepository.paymentRequests
-        assertThat(paymentRequests.size).isEqualTo(1)
-        assertThat(paymentRequests[0].paymentNum).isEqualTo("PAYMENT-orderNum-1")
-        assertThat(paymentRequests[0].paymentVendor).isEqualTo(PaymentVendor.KAKAO)
-        assertThat(paymentRequests[0].paymentAmount).isEqualTo(10000L)
-        assertThat(paymentRequests[0].success).isEqualTo(true)
+
+        val paymentRequests = paymentRepository.getByOrderNum("orderNum-1")
+        assertThat(paymentRequests.orderNum).isEqualTo("orderNum-1")
+        assertThat(paymentRequests.paymentVendor).isEqualTo(PaymentVendor.KAKAO)
+        assertThat(paymentRequests.paymentAmount).isEqualTo(10000L)
+        assertThat(paymentRequests.success).isEqualTo(true)
     }
 
     @Test
@@ -223,13 +228,12 @@ class OrderPaymentUseCaseTest {
         }.isInstanceOf(PaymentProcessException::class.java)
             .hasMessage(PaymentResultCode.TIMEOUT_WHEN_PROCESSING_PAYMENT.message)
 
-        val paymentRequests = paymentRepository.paymentRequests
-        assertThat(paymentRequests.size).isEqualTo(1)
-        assertThat(paymentRequests[0].paymentNum).isEqualTo("PAYMENT-orderNum-1")
-        assertThat(paymentRequests[0].paymentVendor).isEqualTo(PaymentVendor.TOSS)
-        assertThat(paymentRequests[0].paymentAmount).isEqualTo(10000L)
-        assertThat(paymentRequests[0].success).isEqualTo(false)
-        assertThat(paymentRequests[0].paymentResultCode).isEqualTo(PaymentResultCode.TIMEOUT_WHEN_PROCESSING_PAYMENT)
+        val paymentRequests = paymentRepository.getByOrderNum("orderNum-1")
+        assertThat(paymentRequests.orderNum).isEqualTo("orderNum-1")
+        assertThat(paymentRequests.paymentVendor).isEqualTo(PaymentVendor.TOSS)
+        assertThat(paymentRequests.paymentAmount).isEqualTo(10000L)
+        assertThat(paymentRequests.success).isEqualTo(false)
+        assertThat(paymentRequests.paymentResultCode).isEqualTo(PaymentResultCode.TIMEOUT_WHEN_PROCESSING_PAYMENT)
     }
 
     private fun prepareTest() {
@@ -270,10 +274,9 @@ class OrderPaymentUseCaseTest {
             OrderItem(3L, orders[2], 2L, 2, 3000L, OrderItem.DeliveryStatus.READY)
 
         )
-
+        paymentRepository = FakePaymentRepositoryImpl(listOf())
         orderRepository = FakeOrderRepositoryImpl(orders)
         orderItemRepository = FakeOrderItemRepositoryImpl(orderItems)
         productsAccessor = FakeProductsAccessor(productsInStock)
-        userAccessor = FakeUserInfoAccessor(users)
     }
 }
