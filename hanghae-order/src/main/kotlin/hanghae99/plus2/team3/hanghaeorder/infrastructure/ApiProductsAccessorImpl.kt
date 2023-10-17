@@ -24,6 +24,6 @@ class ApiProductsAccessorImpl : ProductsAccessor {
     }
 
     override fun updateProductStock(updateProductStock: List<ProductsAccessor.UpdateProductStockRequest>) {
-        TODO("Not yet implemented")
+        
     }
 }

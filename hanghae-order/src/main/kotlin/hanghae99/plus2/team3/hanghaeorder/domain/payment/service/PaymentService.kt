@@ -1,6 +1,7 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.payment.service
 
 import hanghae99.plus2.team3.hanghaeorder.common.exception.PaymentException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.PaymentProcessException
 import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
@@ -33,7 +34,7 @@ class PaymentService(
     private val productsAccessor: ProductsAccessor,
     private val paymentValidators: List<PaymentValidator>,
     private val paymentProcessor: PaymentProcessor,
-    private val eventPublisher: ApplicationEventPublisher
+    private val applicationEventPublisher: ApplicationEventPublisher
 ) {
 
 
@@ -41,34 +42,55 @@ class PaymentService(
     fun requestPaymentOf(
         orderWithItems: OrderWithItemsDto,
         command: OrderPaymentUseCase.Command
-    ) {
+    ): String {
 
         validatePayment(orderWithItems, command)
         reduceProductStock(orderWithItems.orderItems)
 
-        try {
-            val payment = processPayment(
-                PaymentProcessor.PaymentRequest(
-                    paymentNum = orderWithItems.order.orderNum,
-                    paymentVendor = command.paymentVendor,
-                    paymentAmount = command.paymentAmount
-                )
-            )
+        return try {
+            val payment = processPayment(orderWithItems, command)
             updateOrderStatusToPaymentCompleted(orderWithItems)
-            eventPublisher.publishEvent(payment)
+            publishPaymentRequestLoggerEvent(payment)
+            payment.orderNum
         } catch (e: Exception) {
-            rollbackProductStock(orderWithItems.orderItems)
-            val failedPayment = Payment.createFailPayment(
-                orderNum = orderWithItems.order.orderNum,
-                paymentVendor = command.paymentVendor,
-                paymentAmount = command.paymentAmount,
-                paymentResultCode = when (e) {
-                    is PaymentException -> e.paymentResultCode
-                    else -> PaymentResultCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT
-                }
-            )
-            eventPublisher.publishEvent(failedPayment)
+            val failedPayment = handleFailedPayment(orderWithItems, command, e)
+            publishPaymentRequestLoggerEvent(failedPayment)
+            throw PaymentProcessException(failedPayment.paymentResultCode)
         }
+    }
+
+    private fun publishPaymentRequestLoggerEvent(payment: Payment) {
+        applicationEventPublisher.publishEvent(payment)
+    }
+
+    private fun handleFailedPayment(
+        orderWithItems: OrderWithItemsDto,
+        command: OrderPaymentUseCase.Command,
+        e: Exception
+    ): Payment {
+        rollbackProductStock(orderWithItems.orderItems)
+        return Payment.createFailPayment(
+            orderNum = orderWithItems.order.orderNum,
+            paymentVendor = command.paymentVendor,
+            paymentAmount = command.paymentAmount,
+            paymentResultCode = when (e) {
+                is PaymentException -> e.paymentResultCode
+                else -> PaymentResultCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT
+            }
+        )
+    }
+
+    private fun processPayment(
+        orderWithItems: OrderWithItemsDto,
+        command: OrderPaymentUseCase.Command
+    ): Payment {
+        return processPayment(
+            PaymentProcessor.PaymentRequest(
+                paymentNum = orderWithItems.order.orderNum,
+                paymentVendor = command.paymentVendor,
+                paymentAmount = command.paymentAmount
+            )
+        )
     }
 
 
