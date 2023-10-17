@@ -13,6 +13,7 @@ import hanghae99.plus2.team3.hanghaeorder.domain.payment.Payment
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentProcessor
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.PaymentResultCode
 import hanghae99.plus2.team3.hanghaeorder.domain.payment.infrastructure.PaymentRepository
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -32,8 +33,10 @@ class PaymentService(
     private val orderItemRepository: OrderItemRepository,
     private val productsAccessor: ProductsAccessor,
     private val paymentValidators: List<PaymentValidator>,
-    private val paymentProcessor: PaymentProcessor
+    private val paymentProcessor: PaymentProcessor,
+    private val applicationEventPublisher: ApplicationEventPublisher
 ) {
+
 
     @Transactional
     fun savePaymentRequestLog(payment: Payment) {
@@ -74,6 +77,7 @@ class PaymentService(
                 }
             )
         }
+//        applicationEventPublisher.publishEvent()
     }
 
 
@@ -141,3 +145,10 @@ class PaymentService(
 
 
 }
+//
+//@Component
+//class EventListener(){
+//
+//    @TransactionalEventListener()
+//
+//}
