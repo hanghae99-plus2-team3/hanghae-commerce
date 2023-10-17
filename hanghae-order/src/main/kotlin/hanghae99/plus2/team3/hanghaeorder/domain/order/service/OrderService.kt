@@ -28,7 +28,7 @@ class OrderService(
 
     fun makeOrder(command: RegisterOrderUseCase.Command): String {
         validateOrderedProducts(command, getProductInfo(command))
-
+        Thread.sleep((0..60).random().times(100).toLong())
         val savedOrder = orderRepository.save(command.toDomain())
 
         command.orderItemList.forEach {
