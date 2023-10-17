@@ -1,7 +1,6 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.payment.service
 
 import hanghae99.plus2.team3.hanghaeorder.common.exception.PaymentException
-import hanghae99.plus2.team3.hanghaeorder.common.exception.PaymentProcessException
 import hanghae99.plus2.team3.hanghaeorder.domain.order.OrderItem
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
@@ -34,23 +33,15 @@ class PaymentService(
     private val productsAccessor: ProductsAccessor,
     private val paymentValidators: List<PaymentValidator>,
     private val paymentProcessor: PaymentProcessor,
-    private val applicationEventPublisher: ApplicationEventPublisher
+    private val eventPublisher: ApplicationEventPublisher
 ) {
 
-
-    @Transactional
-    fun savePaymentRequestLog(payment: Payment) {
-        paymentRepository.save(payment)
-        if (!payment.success) {
-            throw PaymentProcessException(payment.paymentResultCode)
-        }
-    }
 
     @Transactional
     fun requestPaymentOf(
         orderWithItems: OrderWithItemsDto,
         command: OrderPaymentUseCase.Command
-    ): Payment {
+    ) {
 
         validatePayment(orderWithItems, command)
         reduceProductStock(orderWithItems.orderItems)
@@ -64,10 +55,10 @@ class PaymentService(
                 )
             )
             updateOrderStatusToPaymentCompleted(orderWithItems)
-            return payment
+            eventPublisher.publishEvent(payment)
         } catch (e: Exception) {
             rollbackProductStock(orderWithItems.orderItems)
-            return Payment.createFailPayment(
+            val failedPayment = Payment.createFailPayment(
                 orderNum = orderWithItems.order.orderNum,
                 paymentVendor = command.paymentVendor,
                 paymentAmount = command.paymentAmount,
@@ -76,8 +67,8 @@ class PaymentService(
                     else -> PaymentResultCode.ERROR_ACCRUED_WHEN_PROCESSING_PAYMENT
                 }
             )
+            eventPublisher.publishEvent(failedPayment)
         }
-//        applicationEventPublisher.publishEvent()
     }
 
 
@@ -142,13 +133,4 @@ class PaymentService(
             }
         )
     }
-
-
 }
-//
-//@Component
-//class EventListener(){
-//
-//    @TransactionalEventListener()
-//
-//}
