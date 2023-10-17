@@ -7,11 +7,7 @@ import hanghae99.plus2.team3.hanghaeorder.interfaces.request.OrderPaymentRequest
 import hanghae99.plus2.team3.hanghaeorder.interfaces.request.OrderProductsRequest
 import hanghae99.plus2.team3.hanghaeorder.interfaces.request.toCommand
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 /**
  * OrderController
@@ -33,8 +29,8 @@ class OrderController(
     fun registerOrder(
         @RequestBody orderProductsRequest: OrderProductsRequest,
         currentUser: CurrentUser
-    ) {
-        registerOrderUseCase.command(orderProductsRequest.toCommand(currentUser.userId))
+    ): String {
+        return registerOrderUseCase.command(orderProductsRequest.toCommand(currentUser.userId))
     }
 
     @ResponseStatus(HttpStatus.OK)
