@@ -1,4 +1,4 @@
-package hanghae99.plus2.team3.hanghaeorder.common
+package hanghae99.plus2.team3.hanghaecommon.config
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

@@ -29,7 +29,7 @@ subprojects {
     apply(plugin = "org.springframework.boot")
     apply(plugin = "io.spring.dependency-management")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    apply(plugin = "com.palantir.docker")
+
 
     dependencies {
 
