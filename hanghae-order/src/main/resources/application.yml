@@ -7,10 +7,10 @@ spring:
     jpa:
         hibernate:
             ddl-auto: create
-#    cloud:
-#        openfeign:
-#            client:
-#                config:
-#                    FeignUserInfoAccessor:
-#                        url: http://hanghae-auth-user-network:8080/v1/user
+    cloud:
+        openfeign:
+            client:
+                config:
+                    user-service:
+                        url: http://host.docker.internal:8081/v1/user
 

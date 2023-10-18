@@ -1,9 +1,6 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.service
 
-import hanghae99.plus2.team3.hanghaeorder.common.exception.CanNotCancelOrderException
-import hanghae99.plus2.team3.hanghaeorder.common.exception.ErrorCode
-import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductNotFoundException
-import hanghae99.plus2.team3.hanghaeorder.common.exception.ProductStockNotEnoughException
+import hanghae99.plus2.team3.hanghaeorder.common.exception.*
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderItemRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.OrderRepository
 import hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure.ProductsAccessor
@@ -38,8 +35,11 @@ class OrderService(
         return savedOrder.orderNum
     }
 
-    fun getOrderWithOrderItems(orderNum: String, userId: Long): OrderWithItemsDto {
+    fun getOrderForPayment(orderNum: String, userId: Long): OrderWithItemsDto {
         val order = orderRepository.getByOrderNumAndUserId(orderNum, userId)
+        if (order.isPaymentCompleted())
+            throw OrderAlreadyPayedException()
+
         return OrderWithItemsDto(
             order,
             orderItemRepository.findByOrderId(order.id)

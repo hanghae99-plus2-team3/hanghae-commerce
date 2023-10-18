@@ -12,7 +12,7 @@ class OrderPaymentUseCaseImpl(
 ) : OrderPaymentUseCase {
 
     override fun command(command: OrderPaymentUseCase.Command): String {
-        val orderWithItems = orderService.getOrderWithOrderItems(command.orderNum, command.userId)
+        val orderWithItems = orderService.getOrderForPayment(command.orderNum, command.userId)
         paymentService.requestPaymentOf(orderWithItems, command)
         return command.orderNum
     }

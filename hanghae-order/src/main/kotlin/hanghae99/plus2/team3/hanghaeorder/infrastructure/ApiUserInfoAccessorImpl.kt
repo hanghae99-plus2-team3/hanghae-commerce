@@ -10,15 +10,10 @@ import org.springframework.web.bind.annotation.PathVariable
 class ApiUserInfoAccessorImpl(
     private val feignUserInfoAccessor: FeignUserInfoAccessor
 ) : UserInfoAccessor {
-    override fun query(userId: Long) =
-        UserInfoAccessor.UserInfo(
-            userId = userId,
-            userName = "test",
-            userEmail = "testEmail"
-        )
+    override fun query(userId: Long) = feignUserInfoAccessor.query(userId)
 }
 
-@FeignClient(name = "user-service", url = "http://localhost:8081/v1/user")
+@FeignClient(name = "user-service")
 interface FeignUserInfoAccessor {
     @GetMapping("/{userId}")
     fun query(@PathVariable("userId") userId: Long): UserInfoAccessor.UserInfo
