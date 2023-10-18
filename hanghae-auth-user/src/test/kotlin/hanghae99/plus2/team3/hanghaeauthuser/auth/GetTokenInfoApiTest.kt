@@ -19,7 +19,7 @@ internal class GetTokenInfoApiTest {
     }
 
     @Test
-    fun `토큰 정보 조회`() {
+    fun `토큰 정보 조회 성공`() {
         val rawResponse = RestAssured
             .given()
             .header("authorization", "1")
@@ -31,5 +31,16 @@ internal class GetTokenInfoApiTest {
         with(rawResponse.body.`as`(AuthTokenInfoResponse::class.java)) {
             memberPk shouldBe 1L
         }
+    }
+
+    @Test
+    fun `토큰 정보 조회 실패`() {
+        val rawResponse = RestAssured
+            .given()
+            .log().all()
+            .get("/api/auth/info")
+
+        rawResponse.then().log().all()
+        rawResponse.statusCode shouldBe 401
     }
 }

@@ -29,8 +29,9 @@ class AuthController(
 
     @GetMapping("/info")
     fun getTokenInfo(
-        @RequestHeader(value = "authorization") authorization: String
+        @RequestHeader(value = "authorization") authorization: String? = null
     ): AuthTokenInfoResponse {
+        if (authorization == null) { throw UnAuthorizedException() }
         return authService.getTokenInfo(authorization)
     }
 }
