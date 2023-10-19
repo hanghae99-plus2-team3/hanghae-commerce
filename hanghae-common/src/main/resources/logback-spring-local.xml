@@ -1,7 +1,6 @@
 <included>
     <property resource="logback-variables.properties"/>
     <appender name="MDC_REQUEST" class="ch.qos.logback.core.ConsoleAppender">
-
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>
                 %replace([REQUEST-ID %X{REQUEST_TRACE_ID}]){'\[REQUEST-ID \]', '[SYSTEM]'} ORDER-SERVICE ${LOG_PATTERN_LOCAL}

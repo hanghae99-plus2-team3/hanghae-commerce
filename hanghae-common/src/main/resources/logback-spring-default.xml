@@ -1,0 +1,30 @@
+<included>
+    <property resource="logback-variables.properties"/>
+    <appender name="MDC_REQUEST" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>
+                %replace([REQUEST-ID %X{REQUEST_TRACE_ID}]){'\[REQUEST-ID \]', '[SYSTEM]'} ORDER-SERVICE ${LOG_PATTERN_LOCAL}
+            </pattern>
+            <outputPatternAsHeader>true</outputPatternAsHeader>
+        </encoder>
+    </appender>
+
+    <appender name="MDC_REQUEST_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>log/archive/request.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+            <maxFileSize>100KB</maxFileSize>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>
+                %replace([REQUEST-ID %X{REQUEST_TRACE_ID}]){'\[REQUEST-ID \]', '[SYSTEM]'} ORDER-SERVICE ${LOG_PATTERN_LOCAL}
+            </pattern>
+            <outputPatternAsHeader>true</outputPatternAsHeader>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="MDC_REQUEST"/>
+        <appender-ref ref="MDC_REQUEST_FILE"/>
+    </root>
+</included>
