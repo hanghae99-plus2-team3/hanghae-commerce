@@ -11,7 +11,6 @@ class CustomerEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val pk: Long,
-    val loginId: String,
-    val password: String,
-    val name: String
+    val name: String,
+    val email: String
 )

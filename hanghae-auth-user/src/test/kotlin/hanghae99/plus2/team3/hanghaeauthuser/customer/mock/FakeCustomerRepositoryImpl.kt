@@ -24,12 +24,4 @@ class FakeCustomerRepositoryImpl(
         customers.add(customerEntity)
         return customerEntity.pk
     }
-
-    override fun existsByLoginId(loginId: String): Boolean {
-        return customers.any { it.loginId == loginId }
-    }
-
-    override fun findByLoginIdAndPassword(loginId: String, password: String): CustomerEntity? {
-        return customers.firstOrNull { it.loginId == loginId && it.password == password }
-    }
 }

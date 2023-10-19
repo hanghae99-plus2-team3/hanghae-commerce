@@ -1,11 +1,13 @@
 package hanghae99.plus2.team3.hanghaeauthuser.customer.controller.request
 
+import hanghae99.plus2.team3.hanghaeauthuser.auth.RegisterMemberRequest
 import hanghae99.plus2.team3.hanghaeauthuser.customer.domain.CustomerEntity
 
 data class CustomerRegisterRequest(
     val loginId: String,
     val password: String,
-    val name: String
+    val name: String,
+    val email: String
 ) {
     init {
         require(loginId.length in 8..20) {
@@ -20,6 +22,10 @@ data class CustomerRegisterRequest(
     }
 }
 
-fun CustomerRegisterRequest.toEntity(pk: Long): CustomerEntity {
-    return CustomerEntity(pk, loginId, password, name)
+fun CustomerRegisterRequest.toEntity(): CustomerEntity {
+    return CustomerEntity(0L, name, email)
+}
+
+fun CustomerRegisterRequest.toAuthRequest(): RegisterMemberRequest {
+    return RegisterMemberRequest(loginId, password)
 }

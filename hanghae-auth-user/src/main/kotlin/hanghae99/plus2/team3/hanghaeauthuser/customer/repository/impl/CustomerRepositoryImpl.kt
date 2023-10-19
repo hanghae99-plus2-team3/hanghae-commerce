@@ -9,13 +9,6 @@ import org.springframework.stereotype.Repository
 class CustomerRepositoryImpl(
     private val customerJpaRepository: CustomerJpaRepository
 ) : CustomerRepository {
-    override fun existsByLoginId(loginId: String): Boolean {
-        return customerJpaRepository.findByLoginId(loginId)
-    }
-
-    override fun findByLoginIdAndPassword(loginId: String, password: String): CustomerEntity {
-        return findByLoginIdAndPassword(loginId, password)
-    }
 
     override fun save(customerEntity: CustomerEntity): Long {
         return customerJpaRepository.save(customerEntity).pk
@@ -23,7 +16,5 @@ class CustomerRepositoryImpl(
 }
 
 interface CustomerJpaRepository : JpaRepository<CustomerEntity, Long> {
-    fun findByLoginId(loginId: String): Boolean
 
-    fun findByLoginIdAndPassword(loginId: String, password: String): CustomerEntity
 }
