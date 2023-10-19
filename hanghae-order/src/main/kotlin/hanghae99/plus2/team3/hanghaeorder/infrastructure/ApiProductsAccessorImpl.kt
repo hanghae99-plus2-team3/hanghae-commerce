@@ -11,12 +11,19 @@ import org.springframework.stereotype.Component
  * @since 2023/09/23
  */
 @Component
-class ApiProductsAccessor : ProductsAccessor {
+class ApiProductsAccessorImpl : ProductsAccessor {
     override fun queryProduct(productIds: List<Long>): List<ProductsAccessor.ProductInfo> {
-        TODO("Not yet implemented")
+        return listOf(
+            ProductsAccessor.ProductInfo(
+                productId = 1,
+                productName = "test",
+                productPrice = 1000,
+                productStock = 10
+            )
+        )
     }
 
     override fun updateProductStock(updateProductStock: List<ProductsAccessor.UpdateProductStockRequest>) {
-        TODO("Not yet implemented")
+        
     }
 }

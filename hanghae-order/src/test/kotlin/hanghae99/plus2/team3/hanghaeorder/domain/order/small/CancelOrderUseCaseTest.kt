@@ -28,6 +28,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.context.ApplicationEventPublisher
 
 /**
  * CancelOrderUseCaseTest
@@ -65,6 +66,7 @@ class CancelOrderUseCaseTest {
                     OrderItemValidator()
                 ),
                 PaymentProcessor(listOf(FakeTossErrorPaymentVendorCaller(), FakeKakaoPaymentVendorCaller())),
+                ApplicationEventPublisher { }
             )
         )
     }
