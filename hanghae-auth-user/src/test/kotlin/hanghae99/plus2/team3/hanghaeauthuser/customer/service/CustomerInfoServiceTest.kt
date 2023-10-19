@@ -1,12 +1,8 @@
 package hanghae99.plus2.team3.hanghaeauthuser.customer.service
 
 
-import hanghae99.plus2.team3.hanghaeauthuser.customer.controller.request.CustomerLoginRequest
 import hanghae99.plus2.team3.hanghaeauthuser.customer.controller.request.CustomerRegisterRequest
 import hanghae99.plus2.team3.hanghaeauthuser.customer.domain.CustomerEntity
-import hanghae99.plus2.team3.hanghaeauthuser.customer.exception.AlreadyExistCustomerException
-import hanghae99.plus2.team3.hanghaeauthuser.customer.exception.ErrorCode
-import hanghae99.plus2.team3.hanghaeauthuser.customer.exception.NotExistedCustomerException
 import hanghae99.plus2.team3.hanghaeauthuser.customer.mock.FakeCustomerRepositoryImpl
 import hanghae99.plus2.team3.hanghaeauthuser.customer.repository.CustomerRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -26,7 +22,7 @@ internal class CustomerInfoServiceTest {
 
     @Test
     fun `회원이 정상적으로 회원가입에 성공한다`() {
-        val customerId = sut.createCustomerInfo(
+        val customerId = sut.createCustomer(
             CustomerRegisterRequest(
                 loginId = "testId33",
                 password = "testPassword123",
@@ -41,7 +37,7 @@ internal class CustomerInfoServiceTest {
     @Test
     fun `필수 정보 입력 누락 시 회원가입에 실패한다`() {
         assertThatThrownBy {
-            sut.createCustomerInfo(
+            sut.createCustomer(
                 CustomerRegisterRequest(
                     loginId = "",
                     password = "test123",
