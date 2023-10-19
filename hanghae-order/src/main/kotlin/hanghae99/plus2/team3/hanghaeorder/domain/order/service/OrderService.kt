@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service
 class OrderService(
     private val orderRepository: OrderRepository,
     private val orderItemRepository: OrderItemRepository,
-    private val productsAccessor: ProductsAccessor,
+    private val productsAccessor: ProductsAccessor
 ) {
 
     fun makeOrder(command: RegisterOrderUseCase.Command): String {
@@ -45,7 +45,6 @@ class OrderService(
             orderItemRepository.findByOrderId(order.id)
         )
     }
-
 
     private fun validateOrderedProducts(
         command: RegisterOrderUseCase.Command,
@@ -103,8 +102,9 @@ class OrderService(
     fun getCancelableOrder(orderNum: String, userId: Long): OrderWithItemsDto {
         val order = orderRepository.getByOrderNumAndUserId(orderNum, userId)
 
-        if (!order.canCancelOrder())
+        if (!order.canCancelOrder()) {
             throw CanNotCancelOrderException(ErrorCode.ORDER_PRODUCT_STARTED_DELIVERY)
+        }
 
         return OrderWithItemsDto(
             order,

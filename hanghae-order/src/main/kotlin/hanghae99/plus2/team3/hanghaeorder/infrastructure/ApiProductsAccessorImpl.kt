@@ -24,6 +24,5 @@ class ApiProductsAccessorImpl : ProductsAccessor {
     }
 
     override fun updateProductStock(updateProductStock: List<ProductsAccessor.UpdateProductStockRequest>) {
-        
     }
 }

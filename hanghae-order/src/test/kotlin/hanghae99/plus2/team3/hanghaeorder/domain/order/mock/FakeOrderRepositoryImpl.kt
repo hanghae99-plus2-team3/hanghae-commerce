@@ -24,9 +24,9 @@ class FakeOrderRepositoryImpl(
                 orderNum = order.orderNum,
                 userId = order.userId,
                 deliveryInfo = order.deliveryInfo,
-                orderStatus = order.orderStatus,
+                orderStatus = order.orderStatus
 
-                )
+            )
             orders.add(entity)
             return order.copy(id = entity.id)
         } else {

@@ -13,5 +13,4 @@ class CancelOrderUseCaseImpl(
         val refundedPayment = paymentService.requestRefundOf(cancelableOrder)
         return cancelableOrder.order.orderNum
     }
-
 }

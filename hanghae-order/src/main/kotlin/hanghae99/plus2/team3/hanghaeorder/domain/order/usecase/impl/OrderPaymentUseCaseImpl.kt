@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 @Component
 class OrderPaymentUseCaseImpl(
     private val orderService: OrderService,
-    private val paymentService: PaymentService,
+    private val paymentService: PaymentService
 ) : OrderPaymentUseCase {
 
     override fun command(command: OrderPaymentUseCase.Command): String {

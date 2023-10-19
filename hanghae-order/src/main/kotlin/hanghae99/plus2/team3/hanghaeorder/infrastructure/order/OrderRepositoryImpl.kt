@@ -34,5 +34,4 @@ class OrderRepositoryImpl(
 
 interface OrderJpaRepository : JpaRepository<OrderEntity, Long> {
     fun findByOrderNumAndUserId(orderNum: String, userId: Long): OrderEntity?
-
 }

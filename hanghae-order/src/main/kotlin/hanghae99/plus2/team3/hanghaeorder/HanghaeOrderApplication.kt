@@ -7,8 +7,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients
 @EnableFeignClients
 @SpringBootApplication(
     scanBasePackages =
-    ["hanghae99.plus2.team3.hanghaeorder",
-        "hanghae99.plus2.team3.hanghaecommon"]
+    [
+        "hanghae99.plus2.team3.hanghaeorder",
+        "hanghae99.plus2.team3.hanghaecommon"
+    ]
 )
 class HanghaeOrderApplication
 

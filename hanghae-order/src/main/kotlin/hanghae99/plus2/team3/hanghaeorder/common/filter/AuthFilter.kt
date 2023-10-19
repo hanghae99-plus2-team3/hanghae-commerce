@@ -25,16 +25,15 @@ class AuthFilter(
         val authThreadLocal = ThreadLocal<CurrentUser>()
     }
 
-
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
         val auth = request.getHeader(HttpHeaders.AUTHORIZATION) ?: throw AuthenticationException()
-        val userInfo = userInfoAccessor.query(auth.toLong()) ?: throw AuthenticationException()
+        val userInfo = userInfoAccessor.query(auth) ?: throw AuthenticationException()
 
-        authThreadLocal.set(CurrentUser(userInfo.userId, userInfo.userName, userInfo.userEmail))
+        authThreadLocal.set(CurrentUser(userInfo.pk, userInfo.name, userInfo.email))
 
         filterChain.doFilter(request, response)
 

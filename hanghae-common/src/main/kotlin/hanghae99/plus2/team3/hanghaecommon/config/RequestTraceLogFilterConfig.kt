@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.Ordered
 
 /**
  * RequestTraceLogFilterConfig
@@ -22,9 +23,11 @@ class RequestTraceLogFilterConfig(
     lateinit var domain: String
 
     @Bean
+
     fun loggingFilter(): FilterRegistrationBean<RequestTraceLoggingFilter> {
         val registrationBean = FilterRegistrationBean<RequestTraceLoggingFilter>()
         registrationBean.filter = RequestTraceLoggingFilter(log, domain)
+        registrationBean.order = Ordered.HIGHEST_PRECEDENCE
         return registrationBean
     }
 }

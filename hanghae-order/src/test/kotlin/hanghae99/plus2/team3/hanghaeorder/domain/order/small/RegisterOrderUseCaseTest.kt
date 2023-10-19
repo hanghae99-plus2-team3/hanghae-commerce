@@ -37,7 +37,7 @@ class RegisterOrderUseCaseTest {
                 OrderService(
                     FakeOrderRepositoryImpl(listOf()),
                     FakeOrderItemRepositoryImpl(listOf()),
-                    FakeProductsAccessor(productsInStock),
+                    FakeProductsAccessor(productsInStock)
                 )
             )
     }

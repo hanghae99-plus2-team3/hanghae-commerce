@@ -7,7 +7,7 @@ data class Order(
     val orderNum: String,
     val userId: Long,
     val deliveryInfo: DeliveryInfo,
-    val orderStatus: OrderStatus,
+    val orderStatus: OrderStatus
 ) {
 
     fun isPaymentCompleted(): Boolean {
@@ -46,12 +46,11 @@ data class Order(
 
     fun canCancelOrder(): Boolean = orderStatus != OrderStatus.DELIVERY
 
-
     enum class OrderStatus(
         val description: String
     ) {
         ORDERED("주문 완료"),
         PAYMENT_COMPLETED("결제 완료"),
-        DELIVERY("배송 중"),
+        DELIVERY("배송 중")
     }
 }

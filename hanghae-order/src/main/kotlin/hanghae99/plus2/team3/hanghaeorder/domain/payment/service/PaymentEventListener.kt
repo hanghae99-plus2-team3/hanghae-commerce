@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Component
 class PaymentEventListener(
-    private val paymentRepository: PaymentRepository,
+    private val paymentRepository: PaymentRepository
 ) {
 
     @Async("paymentRequestLog")
@@ -28,5 +28,4 @@ class PaymentEventListener(
         paymentRepository.save(payment)
         println("========================================================")
     }
-
 }
