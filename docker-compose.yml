@@ -1,110 +1,110 @@
 version: '1'
 services:
-  hanghae-auth-user-mysql:
-    image: mysql:8.0
-    networks:
-      - hanghae-auth-user-network
-    volumes:
-      - ./hanghae-auth-user/db/conf.d:/etc/mysql/conf.d
-      - ./hanghae-auth-user/db/data:/var/lib/mysql
-      - ./hanghae-auth-user/db/initdb.d:/docker-entrypoint-initdb.d
-    env_file: ./hanghae-auth-user/.env
-    ports:
-      - "3307:3306"
+    hanghae-auth-user-mysql:
+        image: mysql:8.0
+        networks:
+            - hanghae-auth-user-network
+        volumes:
+            - ./hanghae-auth-user/db/conf.d:/etc/mysql/conf.d
+            - ./hanghae-auth-user/db/data:/var/lib/mysql
+            - ./hanghae-auth-user/db/initdb.d:/docker-entrypoint-initdb.d
+        env_file: ./hanghae-auth-user/.env
+        ports:
+            - "3307:3306"
 
-  hanghae-auth-user-service:
-    image: hanghae-auth-user:1.0.0
-    networks:
-      - hanghae-auth-user-network
-    ports:
-      - "8081:8080"
-    depends_on:
-      - hanghae-auth-user-mysql
-    environment:
-      - ACTIVE_PROFILE=default
+    hanghae-auth-user-service:
+        image: hanghae-auth-user:1.0.0
+        networks:
+            - hanghae-auth-user-network
+        ports:
+            - "8081:8080"
+        depends_on:
+            - hanghae-auth-user-mysql
+        environment:
+            - ACTIVE_PROFILE=local
+            - SPRING_APPLICATION_NAME=auth-user
+            #========================================================================
 
-#========================================================================
+    hanghae-like-cart-mysql:
+        image: mysql:8.0
+        networks:
+            - hanghae-like-cart-network
+        volumes:
+            - ./hanghae-like-cart/db/conf.d:/etc/mysql/conf.d
+            - ./hanghae-like-cart/db/data:/var/lib/mysql
+            - ./hanghae-like-cart/db/initdb.d:/docker-entrypoint-initdb.d
+        env_file: ./hanghae-like-cart/.env
+        ports:
+            - "3308:3306"
 
-  hanghae-like-cart-mysql:
-    image: mysql:8.0
-    networks:
-      - hanghae-like-cart-network
-    volumes:
-      - ./hanghae-like-cart/db/conf.d:/etc/mysql/conf.d
-      - ./hanghae-like-cart/db/data:/var/lib/mysql
-      - ./hanghae-like-cart/db/initdb.d:/docker-entrypoint-initdb.d
-    env_file: ./hanghae-like-cart/.env
-    ports:
-      - "3308:3306"
-
-  hanghae-like-cart-service:
-    image: hanghae-like-cart:1.0.0
-    networks:
-      - hanghae-like-cart-network
-    ports:
-      - "8082:8080"
-    depends_on:
-      - hanghae-like-cart-mysql
-    environment:
-      - ACTIVE_PROFILE=default
-
-#========================================================================
+    hanghae-like-cart-service:
+        image: hanghae-like-cart:1.0.0
+        networks:
+            - hanghae-like-cart-network
+        ports:
+            - "8082:8080"
+        depends_on:
+            - hanghae-like-cart-mysql
+        environment:
+            - ACTIVE_PROFILE=default
+            - SPRING_APPLICATION_NAME=like-cart
+    #========================================================================
 
 
-  hanghae-order-mysql:
-    image: mysql:8.0
-    networks:
-      - hanghae-order-network
-    volumes:
-      - ./hanghae-order/db/conf.d:/etc/mysql/conf.d
-      - ./hanghae-order/db/customer/data:/var/lib/mysql
-      - ./hanghae-order/db/initdb.d:/docker-entrypoint-initdb.d
-    env_file: ./hanghae-order/.env
-    ports:
-      - "3309:3306"
+    hanghae-order-mysql:
+        image: mysql:8.0
+        networks:
+            - hanghae-order-network
+        volumes:
+            - ./hanghae-order/db/conf.d:/etc/mysql/conf.d
+            - ./hanghae-order/db/customer/data:/var/lib/mysql
+            - ./hanghae-order/db/initdb.d:/docker-entrypoint-initdb.d
+        env_file: ./hanghae-order/.env
+        ports:
+            - "3309:3306"
 
-  hanghae-order-service:
-    image: hanghae-order:1.0.0
-    networks:
-      - hanghae-order-network
-    ports:
-      - "8083:8080"
-    depends_on:
-      - hanghae-order-mysql
-    environment:
-      - ACTIVE_PROFILE=default
+    hanghae-order-service:
+        image: hanghae-order:1.0.0
+        networks:
+            - hanghae-order-network
+        ports:
+            - "8083:8080"
+        depends_on:
+            - hanghae-order-mysql
+        environment:
+            - ACTIVE_PROFILE=local
+            - SPRING_APPLICATION_NAME=order
+    #========================================================================
 
-#========================================================================
+    hanghae-product-mysql:
+        image: mysql:8.0
+        networks:
+            - hanghae-product-network
+        volumes:
+            - ./hanghae-product/db/conf.d:/etc/mysql/conf.d
+            - ./hanghae-product/db/customer/data:/var/lib/mysql
+            - ./hanghae-product/db/initdb.d:/docker-entrypoint-initdb.d
+        env_file: ./hanghae-product/.env
+        ports:
+            - "3310:3306"
 
-  hanghae-product-mysql:
-    image: mysql:8.0
-    networks:
-      - hanghae-product-network
-    volumes:
-      - ./hanghae-product/db/conf.d:/etc/mysql/conf.d
-      - ./hanghae-product/db/customer/data:/var/lib/mysql
-      - ./hanghae-product/db/initdb.d:/docker-entrypoint-initdb.d
-    env_file: ./hanghae-product/.env
-    ports:
-      - "3310:3306"
-
-  hanghae-product-service:
-    image: hanghae-product:1.0.0
-    networks:
-      - hanghae-product-network
-    ports:
-      - "8084:8080"
-    depends_on:
-      - hanghae-product-mysql
-    environment:
-      - ACTIVE_PROFILE=default
-
+    hanghae-product-service:
+        image: hanghae-product:1.0.0
+        networks:
+            - hanghae-product-network
+        ports:
+            - "8084:8080"
+        depends_on:
+            - hanghae-product-mysql
+        environment:
+            - ACTIVE_PROFILE=default
+            - SPRING_APPLICATION_NAME=product
 networks:
-  hanghae-auth-user-network:
-    driver: bridge
-  hanghae-like-cart-network:
-    driver: bridge
-  hanghae-order-network:
-    driver: bridge
-  hanghae-product-network:
-    driver: bridge
+    hanghae-auth-user-network:
+        driver: bridge
+    hanghae-like-cart-network:
+        driver: bridge
+    hanghae-order-network:
+        driver: bridge
+    hanghae-product-network:
+        driver: bridge

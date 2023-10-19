@@ -2,10 +2,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
+    id("com.palantir.docker")
 }
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+    api(project(":hanghae-common"))
 }
 
 docker {
