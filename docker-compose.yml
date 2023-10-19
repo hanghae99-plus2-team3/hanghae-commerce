@@ -22,7 +22,7 @@ services:
             - hanghae-auth-user-mysql
         environment:
             - ACTIVE_PROFILE=local
-            - SPRING_APPLICATION_NAME=auth-user
+            - SPRING_APPLICATION_NAME=AUTH-USER
             #========================================================================
 
     hanghae-like-cart-mysql:
@@ -47,7 +47,7 @@ services:
             - hanghae-like-cart-mysql
         environment:
             - ACTIVE_PROFILE=default
-            - SPRING_APPLICATION_NAME=like-cart
+            - SPRING_APPLICATION_NAME=LIKE-CART
     #========================================================================
 
 
@@ -73,7 +73,7 @@ services:
             - hanghae-order-mysql
         environment:
             - ACTIVE_PROFILE=local
-            - SPRING_APPLICATION_NAME=order
+            - SPRING_APPLICATION_NAME=ORDER
     #========================================================================
 
     hanghae-product-mysql:
@@ -98,7 +98,7 @@ services:
             - hanghae-product-mysql
         environment:
             - ACTIVE_PROFILE=default
-            - SPRING_APPLICATION_NAME=product
+            - SPRING_APPLICATION_NAME=PRODUCT
 networks:
     hanghae-auth-user-network:
         driver: bridge

@@ -13,6 +13,10 @@ class CustomerRepositoryImpl(
     override fun save(customerEntity: CustomerEntity): Long {
         return customerJpaRepository.save(customerEntity).pk
     }
+
+    override fun findById(pk: Long): CustomerEntity {
+        return customerJpaRepository.findById(pk).orElseThrow()
+    }
 }
 
 interface CustomerJpaRepository : JpaRepository<CustomerEntity, Long>
