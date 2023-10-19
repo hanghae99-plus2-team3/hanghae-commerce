@@ -15,6 +15,4 @@ class CustomerRepositoryImpl(
     }
 }
 
-interface CustomerJpaRepository : JpaRepository<CustomerEntity, Long> {
-
-}
+interface CustomerJpaRepository : JpaRepository<CustomerEntity, Long>

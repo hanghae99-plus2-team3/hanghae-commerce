@@ -13,10 +13,10 @@ data class CustomerRegisterRequest(
         require(loginId.length in 8..20) {
             "로그인ID는 8자 이상 20자 이하로 입력해주세요."
         }
-        require(password.length in 8 .. 20) {
+        require(password.length in 8..20) {
             "비밀번호는 8자 이상 20자 이하로 입력해주세요."
         }
-        require(name.length in 2 .. 10) {
+        require(name.length in 2..10) {
             "이름은 2자 이상 10자 이하로 입력해주세요."
         }
     }

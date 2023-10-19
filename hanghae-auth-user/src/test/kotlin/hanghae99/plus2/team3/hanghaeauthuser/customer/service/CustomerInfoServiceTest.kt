@@ -1,6 +1,5 @@
 package hanghae99.plus2.team3.hanghaeauthuser.customer.service
 
-
 import hanghae99.plus2.team3.hanghaeauthuser.customer.controller.request.CustomerRegisterRequest
 import hanghae99.plus2.team3.hanghaeauthuser.customer.domain.CustomerEntity
 import hanghae99.plus2.team3.hanghaeauthuser.customer.mock.FakeCustomerRepositoryImpl

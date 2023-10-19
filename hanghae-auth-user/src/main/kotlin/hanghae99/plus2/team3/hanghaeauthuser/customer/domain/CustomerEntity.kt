@@ -6,7 +6,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 
 @Entity
-class CustomerEntity (
+class CustomerEntity(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

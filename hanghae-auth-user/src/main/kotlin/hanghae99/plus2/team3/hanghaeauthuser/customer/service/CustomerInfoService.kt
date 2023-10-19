@@ -11,7 +11,6 @@ class CustomerInfoService(
     private val customerRepository: CustomerRepository
 ) {
     fun createCustomer(customerRegisterRequest: CustomerRegisterRequest): Long {
-
         return customerRepository.save(customerRegisterRequest.toEntity())
     }
 
