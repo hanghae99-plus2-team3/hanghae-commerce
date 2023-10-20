@@ -5,7 +5,7 @@
     <springProfile name="default">
         <include resource="logback-spring-default.xml"/>
     </springProfile>
-    <springProfile name="local, test">
+    <springProfile name="local, test, inmem">
         <include resource="logback-spring-local.xml"/>
     </springProfile>
     <springProfile name="alpha, prod">
