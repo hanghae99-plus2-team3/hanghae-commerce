@@ -26,6 +26,4 @@ class OrderExceptionHandler(
         log.error(e.toString())
         return ResponseEntity.internalServerError().body(e.toString())
     }
-
-
 }

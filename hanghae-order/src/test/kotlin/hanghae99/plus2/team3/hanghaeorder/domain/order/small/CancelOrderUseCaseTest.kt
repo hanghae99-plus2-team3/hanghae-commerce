@@ -52,7 +52,7 @@ class CancelOrderUseCaseTest {
             OrderService(
                 orderRepository,
                 orderItemRepository,
-                productsAccessor,
+                productsAccessor
             ),
             PaymentService(
                 paymentRepository,
@@ -78,7 +78,7 @@ class CancelOrderUseCaseTest {
         val result = sut.command(
             CancelOrderUseCase.Command(
                 orderNum,
-                userId,
+                userId
             )
         )
         assertThat(result).isEqualTo(orderNum)
@@ -92,7 +92,7 @@ class CancelOrderUseCaseTest {
             sut.command(
                 CancelOrderUseCase.Command(
                     orderNum,
-                    userId,
+                    userId
                 )
             )
         }.isInstanceOf(OrderNotFoundException::class.java)
@@ -107,7 +107,7 @@ class CancelOrderUseCaseTest {
             sut.command(
                 CancelOrderUseCase.Command(
                     orderNum,
-                    userId,
+                    userId
                 )
             )
         }.isInstanceOf(OrderNotFoundException::class.java)
@@ -122,7 +122,7 @@ class CancelOrderUseCaseTest {
             sut.command(
                 CancelOrderUseCase.Command(
                     orderNum,
-                    userId,
+                    userId
                 )
             )
         }.isInstanceOf(CanNotCancelOrderException::class.java)
@@ -137,7 +137,7 @@ class CancelOrderUseCaseTest {
         val result = sut.command(
             CancelOrderUseCase.Command(
                 orderNum,
-                userId,
+                userId
             )
         )
 
@@ -145,7 +145,6 @@ class CancelOrderUseCaseTest {
         val refundPayment = paymentRepository.getByOrderNum(orderNum)
         assertThat(refundPayment).isNotNull
         assertThat(refundPayment.paymentResultCode).isEqualTo(PaymentResultCode.REFUND_SUCCESS)
-
     }
 
     private fun prepareTest() {
@@ -213,7 +212,7 @@ class CancelOrderUseCaseTest {
                 10000L,
                 true,
                 PaymentResultCode.PAYMENT_SUCCESS
-            ),
+            )
         )
 
         paymentRepository = FakePaymentRepositoryImpl(payments)
@@ -222,5 +221,3 @@ class CancelOrderUseCaseTest {
         productsAccessor = FakeProductsAccessor(productsInStock)
     }
 }
-
-

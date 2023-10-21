@@ -49,7 +49,7 @@ class OrderPaymentUseCaseTest {
             OrderService(
                 orderRepository,
                 orderItemRepository,
-                productsAccessor,
+                productsAccessor
             ),
             PaymentService(
                 paymentRepository,
@@ -207,7 +207,6 @@ class OrderPaymentUseCaseTest {
             )
         )
         assertThat(paymentId).isNotNull
-
 
         val paymentRequests = paymentRepository.getByOrderNum("orderNum-1")
         assertThat(paymentRequests.orderNum).isEqualTo("orderNum-1")

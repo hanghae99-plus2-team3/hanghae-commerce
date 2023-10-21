@@ -1,6 +1,5 @@
-package hanghae99.plus2.team3.hanghaeorder.common.filter
+package hanghae99.plus2.team3.hanghaecommon.filter
 
-import hanghae99.plus2.team3.hanghaeorder.common.BufferedRequestWrapper
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -21,14 +20,14 @@ import java.util.*
  */
 
 class RequestTraceLoggingFilter(
-    private val log: Logger
+    private val log: Logger,
+    private val domain: String
 ) : OncePerRequestFilter() {
 
     companion object {
         const val REQUEST_TRACE_ID = "REQUEST_TRACE_ID"
         const val REQUEST_TIME = "REQUEST_TIME"
         const val PROCESSING_DOMAIN = "PROCESSING_DOMAIN"
-        const val DOMAIN = "ORDER"
         const val ELAPSED_TIME_THRESHOLD = 4000L
     }
 
@@ -41,7 +40,7 @@ class RequestTraceLoggingFilter(
         val traceId = request.getHeader(REQUEST_TRACE_ID) ?: generateTraceId()
         MDC.put(REQUEST_TRACE_ID, traceId)
         MDC.put(REQUEST_TIME, System.currentTimeMillis().toString())
-        MDC.put(PROCESSING_DOMAIN, DOMAIN)
+        MDC.put(PROCESSING_DOMAIN, domain)
 
         filterChain.doFilter(requestLog(request), response)
 

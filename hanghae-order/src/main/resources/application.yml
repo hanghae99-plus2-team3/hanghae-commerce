@@ -1,16 +1,18 @@
 spring:
+    application:
+        name: hanghae-order
     datasource:
         url: jdbc:h2:mem:bread_map;MODE=MySQL;DB_CLOSE_DELAY=-1
-    #        url: jdbc:mysql://hanghae-order-mysql:3306/order
-    #        username: root
-    #        password: rootpassword
+        #        url: jdbc:mysql://hanghae-order-mysql:3306/order
+        username: root
+        password: rootpassword
     jpa:
         hibernate:
             ddl-auto: create
-    cloud:
-        openfeign:
-            client:
-                config:
-                    user-service:
-                        url: http://host.docker.internal:8081/v1/user
+#    cloud:
+#        openfeign:
+#            client:
+#                config:
+#                    FeignUserInfoAccessor:
+#                        url: http://hanghae-auth-user-network:8080/v1/user
 

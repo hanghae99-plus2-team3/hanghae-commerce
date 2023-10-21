@@ -29,7 +29,7 @@ subprojects {
     apply(plugin = "org.springframework.boot")
     apply(plugin = "io.spring.dependency-management")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    apply(plugin = "com.palantir.docker")
+
 
     dependencies {
 
@@ -46,6 +46,7 @@ subprojects {
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("io.rest-assured:rest-assured")
+
     }
 
     tasks {

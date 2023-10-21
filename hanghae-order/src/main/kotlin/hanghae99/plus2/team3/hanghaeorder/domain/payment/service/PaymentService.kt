@@ -37,13 +37,11 @@ class PaymentService(
     private val applicationEventPublisher: ApplicationEventPublisher
 ) {
 
-
     @Transactional
     fun requestPaymentOf(
         orderWithItems: OrderWithItemsDto,
         command: OrderPaymentUseCase.Command
     ): String {
-
         validatePayment(orderWithItems, command)
         reduceProductStock(orderWithItems.orderItems)
 
@@ -93,7 +91,6 @@ class PaymentService(
         )
     }
 
-
     @Transactional
     fun requestRefundOf(cancelableOrder: OrderWithItemsDto): Payment {
         val payment = paymentRepository.getByOrderNum(cancelableOrder.order.orderNum)
@@ -101,7 +98,7 @@ class PaymentService(
         try {
             val refundedPayment = paymentProcessor.refund(
                 PaymentProcessor.RefundRequest(
-                    payment = payment,
+                    payment = payment
                 )
             )
             rollbackProductStock(cancelableOrder.orderItems)
@@ -121,7 +118,7 @@ class PaymentService(
     }
 
     private fun updateOrderStatusToPaymentCompleted(
-        orderWithItems: OrderWithItemsDto,
+        orderWithItems: OrderWithItemsDto
     ) {
         orderRepository.save(orderWithItems.order.updateStatusToPaymentCompleted())
         orderWithItems.orderItems.forEach {

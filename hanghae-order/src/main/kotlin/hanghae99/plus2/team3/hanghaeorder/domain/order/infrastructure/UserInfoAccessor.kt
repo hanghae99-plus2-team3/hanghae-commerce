@@ -1,11 +1,11 @@
 package hanghae99.plus2.team3.hanghaeorder.domain.order.infrastructure
 
 interface UserInfoAccessor {
-    fun query(userId: Long): UserInfo?
+    fun query(token: String): UserInfo?
 
     data class UserInfo(
-        val userId: Long,
-        val userName: String,
-        val userEmail: String
+        val pk: Long,
+        val name: String,
+        val email: String
     )
 }

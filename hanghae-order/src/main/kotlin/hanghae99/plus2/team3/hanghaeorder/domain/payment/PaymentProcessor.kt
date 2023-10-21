@@ -29,6 +29,6 @@ class PaymentProcessor(
     )
 
     data class RefundRequest(
-        val payment: Payment,
+        val payment: Payment
     )
 }
