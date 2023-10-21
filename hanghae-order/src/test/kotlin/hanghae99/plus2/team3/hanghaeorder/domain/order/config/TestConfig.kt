@@ -47,9 +47,9 @@ class TestConfig {
         FakeUserInfoAccessor(
             listOf(
                 UserInfoAccessor.UserInfo(
-                    userId = 1L,
-                    userName = "홍길동",
-                    userEmail = "test@gmail.com"
+                    pk = 1L,
+                    name = "홍길동",
+                    email = "test@gmail.com"
                 )
             )
         )

@@ -239,8 +239,8 @@ class OrderPaymentUseCaseTest {
 
     private fun prepareTest() {
         val users = listOf(
-            UserInfoAccessor.UserInfo(userId = 1L, userName = "홍길동", userEmail = "test@gmail.com"),
-            UserInfoAccessor.UserInfo(userId = 2L, userName = "임꺽정", userEmail = "test2@gmail.com")
+            UserInfoAccessor.UserInfo(pk = 1L, name = "홍길동", email = "test@gmail.com"),
+            UserInfoAccessor.UserInfo(pk = 2L, name = "임꺽정", email = "test2@gmail.com")
         )
         val productsInStock = mutableListOf(
             ProductInfo(productId = 1L, productName = "상품1", productPrice = 2000L, productStock = 5),
