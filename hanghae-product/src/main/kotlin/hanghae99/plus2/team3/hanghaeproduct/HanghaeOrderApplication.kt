@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class HanghaeOrderApplication
+class HanghaeProductApplication
 
 fun main(args: Array<String>) {
-    runApplication<HanghaeOrderApplication>(*args)
+    runApplication<HanghaeProductApplication>(*args)
 }
