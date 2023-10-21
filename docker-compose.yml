@@ -3,7 +3,7 @@ services:
     hanghae-auth-user-mysql:
         image: mysql:8.0
         networks:
-            - hanghae-auth-user-network
+            - hanghae-network
         volumes:
             - ./hanghae-auth-user/db/conf.d:/etc/mysql/conf.d
             - ./hanghae-auth-user/db/data:/var/lib/mysql
@@ -15,7 +15,7 @@ services:
     hanghae-auth-user-service:
         image: hanghae-auth-user:1.0.0
         networks:
-            - hanghae-auth-user-network
+            - hanghae-network
         ports:
             - "8081:8080"
         depends_on:
@@ -28,7 +28,7 @@ services:
     hanghae-like-cart-mysql:
         image: mysql:8.0
         networks:
-            - hanghae-like-cart-network
+            - hanghae-network
         volumes:
             - ./hanghae-like-cart/db/conf.d:/etc/mysql/conf.d
             - ./hanghae-like-cart/db/data:/var/lib/mysql
@@ -40,7 +40,7 @@ services:
     hanghae-like-cart-service:
         image: hanghae-like-cart:1.0.0
         networks:
-            - hanghae-like-cart-network
+            - hanghae-network
         ports:
             - "8082:8080"
         depends_on:
@@ -54,7 +54,7 @@ services:
     hanghae-order-mysql:
         image: mysql:8.0
         networks:
-            - hanghae-order-network
+            - hanghae-network
         volumes:
             - ./hanghae-order/db/conf.d:/etc/mysql/conf.d
             - ./hanghae-order/db/customer/data:/var/lib/mysql
@@ -66,7 +66,7 @@ services:
     hanghae-order-service:
         image: hanghae-order:1.0.0
         networks:
-            - hanghae-order-network
+            - hanghae-network
         ports:
             - "8083:8080"
         depends_on:
@@ -74,12 +74,13 @@ services:
         environment:
             - ACTIVE_PROFILE=local
             - SPRING_APPLICATION_NAME=ORDER
+            - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
     #========================================================================
 
     hanghae-product-mysql:
         image: mysql:8.0
         networks:
-            - hanghae-product-network
+            - hanghae-network
         volumes:
             - ./hanghae-product/db/conf.d:/etc/mysql/conf.d
             - ./hanghae-product/db/customer/data:/var/lib/mysql
@@ -91,7 +92,7 @@ services:
     hanghae-product-service:
         image: hanghae-product:1.0.0
         networks:
-            - hanghae-product-network
+            - hanghae-network
         ports:
             - "8084:8080"
         depends_on:
@@ -103,7 +104,7 @@ services:
     zookeeper:
         image: 'arm64v8/zookeeper:3.8'
         networks:
-            - kafka-network
+            - hanghae-network
         ports:
             - '2181:2181'
         environment:
@@ -114,7 +115,7 @@ services:
     kafka:
         image: 'bitnami/kafka@sha256:e1870e20581f8ca7507986be980c64ceb4d9138ffad1b380c1036d5a82ec1bfe'
         networks:
-            - kafka-network
+            - hanghae-network
         ports:
             - '9092:9092'
         environment:
@@ -134,7 +135,7 @@ services:
         image: provectuslabs/kafka-ui
         container_name: kafka-ui
         networks:
-            - kafka-network
+            - hanghae-network
         ports:
             - "8989:8080"
         restart: always
@@ -148,13 +149,5 @@ services:
 
 
 networks:
-    hanghae-auth-user-network:
-        driver: bridge
-    hanghae-like-cart-network:
-        driver: bridge
-    hanghae-order-network:
-        driver: bridge
-    hanghae-product-network:
-        driver: bridge
-    kafka-network:
+    hanghae-network:
         driver: bridge
