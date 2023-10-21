@@ -99,6 +99,54 @@ services:
         environment:
             - ACTIVE_PROFILE=default
             - SPRING_APPLICATION_NAME=PRODUCT
+
+    zookeeper:
+        image: 'arm64v8/zookeeper:3.8'
+        networks:
+            - kafka-network
+        ports:
+            - '2181:2181'
+        environment:
+            - ALLOW_ANONYMOUS_LOGIN=yes
+            - ZOO_TLS_CLIENT_AUTH=none
+            - ZOO_TLS_QUORUM_CLIENT_AUTH=none
+
+    kafka:
+        image: 'bitnami/kafka@sha256:e1870e20581f8ca7507986be980c64ceb4d9138ffad1b380c1036d5a82ec1bfe'
+        networks:
+            - kafka-network
+        ports:
+            - '9092:9092'
+        environment:
+            - KAFKA_BROKER_ID=1
+            - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+            - ALLOW_PLAINTEXT_LISTENER=yes
+            - KAFKA_CFG_LISTENERS=LC://kafka:29092,LX://kafka:9092
+            - KAFKA_CFG_ADVERTISED_LISTENERS=LC://kafka:29092,LX://${DOCKER_HOST_IP:-localhost}:9092
+            - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=LC:PLAINTEXT,LX:PLAINTEXT
+            - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=LC
+            - BITNAMI_DEBUG=true
+            - KAFKA_ENABLE_KRAFT=false
+        depends_on:
+            - zookeeper
+
+    kafka-ui:
+        image: provectuslabs/kafka-ui
+        container_name: kafka-ui
+        networks:
+            - kafka-network
+        ports:
+            - "8989:8080"
+        restart: always
+        depends_on:
+            - kafka
+            - zookeeper
+        environment:
+            - KAFKA_CLUSTERS_0_NAME=local
+            - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:29092
+            - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+
+
 networks:
     hanghae-auth-user-network:
         driver: bridge
@@ -107,4 +155,6 @@ networks:
     hanghae-order-network:
         driver: bridge
     hanghae-product-network:
+        driver: bridge
+    kafka-network:
         driver: bridge
