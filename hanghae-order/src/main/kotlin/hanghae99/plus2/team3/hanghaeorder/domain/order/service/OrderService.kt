@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service
 class OrderService(
     private val orderRepository: OrderRepository,
     private val orderItemRepository: OrderItemRepository,
-    private val productsAccessor: ProductsAccessor
+    private val productsAccessor: ProductsAccessor,
 ) {
 
     fun makeOrder(command: RegisterOrderUseCase.Command): String {
