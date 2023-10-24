@@ -3,7 +3,7 @@ services:
     hanghae-auth-user-mysql:
         image: mysql:8.0
         networks:
-            - hanghae-auth-user-network
+            - hanghae-network
         volumes:
             - ./hanghae-auth-user/db/conf.d:/etc/mysql/conf.d
             - ./hanghae-auth-user/db/data:/var/lib/mysql
@@ -15,7 +15,7 @@ services:
     hanghae-auth-user-service:
         image: hanghae-auth-user:1.0.0
         networks:
-            - hanghae-auth-user-network
+            - hanghae-network
         ports:
             - "8081:8080"
         depends_on:
@@ -28,7 +28,7 @@ services:
     hanghae-like-cart-mysql:
         image: mysql:8.0
         networks:
-            - hanghae-like-cart-network
+            - hanghae-network
         volumes:
             - ./hanghae-like-cart/db/conf.d:/etc/mysql/conf.d
             - ./hanghae-like-cart/db/data:/var/lib/mysql
@@ -40,7 +40,7 @@ services:
     hanghae-like-cart-service:
         image: hanghae-like-cart:1.0.0
         networks:
-            - hanghae-like-cart-network
+            - hanghae-network
         ports:
             - "8082:8080"
         depends_on:
@@ -54,7 +54,7 @@ services:
     hanghae-order-mysql:
         image: mysql:8.0
         networks:
-            - hanghae-order-network
+            - hanghae-network
         volumes:
             - ./hanghae-order/db/conf.d:/etc/mysql/conf.d
             - ./hanghae-order/db/customer/data:/var/lib/mysql
@@ -66,7 +66,7 @@ services:
     hanghae-order-service:
         image: hanghae-order:1.0.0
         networks:
-            - hanghae-order-network
+            - hanghae-network
         ports:
             - "8083:8080"
         depends_on:
@@ -74,12 +74,13 @@ services:
         environment:
             - ACTIVE_PROFILE=local
             - SPRING_APPLICATION_NAME=ORDER
+            - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
     #========================================================================
 
     hanghae-product-mysql:
         image: mysql:8.0
         networks:
-            - hanghae-product-network
+            - hanghae-network
         volumes:
             - ./hanghae-product/db/conf.d:/etc/mysql/conf.d
             - ./hanghae-product/db/customer/data:/var/lib/mysql
@@ -91,7 +92,7 @@ services:
     hanghae-product-service:
         image: hanghae-product:1.0.0
         networks:
-            - hanghae-product-network
+            - hanghae-network
         ports:
             - "8084:8080"
         depends_on:
@@ -99,12 +100,54 @@ services:
         environment:
             - ACTIVE_PROFILE=default
             - SPRING_APPLICATION_NAME=PRODUCT
+
+    zookeeper:
+        image: 'arm64v8/zookeeper:3.8'
+        networks:
+            - hanghae-network
+        ports:
+            - '2181:2181'
+        environment:
+            - ALLOW_ANONYMOUS_LOGIN=yes
+            - ZOO_TLS_CLIENT_AUTH=none
+            - ZOO_TLS_QUORUM_CLIENT_AUTH=none
+
+    kafka:
+        image: 'bitnami/kafka@sha256:e1870e20581f8ca7507986be980c64ceb4d9138ffad1b380c1036d5a82ec1bfe'
+        networks:
+            - hanghae-network
+        ports:
+            - '9092:9092'
+        environment:
+            - KAFKA_BROKER_ID=1
+            - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+            - ALLOW_PLAINTEXT_LISTENER=yes
+            - KAFKA_CFG_LISTENERS=LC://kafka:29092,LX://kafka:9092
+            - KAFKA_CFG_ADVERTISED_LISTENERS=LC://kafka:29092,LX://${DOCKER_HOST_IP:-localhost}:9092
+            - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=LC:PLAINTEXT,LX:PLAINTEXT
+            - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=LC
+            - BITNAMI_DEBUG=true
+            - KAFKA_ENABLE_KRAFT=false
+        depends_on:
+            - zookeeper
+
+    kafka-ui:
+        image: provectuslabs/kafka-ui
+        container_name: kafka-ui
+        networks:
+            - hanghae-network
+        ports:
+            - "8989:8080"
+        restart: always
+        depends_on:
+            - kafka
+            - zookeeper
+        environment:
+            - KAFKA_CLUSTERS_0_NAME=local
+            - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:29092
+            - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+
+
 networks:
-    hanghae-auth-user-network:
-        driver: bridge
-    hanghae-like-cart-network:
-        driver: bridge
-    hanghae-order-network:
-        driver: bridge
-    hanghae-product-network:
+    hanghae-network:
         driver: bridge
