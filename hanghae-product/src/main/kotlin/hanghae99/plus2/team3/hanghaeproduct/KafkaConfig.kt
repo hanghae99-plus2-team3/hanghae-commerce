@@ -1,9 +1,10 @@
 package hanghae99.plus2.team3.hanghaeproduct
 
+import hanghae99.plus2.team3.hanghaecommon.event.ChangeStockEvent
+import hanghae99.plus2.team3.hanghaecommon.event.ChangeStockEventDeserializer
+import hanghae99.plus2.team3.hanghaecommon.event.ChangeStockEventSerializer
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
-import org.apache.kafka.common.serialization.LongDeserializer
-import org.apache.kafka.common.serialization.LongSerializer
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.beans.factory.annotation.Value
@@ -30,33 +31,33 @@ class KafkaConfig {
     lateinit var groupName: String
 
     @Bean
-    fun consumerFactory(): ConsumerFactory<String, Long> {
+    fun consumerFactory(): ConsumerFactory<String, ChangeStockEvent> {
         val config: MutableMap<String, Any> = HashMap()
         config[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapServers
         config[ConsumerConfig.GROUP_ID_CONFIG] = groupName
         config[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
-        config[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = LongDeserializer::class.java
+        config[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = ChangeStockEventDeserializer::class.java
         return DefaultKafkaConsumerFactory(config)
     }
 
     @Bean
-    fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, Long> {
-        val factory = ConcurrentKafkaListenerContainerFactory<String, Long>()
+    fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, ChangeStockEvent> {
+        val factory = ConcurrentKafkaListenerContainerFactory<String, ChangeStockEvent>()
         factory.consumerFactory = consumerFactory()
         return factory
     }
 
     @Bean
-    fun producerFactory(): ProducerFactory<String, Long> {
+    fun producerFactory(): ProducerFactory<String, ChangeStockEvent> {
         val config: MutableMap<String, Any> = java.util.HashMap()
         config[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapServers
         config[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
-        config[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = LongSerializer::class.java
+        config[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = ChangeStockEventSerializer::class.java
         return DefaultKafkaProducerFactory(config)
     }
 
     @Bean
-    fun kafkaTemplate(): KafkaTemplate<String, Long> {
+    fun kafkaTemplate(): KafkaTemplate<String, ChangeStockEvent> {
         return KafkaTemplate(producerFactory())
     }
 }
