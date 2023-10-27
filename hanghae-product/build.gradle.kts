@@ -8,6 +8,7 @@ plugins {
 dependencies {
 
     implementation(kotlin("stdlib"))
+    api(project(":hanghae-common"))
 }
 
 docker {

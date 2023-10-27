@@ -48,16 +48,16 @@ class PaymentService(
         return try {
             val payment = processPayment(orderWithItems, command)
             updateOrderStatusToPaymentCompleted(orderWithItems)
-            publishPaymentRequestLoggerEvent(payment)
+            publishPaymentRequestLogEvent(payment)
             payment.orderNum
         } catch (e: Exception) {
             val failedPayment = handleFailedPayment(orderWithItems, command, e)
-            publishPaymentRequestLoggerEvent(failedPayment)
+            publishPaymentRequestLogEvent(failedPayment)
             throw PaymentProcessException(failedPayment.paymentResultCode)
         }
     }
 
-    private fun publishPaymentRequestLoggerEvent(payment: Payment) {
+    private fun publishPaymentRequestLogEvent(payment: Payment) {
         applicationEventPublisher.publishEvent(payment)
     }
 

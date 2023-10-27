@@ -74,7 +74,10 @@ services:
         environment:
             - ACTIVE_PROFILE=local
             - SPRING_APPLICATION_NAME=ORDER
-            - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
+            - KAFKA_CLUSTER_BOOTSTRAPSERVERS=kafka:29092
+            - KAFKA_GROUP_NAME=order-domain-group
+            - SPRING_CLOUD_OPENFEIGN_CLIENT_CONFIG_USER-SERVICE_URL=http://hanghae-auth-user-service:8080/api
+
     #========================================================================
 
     hanghae-product-mysql:
@@ -100,7 +103,8 @@ services:
         environment:
             - ACTIVE_PROFILE=default
             - SPRING_APPLICATION_NAME=PRODUCT
-
+            - KAFKA_CLUSTER_BOOTSTRAPSERVERS=kafka:29092
+            - KAFKA_GROUP_NAME=product-domain-group
     zookeeper:
         image: 'arm64v8/zookeeper:3.8'
         networks:
