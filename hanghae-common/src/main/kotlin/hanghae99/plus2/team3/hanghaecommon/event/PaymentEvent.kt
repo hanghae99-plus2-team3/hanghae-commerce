@@ -19,5 +19,9 @@ data class PaymentEvent(
     subEventId = subEventId,
     topic = EventTopic.PAYMENT_EVENT,
     status = status,
-)
+) {
+    override fun createRollbackEvent(): Event {
+        TODO("Not yet implemented")
+    }
+}
 
