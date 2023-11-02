@@ -9,5 +9,4 @@ class HanghaeLikeCartApplicationTests {
     @Test
     fun contextLoads() {
     }
-
 }
