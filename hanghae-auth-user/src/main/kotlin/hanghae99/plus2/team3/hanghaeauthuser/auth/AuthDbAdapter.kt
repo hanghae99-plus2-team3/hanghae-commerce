@@ -38,8 +38,6 @@ class AuthDbAdapter(
 
     override fun getTokenInfo(authorization: String): AuthTokenInfoResponse {
         val tokenEntity = authTokenEntityRepository.getAuthTokenEntityByToken(authorization)
-        return AuthTokenInfoResponse(
-            memberPk = tokenEntity.memberPk
-        )
+        return AuthTokenInfoResponse(tokenEntity.memberPk)
     }
 }
