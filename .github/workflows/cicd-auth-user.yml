@@ -1,4 +1,4 @@
-name: cicd-dev
+name: cicd-auth-user
 
 on:
     push:
